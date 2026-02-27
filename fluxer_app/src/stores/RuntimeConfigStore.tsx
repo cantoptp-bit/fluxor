@@ -327,17 +327,23 @@ class RuntimeConfigStore {
 			}
 		}
 		const fallback = this.getEffectiveBootstrapEndpoint();
-		// On Vercel, never use localhost (browser would hit user's machine; backend is elsewhere)
+		// On Vercel, never use localhost or same-origin (backend is elsewhere; same-origin would hit Vercel, not your API)
 		if (isVercel && fallback) {
 			try {
-				const u = new URL(fallback.startsWith('/') ? origin + fallback : fallback);
+				const fallbackUrl = fallback.startsWith('/') ? origin + fallback : fallback;
+				const u = new URL(fallbackUrl);
 				if (u.hostname === 'localhost' || u.hostname === '127.0.0.1') {
 					throw new Error(
-						'FLUXER_PUBLIC_DOMAIN is not set or not applied. Set it in Vercel Project Settings → Environment Variables and redeploy.',
+						'FLUXER_PUBLIC_DOMAIN is not set. Set it in Vercel → Settings → Environment Variables (e.g. your ngrok hostname), then run .\\scripts\\set_vercel_backend_from_ngrok.ps1 and refresh.',
+					);
+				}
+				if (u.origin === origin) {
+					throw new Error(
+						'Backend URL not configured for Vercel. Set FLUXER_PUBLIC_DOMAIN in Vercel → Settings → Environment Variables to your backend hostname (e.g. from ngrok). Run .\\scripts\\set_vercel_backend_from_ngrok.ps1 with ngrok running, then refresh.',
 					);
 				}
 			} catch (e) {
-				if (e instanceof Error && e.message.includes('FLUXER_PUBLIC_DOMAIN')) throw e;
+				if (e instanceof Error && (e.message.includes('FLUXER_PUBLIC_DOMAIN') || e.message.includes('Backend URL'))) throw e;
 			}
 		}
 		return fallback;

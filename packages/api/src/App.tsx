@@ -48,10 +48,14 @@ export async function createAPIApp(options: CreateAPIAppOptions): Promise<APIApp
 
 	const routes = new Hono<HonoEnv>({ strict: true });
 
+	// In development, allow any origin so a Vercel-deployed frontend can reach this backend (e.g. via ngrok)
 	configureMiddleware(routes, {
 		logger,
 		nodeEnv: config.nodeEnv,
-		corsOrigins: config.dev.testModeEnabled ? '*' : [config.endpoints.webApp, config.endpoints.marketing],
+		corsOrigins:
+			config.nodeEnv === 'development' || config.dev.testModeEnabled
+				? '*'
+				: [config.endpoints.webApp, config.endpoints.marketing],
 		setSentryUser,
 		isTelemetryActive,
 	});

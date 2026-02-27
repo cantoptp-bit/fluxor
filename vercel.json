@@ -4,6 +4,12 @@
   "outputDirectory": "fluxer_app/dist",
   "installCommand": "pnpm install",
   "framework": null,
+  "functions": {
+    "api/fluxer-config.js": {
+      "memory": 128,
+      "maxDuration": 5
+    }
+  },
   "rewrites": [
     { "source": "/backend-config.json", "destination": "/backend-config.json" },
     { "source": "/api/:path*", "destination": "/api/:path*" },
