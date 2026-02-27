@@ -20,6 +20,7 @@
 import {SettingsSection} from '@app/components/modals/shared/SettingsSection';
 import {CommunicationTabContent as CommunicationTab} from '@app/components/modals/tabs/privacy_safety_tab/CommunicationTab';
 import {ConnectionsTabContent as ConnectionsTab} from '@app/components/modals/tabs/privacy_safety_tab/ConnectionsTab';
+import {TempChatLockTabContent} from '@app/components/modals/tabs/privacy_safety_tab/TempChatLockTab';
 import styles from '@app/components/modals/tabs/privacy_safety_tab/Inline.module.css';
 import {useLingui} from '@lingui/react/macro';
 import {observer} from 'mobx-react-lite';
@@ -34,6 +35,9 @@ export const PrivacySafetyInlineContent: React.FC = observer(() => {
 			</SettingsSection>
 			<SettingsSection id="communication" title={t`Communication`}>
 				<CommunicationTab />
+			</SettingsSection>
+			<SettingsSection id="temp_chat_lock" title={t`Temp chat lock`}>
+				<TempChatLockTabContent />
 			</SettingsSection>
 		</div>
 	);

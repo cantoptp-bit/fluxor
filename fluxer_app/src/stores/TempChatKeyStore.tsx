@@ -25,15 +25,24 @@ import {
 	type X25519KeyPair,
 } from '@app/lib/E2EEncryption';
 import * as TempChatApi from '@app/lib/TempChatApi';
+import * as TempChatLockStore from '@app/stores/TempChatLockStore';
 
 const STORAGE_KEY_PREFIX = 'temp_chat_private_key_';
 
 /**
  * Get or create X25519 key pair for the current user.
  * Private key is stored in sessionStorage; public key is synced to the server.
- * Call this before opening/sending in a temp chat.
+ * If a master (or per-chat) password is set and the session is locked, returns null —
+ * use TempChatLockStore.unlockWithMasterPassword or unlockWithChatPassword first.
  */
-export async function getOrCreateKeyPair(userId: string): Promise<X25519KeyPair> {
+export async function getOrCreateKeyPair(
+	userId: string,
+	tempChatId?: string,
+): Promise<X25519KeyPair | null> {
+	if (TempChatLockStore.isLocked(userId, tempChatId)) {
+		return null;
+	}
+
 	const storageKey = `${STORAGE_KEY_PREFIX}${userId}`;
 	const stored = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem(storageKey) : null;
 

@@ -1,0 +1,70 @@
+/*
+ * Copyright (C) 2026 Fluxer Contributors
+ *
+ * This file is part of Fluxer.
+ *
+ * Fluxer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fluxer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.input {
+	width: 100%;
+	padding: 10px 12px;
+	border-radius: var(--radius-md);
+	border: 1px solid var(--background-modifier-accent);
+	background: var(--background-secondary);
+	color: var(--text-normal);
+	font-size: 1rem;
+	box-sizing: border-box;
+}
+
+.input:focus {
+	outline: none;
+	border-color: var(--background-modifier-accent);
+	box-shadow: 0 0 0 2px var(--background-modifier-accent);
+}
+
+.input[aria-invalid="true"] {
+	border-color: var(--danger-color);
+}
+
+.subtitle {
+	margin: 0;
+	font-size: 0.875rem;
+	color: var(--text-muted);
+}
+
+.error {
+	margin: 0;
+	font-size: 0.875rem;
+	color: var(--danger-color);
+}
+
+.footer {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+	gap: 8px;
+}
+
+.footer > * {
+	flex: 1;
+	min-width: fit-content;
+}

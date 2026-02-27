@@ -18,7 +18,6 @@
  */
 
 import {FluxerIcon} from '@app/components/icons/FluxerIcon';
-import {Button} from '@app/components/uikit/button/Button';
 import {useFluxerDocumentTitle} from '@app/hooks/useFluxerDocumentTitle';
 import {Link} from '@app/lib/router/React';
 import {Routes} from '@app/Routes';
@@ -183,9 +182,14 @@ export const StatusPage = observer(function StatusPage() {
 					<h1 className={styles.pageTitle}>
 						<Trans>Status</Trans>
 					</h1>
-					<Button onClick={() => void fetchStatus()} disabled={loading} className={styles.refreshBtn}>
+					<button
+						type="button"
+						className={styles.refreshBtn}
+						onClick={() => void fetchStatus()}
+						disabled={loading}
+					>
 						<Trans>Refresh</Trans>
-					</Button>
+					</button>
 				</div>
 			</header>
 
@@ -209,9 +213,13 @@ export const StatusPage = observer(function StatusPage() {
 								</p>
 								<p className={styles.heroSub}>{error}</p>
 							</div>
-							<Button onClick={() => void fetchStatus()}>
+							<button
+								type="button"
+								className={styles.heroBtn}
+								onClick={() => void fetchStatus()}
+							>
 								<Trans>Retry</Trans>
-							</Button>
+							</button>
 						</div>
 					)}
 

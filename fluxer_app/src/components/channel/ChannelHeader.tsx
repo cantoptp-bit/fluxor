@@ -44,6 +44,7 @@ import {AddFriendsToGroupModal} from '@app/components/modals/AddFriendsToGroupMo
 import {ChannelTopicModal} from '@app/components/modals/ChannelTopicModal';
 import {CreateDMModal} from '@app/components/modals/CreateDMModal';
 import {EditGroupModal} from '@app/components/modals/EditGroupModal';
+import {TempChatSetPasswordBeforeCreateModal} from '@app/components/modals/TempChatSetPasswordBeforeCreateModal';
 import {ChannelContextMenu} from '@app/components/uikit/context_menu/ChannelContextMenu';
 import {DMContextMenu} from '@app/components/uikit/context_menu/DMContextMenu';
 import {GroupDMContextMenu} from '@app/components/uikit/context_menu/GroupDMContextMenu';
@@ -433,17 +434,28 @@ export const ChannelHeader = observer(
 		const shouldShowTempChatButton = !!channel && !isMobile && !isPersonalNotes && isFriendDM && !isGroupDM;
 		const shouldShowAddFriendsButton = !!channel && !isMobile && !isPersonalNotes && isGroupDM && !isGroupDMFull;
 
-		const handleStartTempChat = useCallback(async () => {
+		const handleStartTempChat = useCallback(() => {
 			if (!recipient) return;
-			try {
-				await openTempChatForUser(recipient);
-			} catch (err) {
-				const message =
-					err && typeof err === 'object' && 'message' in err
-						? String((err as {message: string}).message)
-						: t`Failed to open temp chat`;
-				ToastActionCreators.createToast({type: 'error', children: message});
-			}
+			ModalActionCreators.push(
+				modal(() => (
+					<TempChatSetPasswordBeforeCreateModal
+						user={recipient}
+						onConfirm={async (password) => {
+							ModalActionCreators.pop();
+							try {
+								await openTempChatForUser(recipient, password);
+							} catch (err) {
+								const message =
+									err && typeof err === 'object' && 'message' in err
+										? String((err as {message: string}).message)
+										: t`Failed to open temp chat`;
+								ToastActionCreators.createToast({type: 'error', children: message});
+							}
+						}}
+						onCancel={() => ModalActionCreators.pop()}
+					/>
+				)),
+			);
 		}, [recipient, t]);
 
 		return (

@@ -20,6 +20,8 @@ import * as ModalActionCreators from '@app/actions/ModalActionCreators';
 import {modal} from '@app/actions/ModalActionCreators';
 import * as ToastActionCreators from '@app/actions/ToastActionCreators';
 import {ConfirmModal} from '@app/components/modals/ConfirmModal';
+import {TempChatSetChatPasswordModal} from '@app/components/modals/TempChatSetChatPasswordModal';
+import {TempChatUnlockModal} from '@app/components/modals/TempChatUnlockModal';
 import {Button} from '@app/components/uikit/button/Button';
 import {Scroller, type ScrollerHandle} from '@app/components/uikit/Scroller';
 import {StatusAwareAvatar} from '@app/components/uikit/StatusAwareAvatar';
@@ -28,33 +30,20 @@ import * as TempChatApi from '@app/lib/TempChatApi';
 import {Routes} from '@app/Routes';
 import * as RouterUtils from '@app/utils/RouterUtils';
 import {getOrCreateKeyPair, getRecipientPublicKey} from '@app/stores/TempChatKeyStore';
+import * as TempChatLockStore from '@app/stores/TempChatLockStore';
 import type {UserRecord} from '@app/records/UserRecord';
 import AuthenticationStore from '@app/stores/AuthenticationStore';
 import UserStore from '@app/stores/UserStore';
 import * as DateUtils from '@app/utils/DateUtils';
+import {
+	processTempChatMessages,
+	setSentPlaintext,
+	type DecryptedMessage,
+} from '@app/utils/TempChatSentCache';
 import {useLingui} from '@lingui/react/macro';
 import {observer} from 'mobx-react-lite';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import styles from '@app/components/pages/TempChatFullPage.module.css';
-
-interface DecryptedMessage {
-	id: string;
-	senderId: string;
-	text: string;
-	createdAt: string;
-}
-
-const SENT_PLAINTEXT_PREFIX = 'fluxer_temp_sent:';
-
-function getSentPlaintext(tempChatId: string, messageId: string): string | null {
-	if (typeof sessionStorage === 'undefined') return null;
-	return sessionStorage.getItem(`${SENT_PLAINTEXT_PREFIX}${tempChatId}:${messageId}`);
-}
-
-function setSentPlaintext(tempChatId: string, messageId: string, text: string): void {
-	if (typeof sessionStorage === 'undefined') return;
-	sessionStorage.setItem(`${SENT_PLAINTEXT_PREFIX}${tempChatId}:${messageId}`, text);
-}
 
 function parseOtherUserId(tempChatId: string, currentUserId: string): string | null {
 	const parts = tempChatId.split('_');
@@ -80,6 +69,8 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 	const [sending, setSending] = useState(false);
 	const [inputValue, setInputValue] = useState('');
 	const [decryptErrors, setDecryptErrors] = useState(0);
+	const [needUnlock, setNeedUnlock] = useState(false);
+	const unlockModalPushedRef = useRef(false);
 	const scrollerRef = useRef<ScrollerHandle>(null);
 
 	// Resolve other participant from temp chat list or parse from id
@@ -112,41 +103,20 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 		if (!currentUserId) return;
 		setDecryptErrors(0);
 		try {
-			const keyPair = await getOrCreateKeyPair(currentUserId);
-			const raw = await TempChatApi.getTempChatMessages(tempChatId);
-			const decrypted: Array<DecryptedMessage> = [];
-			let errors = 0;
-			for (const m of raw) {
-				const isOwn = m.sender_id === currentUserId;
-				if (isOwn) {
-					const cached = getSentPlaintext(tempChatId, m.id);
-					decrypted.push({
-						id: m.id,
-						senderId: m.sender_id,
-						text: cached ?? t`[Your message]`,
-						createdAt: m.created_at,
-					});
-					continue;
-				}
-				try {
-					const text = await decryptFromSenderToString(
-						{
-							ciphertext: m.ciphertext,
-							iv: m.iv,
-							ephemeralPublicKey: m.ephemeral_public_key,
-						},
-						keyPair.privateKey,
-					);
-					decrypted.push({
-						id: m.id,
-						senderId: m.sender_id,
-						text,
-						createdAt: m.created_at,
-					});
-				} catch {
-					errors += 1;
-				}
+			const keyPair = await getOrCreateKeyPair(currentUserId, tempChatId);
+			if (!keyPair) {
+				setNeedUnlock(true);
+				setLoading(false);
+				return;
 			}
+			const raw = await TempChatApi.getTempChatMessages(tempChatId);
+			const { messages: decrypted, decryptErrorCount: errors } = await processTempChatMessages(
+				raw,
+				currentUserId,
+				tempChatId,
+				t`[Your message]`,
+				(payload) => decryptFromSenderToString(payload, keyPair.privateKey),
+			);
 			setDecryptErrors(errors);
 			setMessages(decrypted);
 		} catch {
@@ -162,6 +132,32 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 		const interval = setInterval(loadMessages, 5000);
 		return () => clearInterval(interval);
 	}, [otherUser, loadMessages]);
+
+	// When locked, show unlock modal once
+	useEffect(() => {
+		if (!needUnlock || !currentUserId || !otherUser || unlockModalPushedRef.current) return;
+		unlockModalPushedRef.current = true;
+		ModalActionCreators.push(
+			modal(() => (
+				<TempChatUnlockModal
+					userId={currentUserId}
+					tempChatId={tempChatId}
+					onUnlocked={() => {
+						ModalActionCreators.pop();
+						unlockModalPushedRef.current = false;
+						setNeedUnlock(false);
+						loadMessages();
+					}}
+					onCancel={() => {
+						ModalActionCreators.pop();
+						unlockModalPushedRef.current = false;
+						setNeedUnlock(false);
+						RouterUtils.transitionTo(Routes.ME);
+					}}
+				/>
+			)),
+		);
+	}, [needUnlock, currentUserId, tempChatId, otherUser, loadMessages]);
 
 	const handleSend = useCallback(async () => {
 		const text = inputValue.trim();
@@ -232,6 +228,43 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 		RouterUtils.transitionTo(Routes.ME);
 	}, []);
 
+	const hasChatPassword = TempChatLockStore.hasChatPassword(tempChatId);
+
+	const handleSetChatPassword = useCallback(() => {
+		ModalActionCreators.push(
+			modal(() => (
+				<TempChatSetChatPasswordModal
+					userId={currentUserId}
+					tempChatId={tempChatId}
+					onDone={() => {
+						ModalActionCreators.pop();
+						ToastActionCreators.createToast({type: 'success', children: t`Password set for this chat`});
+					}}
+					onCancel={() => ModalActionCreators.pop()}
+				/>
+			)),
+		);
+	}, [currentUserId, tempChatId, t]);
+
+	const handleRemoveChatPassword = useCallback(() => {
+		ModalActionCreators.push(
+			modal(() => (
+				<ConfirmModal
+					title={t`Remove password for this chat?`}
+					description={t`You can still unlock with your master password.`}
+					primaryText={t`Remove`}
+					primaryVariant="danger-primary"
+					onPrimary={() => {
+						TempChatLockStore.clearChatPassword(tempChatId);
+						ModalActionCreators.pop();
+						ToastActionCreators.createToast({type: 'success', children: t`Chat password removed`});
+					}}
+					onSecondary={() => ModalActionCreators.pop()}
+				/>
+			)),
+		);
+	}, [tempChatId, t]);
+
 	if (loadingUser) {
 		return (
 			<div className={styles.container}>
@@ -260,6 +293,15 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 					<span className={styles.headerTempLabel}>{t`Temporary encrypted chat`}</span>
 				</div>
 				<div className={styles.headerActions}>
+					{hasChatPassword ? (
+						<Button variant="secondary" size="small" onClick={handleRemoveChatPassword}>
+							{t`Remove chat password`}
+						</Button>
+					) : (
+						<Button variant="secondary" size="small" onClick={handleSetChatPassword}>
+							{t`Set password for this chat`}
+						</Button>
+					)}
 					<Button variant="secondary" size="small" onClick={handleDeleteChat} className={styles.deleteButton}>
 						{t`Delete chat`}
 					</Button>

@@ -72,6 +72,73 @@
 
 .refreshBtn {
 	margin-left: auto;
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 36px;
+	padding: 0 1rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	line-height: 1.25;
+	color: var(--text-primary);
+	background: var(--background-tertiary);
+	border: 1px solid var(--background-modifier-accent);
+	border-radius: 6px;
+	cursor: pointer;
+	appearance: none;
+	transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.refreshBtn:hover:not(:disabled) {
+	background: var(--background-modifier-hover);
+	border-color: var(--background-modifier-accent);
+}
+
+.refreshBtn:active:not(:disabled) {
+	background: var(--background-modifier-active);
+}
+
+.refreshBtn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.refreshBtn:focus-visible {
+	outline: 2px solid var(--brand-primary);
+	outline-offset: 2px;
+}
+
+.heroBtn {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 40px;
+	padding: 0 1.25rem;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	line-height: 1.25;
+	color: var(--brand-primary-fill);
+	background: var(--brand-primary);
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	appearance: none;
+	transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.heroBtn:hover {
+	background: var(--brand-secondary);
+}
+
+.heroBtn:active {
+	transform: scale(0.98);
+}
+
+.heroBtn:focus-visible {
+	outline: 2px solid var(--brand-primary);
+	outline-offset: 2px;
 }
 
 .main {

@@ -406,36 +406,52 @@
 
 .dmListModeToggle {
 	display: flex;
-	gap: 0;
+	flex-direction: column;
+	gap: 2px;
 	margin: var(--spacing-2) var(--spacing-2) var(--spacing-1);
-	border-radius: var(--radius-md);
-	background-color: var(--background-tertiary);
-	padding: 2px;
 }
 
 .dmListModeButton {
-	flex: 1;
-	padding: 6px 12px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	width: 100%;
+	height: 2.625rem;
+	padding: 0 0.5rem;
 	border: none;
-	border-radius: calc(var(--radius-md) - 2px);
-	background: transparent;
+	border-radius: var(--radius-md);
+	background-color: transparent;
 	color: var(--text-primary-muted);
-	font-size: 0.8125rem;
+	font-size: 0.9375rem;
 	font-weight: 500;
+	line-height: 1.25;
+	text-align: left;
 	cursor: pointer;
-	transition: background-color 0.1s, color 0.1s;
+	appearance: none;
+	transition: background-color 0.1s ease, color 0.1s ease;
 }
 
-.dmListModeButton:hover {
+@media (hover: hover) and (pointer: fine) {
+	.dmListModeButton:hover:not(.dmListModeButtonActive) {
+		background-color: var(--surface-interactive-hover-bg);
+		color: var(--text-primary);
+	}
+}
+
+.dmListModeButton:active:not(.dmListModeButtonActive) {
+	background-color: var(--surface-interactive-hover-bg);
 	color: var(--text-primary);
-	background-color: var(--background-modifier-hover);
+}
+
+.dmListModeButton:focus-visible {
+	outline: 2px solid var(--brand-primary);
+	outline-offset: 2px;
 }
 
 .dmListModeButtonActive {
 	composes: dmListModeButton;
-	background-color: var(--background-secondary);
-	color: var(--text-primary);
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	background-color: color-mix(in srgb, var(--surface-interactive-selected-bg) 35%, transparent);
+	color: var(--surface-interactive-selected-color);
 }
 
 .dmListModeEmpty {

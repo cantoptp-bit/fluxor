@@ -22,21 +22,27 @@ import * as RouterUtils from '@app/utils/RouterUtils';
 import {Routes} from '@app/Routes';
 import type {UserRecord} from '@app/records/UserRecord';
 import AuthenticationStore from '@app/stores/AuthenticationStore';
+import * as TempChatLockStore from '@app/stores/TempChatLockStore';
 import {getOrCreateKeyPair} from '@app/stores/TempChatKeyStore';
 
 /**
- * Opens the temp chat as a full page for the given user. Caller should catch and show a toast on error.
+ * Opens the temp chat as a full page for the given user.
+ * If chatPassword is provided (e.g. from the "set password before create" modal), it is stored as the per-chat password.
+ * Caller should catch and show a toast on error.
+ * Users can have multiple temp chats with the same user; each requires its own password when created.
  */
-export async function openTempChatForUser(user: UserRecord): Promise<void> {
+export async function openTempChatForUser(user: UserRecord, chatPassword?: string): Promise<void> {
 	const currentUserId = AuthenticationStore.currentUserId;
 	if (!currentUserId) {
 		throw new Error('Not authenticated');
 	}
-	try {
-		await getOrCreateKeyPair(currentUserId);
-		const chat = await TempChatApi.createOrGetTempChat(user.id);
-		RouterUtils.transitionTo(Routes.tempChat(chat.id));
-	} catch (err) {
-		throw err;
+	await getOrCreateKeyPair(currentUserId);
+	const chat = await TempChatApi.createOrGetTempChat(user.id);
+	if (chatPassword?.trim()) {
+		const ok = await TempChatLockStore.setChatPassword(currentUserId, chat.id, chatPassword.trim(), null);
+		if (!ok) {
+			throw new Error('Failed to set chat password');
+		}
 	}
+	RouterUtils.transitionTo(Routes.tempChat(chat.id));
 }

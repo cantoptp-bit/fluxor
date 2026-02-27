@@ -1353,27 +1353,6 @@ export const DMList = observer(() => {
 							</FocusRing>
 						)}
 
-						{showMobilePlutoniumButton && (
-							<FocusRing offset={-2}>
-								<button
-									type="button"
-									onClick={() => PremiumModalActionCreators.open()}
-									className={styles.mobilePlutoniumButton}
-								>
-									<div className={styles.mobileSpecialButtonContent}>
-										<div className={styles.mobileSpecialButtonIcon}>
-											<CrownIcon weight="fill" className={styles.iconSize5} />
-										</div>
-										<div className={styles.mobileSpecialButtonText}>
-											<span className={styles.mobileSpecialButtonLabel}>
-												<Trans>Plutonium</Trans>
-											</span>
-										</div>
-									</div>
-								</button>
-							</FocusRing>
-						)}
-
 						<div className={styles.dmListModeToggle} role="tablist" aria-label={t`Switch between direct messages and temp chats`}>
 							<FocusRing offset={-2}>
 								<button
@@ -1450,6 +1429,28 @@ export const DMList = observer(() => {
 								})
 							)
 						)}
+
+						{showMobilePlutoniumButton && (
+							<FocusRing offset={-2}>
+								<button
+									type="button"
+									onClick={() => PremiumModalActionCreators.open()}
+									className={styles.mobilePlutoniumButton}
+								>
+									<div className={styles.mobileSpecialButtonContent}>
+										<div className={styles.mobileSpecialButtonIcon}>
+											<CrownIcon weight="fill" className={styles.iconSize5} />
+										</div>
+										<div className={styles.mobileSpecialButtonText}>
+											<span className={styles.mobileSpecialButtonLabel}>
+												<Trans>Plutonium</Trans>
+											</span>
+										</div>
+									</div>
+								</button>
+							</FocusRing>
+						)}
+
 						<div style={{height: 'var(--spacing-2)'}} />
 					</div>
 				</Scroller>
@@ -1505,19 +1506,6 @@ export const DMList = observer(() => {
 								</div>
 								<span className={styles.clickableItemText}>
 									<Trans>Personal Notes</Trans>
-								</span>
-							</div>
-						</ClickableItem>
-					)}
-
-					{showPremiumFeatures && (
-						<ClickableItem onClick={() => PremiumModalActionCreators.open()}>
-							<div className={styles.clickableItemContent}>
-								<div className={styles.clickableItemIcon}>
-									<CrownIcon weight="fill" className={styles.iconSize5} />
-								</div>
-								<span className={styles.clickableItemText}>
-									<Trans>Plutonium</Trans>
 								</span>
 							</div>
 						</ClickableItem>
@@ -1630,6 +1618,19 @@ export const DMList = observer(() => {
 								)}
 							</div>
 						</>
+					)}
+
+					{showPremiumFeatures && (
+						<ClickableItem onClick={() => PremiumModalActionCreators.open()}>
+							<div className={styles.clickableItemContent}>
+								<div className={styles.clickableItemIcon}>
+									<CrownIcon weight="fill" className={styles.iconSize5} />
+								</div>
+								<span className={styles.clickableItemText}>
+									<Trans>Plutonium</Trans>
+								</span>
+							</div>
+						</ClickableItem>
 					)}
 
 					<div style={{height: 'var(--spacing-2)'}} />

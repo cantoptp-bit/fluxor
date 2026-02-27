@@ -22,6 +22,7 @@ import {modal} from '@app/actions/ModalActionCreators';
 import * as ToastActionCreators from '@app/actions/ToastActionCreators';
 import {ConfirmModal} from '@app/components/modals/ConfirmModal';
 import * as Modal from '@app/components/modals/Modal';
+import {TempChatUnlockModal} from '@app/components/modals/TempChatUnlockModal';
 import {Button} from '@app/components/uikit/button/Button';
 import {Scroller, type ScrollerHandle} from '@app/components/uikit/Scroller';
 import {decryptFromSenderToString, encryptForRecipient} from '@app/lib/E2EEncryption';
@@ -54,13 +55,20 @@ export const TempChatModal = observer(({tempChatId, otherUser, onClose}: TempCha
 	const [sending, setSending] = useState(false);
 	const [inputValue, setInputValue] = useState('');
 	const [decryptErrors, setDecryptErrors] = useState(0);
+	const [needUnlock, setNeedUnlock] = useState(false);
+	const unlockModalPushedRef = useRef(false);
 	const scrollerRef = useRef<ScrollerHandle>(null);
 	const currentUserId = AuthenticationStore.currentUserId ?? '';
 
 	const loadMessages = useCallback(async () => {
 		if (!currentUserId) return;
 		try {
-			const keyPair = await getOrCreateKeyPair(currentUserId);
+			const keyPair = await getOrCreateKeyPair(currentUserId, tempChatId);
+			if (!keyPair) {
+				setNeedUnlock(true);
+				setLoading(false);
+				return;
+			}
 			const raw = await TempChatApi.getTempChatMessages(tempChatId);
 			const decrypted: Array<DecryptedMessage> = [];
 			for (const m of raw) {
@@ -96,6 +104,32 @@ export const TempChatModal = observer(({tempChatId, otherUser, onClose}: TempCha
 		const interval = setInterval(loadMessages, 5000);
 		return () => clearInterval(interval);
 	}, [loadMessages]);
+
+	// When locked, show unlock modal once
+	useEffect(() => {
+		if (!needUnlock || !currentUserId || unlockModalPushedRef.current) return;
+		unlockModalPushedRef.current = true;
+		ModalActionCreators.push(
+			modal(() => (
+				<TempChatUnlockModal
+					userId={currentUserId}
+					tempChatId={tempChatId}
+					onUnlocked={() => {
+						ModalActionCreators.pop();
+						unlockModalPushedRef.current = false;
+						setNeedUnlock(false);
+						loadMessages();
+					}}
+					onCancel={() => {
+						ModalActionCreators.pop();
+						unlockModalPushedRef.current = false;
+						setNeedUnlock(false);
+						onClose();
+					}}
+				/>
+			)),
+		);
+	}, [needUnlock, currentUserId, tempChatId, onClose, loadMessages]);
 
 	const handleSend = useCallback(async () => {
 		const text = inputValue.trim();

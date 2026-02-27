@@ -468,6 +468,19 @@ const SECTION_REGISTRY: Array<SectionDefinition> = [
 		isAdvanced: false,
 	},
 	{
+		id: 'temp_chat_lock',
+		tabType: 'privacy_safety',
+		label: msg`Temp chat lock`,
+		keywords: [
+			msg`temp chat`,
+			msg`master password`,
+			msg`encrypted`,
+			msg`unlock`,
+			msg`password`,
+		],
+		isAdvanced: false,
+	},
+	{
 		id: 'data-export',
 		tabType: 'privacy_safety',
 		label: msg`Data Export`,
