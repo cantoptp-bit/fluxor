@@ -30,6 +30,10 @@
 	max-width: 420px;
 	margin: 3rem auto;
 	padding: 0 1rem;
+	transition:
+		transform 160ms ease,
+		box-shadow 160ms ease;
+	will-change: transform, box-shadow;
 }
 
 .loginNotice {
@@ -41,6 +45,19 @@
 	font-size: 0.875rem;
 	color: var(--text-primary);
 	text-align: center;
+	transition:
+		background-color 160ms ease,
+		border-color 160ms ease,
+		transform 160ms ease,
+		box-shadow 160ms ease;
+	will-change: transform, box-shadow, background-color, border-color;
+}
+
+.loginNotice:hover {
+	background-color: var(--background-tertiary);
+	border-color: var(--background-modifier-accent-strong, var(--background-modifier-accent));
+	transform: translateY(-1px);
+	box-shadow: 0 10px 24px rgba(0 0 0 / 0.4);
 }
 
 .form {
@@ -80,6 +97,10 @@
 	flex-direction: column;
 	gap: 0.5rem;
 	margin-bottom: 1.25rem;
+	transition:
+		transform 160ms ease,
+		background-color 160ms ease;
+	will-change: transform, background-color;
 }
 
 .primaryButton {
@@ -142,11 +163,19 @@
 .passkeyActions button {
 	border: 1px solid rgba(255, 255, 255, 0.25);
 	background-color: #3c3c41;
+	transition:
+		background-color 140ms ease,
+		border-color 140ms ease,
+		transform 140ms ease,
+		box-shadow 140ms ease;
+	will-change: transform, box-shadow, background-color, border-color;
 }
 
 .passkeyActions button:hover:not(:disabled) {
 	border-color: rgba(255, 255, 255, 0.4);
 	background-color: #45454a;
+	transform: translateY(-1px);
+	box-shadow: 0 10px 22px rgba(0 0 0 / 0.45);
 }
 
 .divider {
@@ -278,6 +307,21 @@
 	padding: 0.75rem;
 	background-color: var(--background-secondary);
 	border-radius: 8px;
+	transition:
+		background-color 160ms ease,
+		transform 160ms ease,
+		box-shadow 160ms ease,
+		border-color 160ms ease;
+	border: 1px solid transparent;
+	will-change: transform, box-shadow, background-color, border-color;
+	cursor: pointer;
+}
+
+.accountCard:hover {
+	background-color: var(--background-tertiary);
+	border-color: var(--background-modifier-accent);
+	transform: translateY(-1px);
+	box-shadow: 0 12px 26px rgba(0 0 0 / 0.45);
 }
 
 .accountDetails {
@@ -359,6 +403,18 @@
 	background-color: var(--background-tertiary);
 	border: 2px solid var(--background-modifier-accent);
 	border-radius: 12px;
+	transition:
+		transform 160ms ease,
+		box-shadow 160ms ease,
+		border-color 160ms ease,
+		background-color 160ms ease;
+	will-change: transform, box-shadow, border-color, background-color;
+}
+
+.handoffCodeDisplay:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 12px 28px rgba(0 0 0 / 0.45);
+	border-color: var(--brand-primary-alpha-60, var(--background-modifier-accent));
 }
 
 .handoffCodeChar {

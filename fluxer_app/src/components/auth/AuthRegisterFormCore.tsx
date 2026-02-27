@@ -184,6 +184,15 @@ export function AuthRegisterFormCore({
 			invite_code: inviteCode,
 		});
 
+		// If the server doesn't return a token/user_id, we can't auto-log the user in.
+		// Treat this as a soft failure so the form stays put with a clear message instead
+		// of silently redirecting back to the login page.
+		if (!response.token || !response.user_id) {
+			throw new Error(
+				t`We couldn't automatically log you in after registration. Please check your email for a verification link, then log in.`,
+			);
+		}
+
 		if (onRegister) {
 			await onRegister(response);
 		} else {

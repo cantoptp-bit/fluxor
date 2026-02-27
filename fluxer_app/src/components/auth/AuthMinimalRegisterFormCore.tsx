@@ -140,6 +140,15 @@ export function AuthMinimalRegisterFormCore({
 			invite_code: inviteCode,
 		});
 
+		// If no token/user_id is returned, we can't auto-log the user in.
+		// Surface a clear message and keep them on the page instead of
+		// bouncing them back to the login screen with no explanation.
+		if (!response.token || !response.user_id) {
+			throw new Error(
+				t`We couldn't automatically log you in after registration. Please check your email for a verification link, then log in.`,
+			);
+		}
+
 		if (onRegister) {
 			await onRegister(response);
 		} else {
