@@ -23,8 +23,7 @@ import * as MediaViewerActionCreators from '@app/actions/MediaViewerActionCreato
 import * as ModalActionCreators from '@app/actions/ModalActionCreators';
 import {modal} from '@app/actions/ModalActionCreators';
 import {AltTextBadge} from '@app/components/channel/embeds/AltTextBadge';
-import {getMediaButtonVisibility} from '../media/MediaButtonUtils.tsx';
-import {MediaContainer} from '../media/MediaContainer.tsx';
+import {getMediaButtonVisibility, MediaContainer} from '../media';
 import {NSFWBlurOverlay} from '@app/components/channel/embeds/NSFWBlurOverlay';
 import {MediaActionBottomSheet} from '@app/components/channel/MediaActionBottomSheet';
 import {useMaybeMessageViewContext} from '@app/components/channel/MessageViewContext';

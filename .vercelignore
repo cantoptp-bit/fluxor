@@ -5,7 +5,7 @@
 .git
 *.log
 dev/
-media/
+/media/
 **/dist
 **/.turbo
 **/__pycache__
