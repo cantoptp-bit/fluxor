@@ -275,6 +275,11 @@ export default () => {
 
 		target: ['web', 'browserslist'],
 
+		// Disable bundle size hints; this app's entrypoint/assets exceed default limits
+		performance: {
+			hints: false,
+		},
+
 		resolve: {
 			alias: {
 				'~': SRC_DIR,
