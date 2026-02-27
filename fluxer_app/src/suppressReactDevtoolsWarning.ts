@@ -1,5 +1,10 @@
 /**
- * Suppress "Download the React DevTools" console message in development.
+ * Suppress known noisy console messages.
+ *
+ * - "Download the React DevTools": from React in development.
+ * - "Uncompiled message detected!" / "Please compile your catalog": from Lingui in production when the deployed catalog is stale (suppressed so users aren't spammed; fix by running lingui:extract && lingui:compile before deploy).
+ *
+ * Note: "SES Removing unpermitted intrinsics" (lockdown-install.js) is from a browser extension (e.g. MetaMask), not from this app; it cannot be fixed in-app.
  *
  * Strategy 1 – DevTools hook: React 19 checks hook.isDisabled in
  * injectInternals(). Setting it to true makes injectInternals return truthy,
@@ -29,16 +34,19 @@ if (typeof window !== 'undefined') {
 
 	// --- Strategy 2: console intercept ---
 	const DEVTOOLS_PATTERN = /Download the React DevTools/;
+	const LINGUI_UNCOMPILED_PATTERN = /Uncompiled message detected!|Please compile your catalog/;
 
 	const _origInfo = console.info.bind(console);
-	console.info = (...args: unknown[]): void => {
+	console.info = (...args: Array<unknown>): void => {
 		if (typeof args[0] === 'string' && DEVTOOLS_PATTERN.test(args[0])) return;
 		_origInfo(...args);
 	};
 
 	const _origWarn = console.warn.bind(console);
-	console.warn = (...args: unknown[]): void => {
+	console.warn = (...args: Array<unknown>): void => {
 		if (typeof args[0] === 'string' && DEVTOOLS_PATTERN.test(args[0])) return;
+		// In production, suppress Lingui "Uncompiled message" so users aren't spammed (fix: run lingui:extract && lingui:compile before deploy).
+		if (process.env.NODE_ENV === 'production' && args.some((a) => typeof a === 'string' && LINGUI_UNCOMPILED_PATTERN.test(a))) return;
 		_origWarn(...args);
 	};
 }
