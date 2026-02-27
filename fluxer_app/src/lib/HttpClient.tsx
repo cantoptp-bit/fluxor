@@ -284,6 +284,11 @@ export class HttpClient {
 	private buildRequestHeaders(config: HttpRequestConfig, retryCount: number): Record<string, string> {
 		const headers: Record<string, string> = {...(config.headers ?? {})};
 
+		// Ngrok free tier shows an HTML interstitial for browser requests; this header skips it.
+		if (this.baseUrl?.includes('ngrok') || config.url?.includes('ngrok')) {
+			headers['ngrok-skip-browser-warning'] = '1';
+		}
+
 		if (!config.skipAuth && !config.url.includes('://')) {
 			const authToken = this.authTokenProvider?.();
 			if (authToken) {
