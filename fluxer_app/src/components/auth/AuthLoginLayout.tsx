@@ -120,7 +120,7 @@ export const AuthLoginLayout = observer(function AuthLoginLayout({
 		RouterUtils.replaceWith(redirectPath ?? '/');
 	}, [handoff.successPayload, redirectPath]);
 
-	const { form, isLoading, fieldErrors, handlePasskeyLogin, handlePasskeyBrowserLogin, isPasskeyLoading } =
+	const { form, isLoading, fieldErrors, error: loginError, handlePasskeyLogin, handlePasskeyBrowserLogin, isPasskeyLoading } =
 		useLoginFormController({
 			redirectPath,
 			inviteCode,
@@ -304,7 +304,13 @@ export const AuthLoginLayout = observer(function AuthLoginLayout({
 
 			{showTitle ? <h1 className={styles.title}>{title ?? <Trans>Welcome back</Trans>}</h1> : null}
 
-			{!showAccountSelector && switchError ? <div className={styles.loginNotice}>{switchError}</div> : null}
+			{!showAccountSelector && switchError ? <div className={styles.loginNotice} role="alert">{switchError}</div> : null}
+
+			{loginError ? (
+				<div className={styles.loginNotice} role="alert">
+					{loginError}
+				</div>
+			) : null}
 
 			{ssoConfig?.enabled ? (
 				<div className={styles.ssoBlock}>

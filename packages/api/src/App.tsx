@@ -48,7 +48,7 @@ export async function createAPIApp(options: CreateAPIAppOptions): Promise<APIApp
 
 	const routes = new Hono<HonoEnv>({ strict: true });
 
-	// In development, allow any origin. In production, allow webApp + marketing + any *.vercel.app so the deployed frontend can reach this backend (e.g. via ngrok).
+	// In development, allow any origin. In production, allow webApp + marketing + any *.vercel.app so the deployed frontend can reach this backend (e.g. ngrok or trycloudflare.com). When exposing the API via a tunnel, run with NODE_ENV=production so CORS uses this allow-list and the browser receives Access-Control-Allow-Origin; ensure the tunnel forwards the Origin header.
 	const allowedOriginList = [
 		config.endpoints.webApp,
 		config.endpoints.marketing,

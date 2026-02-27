@@ -264,6 +264,57 @@ describe('CORS Middleware', () => {
 		});
 	});
 
+	describe('origin function (predicate)', () => {
+		test('allows origin when predicate returns true', async () => {
+			const allowVercel = (origin: string): boolean =>
+				origin.startsWith('https://') && origin.includes('vercel.app');
+			const app = new Hono();
+			app.use('*', cors({origins: allowVercel, credentials: true}));
+			app.get('/test', (c) => c.json({ok: true}));
+
+			const response = await app.request('/test', {
+				headers: {origin: 'https://fluxor-rust.vercel.app'},
+			});
+
+			expect(response.status).toBe(200);
+			expect(response.headers.get('Access-Control-Allow-Origin')).toBe('https://fluxor-rust.vercel.app');
+			expect(response.headers.get('Access-Control-Allow-Credentials')).toBe('true');
+			expect(response.headers.get('Vary')).toBe('Origin');
+		});
+
+		test('OPTIONS preflight returns Allow-Origin when predicate allows origin', async () => {
+			const allowVercel = (origin: string): boolean =>
+				origin.startsWith('https://') && origin.includes('vercel.app');
+			const app = new Hono();
+			app.use('*', cors({origins: allowVercel, credentials: true}));
+			app.post('/v1/auth/login', (c) => c.json({token: 'x'}));
+
+			const response = await app.request('/v1/auth/login', {
+				method: 'OPTIONS',
+				headers: {origin: 'https://fluxor-rust.vercel.app'},
+			});
+
+			expect(response.status).toBe(204);
+			expect(response.headers.get('Access-Control-Allow-Origin')).toBe('https://fluxor-rust.vercel.app');
+			expect(response.headers.get('Access-Control-Allow-Credentials')).toBe('true');
+		});
+
+		test('does not set Allow-Origin when predicate returns false', async () => {
+			const allowVercel = (origin: string): boolean =>
+				origin.startsWith('https://') && origin.includes('vercel.app');
+			const app = new Hono();
+			app.use('*', cors({origins: allowVercel}));
+			app.get('/test', (c) => c.json({ok: true}));
+
+			const response = await app.request('/test', {
+				headers: {origin: 'https://evil.com'},
+			});
+
+			expect(response.status).toBe(200);
+			expect(response.headers.get('Access-Control-Allow-Origin')).toBeNull();
+		});
+	});
+
 	describe('integration with routes', () => {
 		test('works with multiple routes', async () => {
 			const app = new Hono();
