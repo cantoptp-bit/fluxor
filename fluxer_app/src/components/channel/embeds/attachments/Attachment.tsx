@@ -19,11 +19,11 @@
 
 import styles from '@app/components/channel/embeds/attachments/Attachment.module.css';
 import {AttachmentFile} from '@app/components/channel/embeds/attachments/AttachmentFile';
-import EmbedAudio from '../media/EmbedAudio';
-import {EmbedGif, EmbedGifv} from '../media/EmbedGifv';
-import {EmbedImage} from '../media/EmbedImage';
-import EmbedVideo from '../media/EmbedVideo';
-import VoiceMessagePlayer from '../media/VoiceMessagePlayer';
+import EmbedAudio from '../media/EmbedAudio.tsx';
+import {EmbedGif, EmbedGifv} from '../media/EmbedGifv.tsx';
+import {EmbedImage} from '../media/EmbedImage.tsx';
+import EmbedVideo from '../media/EmbedVideo.tsx';
+import VoiceMessagePlayer from '../media/VoiceMessagePlayer.tsx';
 import {MessageUploadProgress} from '@app/components/channel/MessageUploadProgress';
 import {ExpiryFootnote} from '@app/components/common/ExpiryFootnote';
 import {SpoilerOverlay} from '@app/components/common/SpoilerOverlay';

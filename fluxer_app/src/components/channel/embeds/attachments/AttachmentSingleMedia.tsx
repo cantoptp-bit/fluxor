@@ -17,9 +17,9 @@
  * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {EmbedGif, EmbedGifv} from '../media/EmbedGifv';
-import {EmbedImage} from '../media/EmbedImage';
-import EmbedVideo from '../media/EmbedVideo';
+import {EmbedGif, EmbedGifv} from '../media/EmbedGifv.tsx';
+import {EmbedImage} from '../media/EmbedImage.tsx';
+import EmbedVideo from '../media/EmbedVideo.tsx';
 import {SpoilerOverlay} from '@app/components/common/SpoilerOverlay';
 import spoilerStyles from '@app/components/common/SpoilerOverlay.module.css';
 import type {MessageRecord} from '@app/records/MessageRecord';
