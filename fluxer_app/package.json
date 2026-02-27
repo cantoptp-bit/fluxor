@@ -17,7 +17,7 @@
 	"scripts": {
 		"build": "pnpm wasm:codegen && pnpm generate:colors && pnpm generate:masks && pnpm generate:css-types && tsgo --noEmit && pnpm lingui:compile && node -e \"try { require('fs').rmSync('dist', {recursive: true, force: true}) } catch (e) {}\" && rspack build --mode production && pnpm tsx scripts/build-sw.mjs",
 		"build:no-wasm": "pnpm generate:colors && pnpm generate:masks && pnpm generate:css-types && pnpm lingui:compile && tsgo --noEmit && node -e \"try { require('fs').rmSync('dist', {recursive: true, force: true}) } catch (e) {}\" && rspack build --mode production && pnpm tsx scripts/build-sw.mjs",
-		"build:vercel": "pnpm run build:no-wasm",
+		"build:vercel": "pnpm generate:colors && pnpm generate:masks && pnpm generate:css-types && pnpm lingui:compile && node -e \"try { require('fs').rmSync('dist', {recursive: true, force: true}) } catch (e) {}\" && rspack build --mode production && pnpm tsx scripts/build-sw.mjs",
 		"dev": "pnpm tsx scripts/DevServer.tsx",
 		"typecheck": "pnpm wasm:codegen && pnpm generate:masks && pnpm generate:css-types && tsgo --noEmit",
 		"typecheck:only": "tsgo --noEmit",
