@@ -1,3 +1,7 @@
+fluxer_desktop/
+**/*.exe
+**/*.tgz
+
 # Avoid permission errors and reduce upload size (CLI deploys)
 .devenv
 **/.devenv

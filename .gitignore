@@ -96,3 +96,8 @@ next-env.d.ts
 .github/prompts
 
 .vercel
+
+# Desktop build artifacts
+fluxer_desktop/dist-electron/
+fluxer_desktop/*.exe
+fluxer_desktop/*.tgz
