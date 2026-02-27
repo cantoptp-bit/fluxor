@@ -1,0 +1,78 @@
+# Backing services for local development only.
+# Started automatically by pnpm dev:full and pnpm dev:servers.
+# Run manually: docker compose -f compose.dev.yaml up -d
+# Open: http://localhost:48763 or http://home.auroraplayer.com:48763
+# Dev emails: http://localhost:8025 (Mailpit)
+
+services:
+  valkey:
+    image: valkey/valkey:8.0.6-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["valkey-server", "--loglevel", "warning"]
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.14
+    restart: unless-stopped
+    environment:
+      MEILI_ENV: development
+      MEILI_MASTER_KEY: 3e794a04937b0d64a249ebcba9141afc1db50b940236362faccdb0cc27f49223
+      MEILI_HTTP_ADDR: 0.0.0.0:7700
+    ports:
+      - "7700:7700"
+    volumes:
+      - meilisearch_data:/meili_data
+
+  nats_core:
+    image: nats:2.10-alpine
+    restart: unless-stopped
+    ports:
+      - "4222:4222"
+    command: ["-p", "4222", "-a", "0.0.0.0"]
+
+  nats_jetstream:
+    image: nats:2.10-alpine
+    restart: unless-stopped
+    ports:
+      - "4223:4223"
+    command: ["-p", "4223", "-js", "-sd", "/data", "-a", "0.0.0.0"]
+    volumes:
+      - nats_jetstream_data:/data
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "49621:1025"   # SMTP (app sends here; config uses port 49621)
+      - "8025:8025"    # Web UI to view emails
+
+  cassandra:
+    image: ${CASSANDRA_IMAGE:-cassandra:5.0}
+    hostname: cassandra
+    restart: unless-stopped
+    environment:
+      - CASSANDRA_CLUSTER_NAME=fluxer-dev
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_SEEDS=cassandra
+      - CASSANDRA_AUTHENTICATOR=PasswordAuthenticator
+      - CASSANDRA_AUTHORIZER=CassandraAuthorizer
+      - MAX_HEAP_SIZE=512M
+      - HEAP_NEWSIZE=128M
+    ports:
+      - "9042:9042"
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+    healthcheck:
+      test: ['CMD-SHELL', 'nodetool status']
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+
+volumes:
+  meilisearch_data:
+  nats_jetstream_data:
+  cassandra_data:

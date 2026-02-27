@@ -1,0 +1,95 @@
+{
+  "$schema": "./packages/config/src/schema/ConfigSchema.json",
+  "env": "development",
+  "domain": {
+    "base_domain": "localhost",
+    "public_scheme": "http",
+    "public_port": 48763
+  },
+  "database": {
+    "backend": "cassandra",
+    "cassandra": {
+      "hosts": ["127.0.0.1"],
+      "keyspace": "fluxer",
+      "local_dc": "dc1",
+      "username": "cassandra",
+      "password": "cassandra"
+    }
+  },
+  "internal": {
+    "kv": "redis://localhost:6379/0",
+    "kv_mode": "standalone"
+  },
+  "s3": {
+    "access_key_id": "dev-access-key",
+    "secret_access_key": "e000a56f0919ca447b917a0db8709b3998be41a1d079d876b848dec04cba757f",
+    "endpoint": "http://localhost:49319/s3"
+  },
+  "services": {
+    "server": {
+      "port": 49319,
+      "host": "0.0.0.0"
+    },
+    "media_proxy": {
+      "secret_key": "ad52a5338e910ede2aeaf844cf7e3dcf8fe07d9ef0f240d4a0a6bc60a9ad9e16"
+    },
+    "admin": {
+      "secret_key_base": "95331e57dc91aa805bc374e53d935ba3686d9fd9fc2ec5f112966fb2bf7493e1",
+      "oauth_client_secret": "dc684f55f498f8717efc9de184c79c7808b44290022de7d691d48bba74d5427b"
+    },
+    "marketing": {
+      "enabled": true,
+      "secret_key_base": "ca45c80ed1a4e0726ad3ba18d29d7c45f042d728b6dd71a9e0e8ecae9fb41b82"
+    },
+    "gateway": {
+      "port": 8082,
+      "admin_reload_secret": "71e847d7c638e39aec1223232298f782c4dfb3e31755d72724073c295c94f095",
+      "media_proxy_endpoint": "http://127.0.0.1:49319/media"
+    },
+    "app_proxy": {
+      "port": 48763,
+      "assets_dir": "c:/Users/canto/Desktop/fluxor/fluxer_app/dist"
+    },
+    "nats": {
+      "core_url": "nats://localhost:4222",
+      "jetstream_url": "nats://localhost:4222",
+      "auth_token": "d0d76b71837fe8c6d0eddba9267e8603"
+    }
+  },
+  "auth": {
+    "sudo_mode_secret": "848f3b8ef824928a3c7d44507607d8dc7523f8a621b6d194c95da676a07779f0",
+    "connection_initiation_secret": "6f886d9a1186f02e9b368d2cf425688c34a12a3e2037c56433e290b62b129e37",
+    "vapid": {
+      "public_key": "BA_jlppKmu7NMBq_aTjnb8WR8sYOUHhXaIXgmXwMW2DVl29yRQ7BCHxuH0XFsIUM3lg8BvIlEt-nVS3iXXZPKvg",
+      "private_key": "AuODU2Kc5uK6InKhXvKy7v6xAScwubc_o8SXvoJzZYI"
+    }
+  },
+  "integrations": {
+    "email": {
+      "enabled": true,
+      "provider": "smtp",
+      "from_email": "noreply@localhost",
+      "from_name": "Fluxer",
+      "smtp": {
+        "host": "localhost",
+        "port": 49621,
+        "username": "",
+        "password": "",
+        "secure": false
+      }
+    },
+    "search": {
+      "engine": "meilisearch",
+      "url": "http://localhost:7700",
+      "api_key": "e6402e9beabba7820bf36a34a33bbc3168e43a8d6dbc963d07fa76dfee1e1160"
+    }
+  },
+  "dev": {
+    "disable_rate_limits": true,
+    "relax_registration_rate_limits": true,
+    "test_mode_enabled": true
+  },
+  "app_public": {
+    "bootstrap_api_endpoint": "/api"
+  }
+}

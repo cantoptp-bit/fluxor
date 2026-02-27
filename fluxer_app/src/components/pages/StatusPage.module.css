@@ -1,0 +1,419 @@
+/*
+ * Copyright (C) 2026 Fluxer Contributors
+ *
+ * This file is part of Fluxer.
+ *
+ * Fluxer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fluxer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+.wrapper {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--background-primary);
+}
+
+.topBar {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	background: var(--background-secondary);
+	border-bottom: 1px solid var(--background-modifier-accent);
+}
+
+.topBarInner {
+	max-width: 920px;
+	margin: 0 auto;
+	padding: 0.875rem 1.5rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.logoLink {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--brand-primary);
+	text-decoration: none;
+}
+
+.logoLink:hover {
+	text-decoration: none;
+	color: var(--brand-primary);
+	opacity: 0.9;
+}
+
+.logo {
+	width: 28px;
+	height: 28px;
+	flex-shrink: 0;
+}
+
+.pageTitle {
+	font-size: 1.125rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	color: var(--text-primary);
+	margin: 0;
+	flex: 1;
+}
+
+.refreshBtn {
+	margin-left: auto;
+}
+
+.main {
+	flex: 1;
+	padding: 2rem 1.5rem;
+}
+
+.content {
+	max-width: 920px;
+	margin: 0 auto;
+}
+
+.loadingState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	padding: 4rem 2rem;
+}
+
+.spinner {
+	width: 32px;
+	height: 32px;
+	border: 3px solid var(--background-modifier-accent);
+	border-top-color: var(--brand-primary);
+	border-radius: 50%;
+	animation: statusSpin 0.7s linear infinite;
+}
+
+@keyframes statusSpin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.loadingText {
+	font-size: 0.9375rem;
+	color: var(--text-secondary);
+	margin: 0;
+}
+
+.heroSection {
+	margin-bottom: 2.5rem;
+}
+
+.heroBanner {
+	display: flex;
+	align-items: center;
+	gap: 1.25rem;
+	padding: 1.5rem 1.75rem;
+	border-radius: 12px;
+	margin-bottom: 1rem;
+	border-left: 4px solid transparent;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-accent);
+}
+
+.heroBanner[data-status='healthy'] {
+	border-left-color: var(--status-success, #57f287);
+	background: color-mix(in srgb, var(--status-success, #57f287) 8%, var(--background-secondary));
+}
+
+.heroBanner[data-status='degraded'] {
+	border-left-color: var(--status-warning, #fee75c);
+	background: color-mix(in srgb, var(--status-warning, #fee75c) 8%, var(--background-secondary));
+}
+
+.heroBanner[data-status='unhealthy'] {
+	border-left-color: var(--status-danger, #ed4245);
+	background: color-mix(in srgb, var(--status-danger, #ed4245) 8%, var(--background-secondary));
+}
+
+.heroBanner[data-status='disabled'] {
+	border-left-color: var(--text-muted);
+}
+
+.heroIconWrap {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.heroIcon {
+	flex-shrink: 0;
+	color: var(--status-danger, #ed4245);
+}
+
+.heroBanner[data-status='healthy'] .heroIconWrap {
+	color: var(--status-success, #57f287);
+}
+
+.heroBanner[data-status='degraded'] .heroIconWrap {
+	color: var(--status-warning, #fee75c);
+}
+
+.heroBanner[data-status='unhealthy'] .heroIconWrap {
+	color: var(--status-danger, #ed4245);
+}
+
+.heroText {
+	flex: 1;
+	min-width: 0;
+}
+
+.heroTitle {
+	font-size: 1.375rem;
+	font-weight: 600;
+	color: var(--text-primary);
+	margin: 0 0 0.35rem 0;
+}
+
+.heroSub {
+	font-size: 0.8125rem;
+	color: var(--text-secondary);
+	margin: 0;
+}
+
+.alertBanner {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.875rem 1.25rem;
+	border-radius: 10px;
+	margin-bottom: 1.25rem;
+	border: 1px solid var(--background-modifier-accent);
+}
+
+.alertBanner[data-status='degraded'] {
+	background: color-mix(in srgb, var(--status-warning, #fee75c) 12%, var(--background-secondary));
+	border-left: 4px solid var(--status-warning, #fee75c);
+}
+
+.alertBanner[data-status='unhealthy'] {
+	background: color-mix(in srgb, var(--status-danger, #ed4245) 12%, var(--background-secondary));
+	border-left: 4px solid var(--status-danger, #ed4245);
+}
+
+.alertIcon {
+	flex-shrink: 0;
+}
+
+.alertBanner[data-status='degraded'] .alertIcon {
+	color: var(--status-warning, #fee75c);
+}
+
+.alertBanner[data-status='unhealthy'] .alertIcon {
+	color: var(--status-danger, #ed4245);
+}
+
+.alertText {
+	font-size: 0.9375rem;
+	font-weight: 500;
+	color: var(--text-primary);
+	margin: 0;
+}
+
+.legend {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 1rem 1.5rem;
+	padding: 0;
+	font-size: 0.8125rem;
+	color: var(--text-secondary);
+}
+
+.legendItem {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.legendItem .statusDot {
+	width: 8px;
+	height: 8px;
+}
+
+.servicesSection {
+	margin-bottom: 2rem;
+}
+
+.sectionTitle {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: var(--text-primary);
+	margin: 0 0 0.25rem 0;
+}
+
+.sectionSubtitle {
+	font-size: 0.8125rem;
+	color: var(--text-muted);
+	margin: 0 0 1rem 0;
+}
+
+.servicesCard {
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-accent);
+	border-radius: 12px;
+	overflow: hidden;
+}
+
+.serviceRow {
+	display: grid;
+	grid-template-columns: auto minmax(90px, 1fr) minmax(100px, 2.5fr) minmax(100px, auto);
+	align-items: center;
+	gap: 1rem 1.25rem;
+	padding: 0.875rem 1.25rem;
+	border-bottom: 1px solid var(--background-modifier-accent);
+}
+
+.serviceRow:last-child {
+	border-bottom: none;
+}
+
+@media (max-width: 640px) {
+	.serviceRow {
+		grid-template-columns: auto 1fr;
+		grid-template-rows: auto auto auto;
+		gap: 0.5rem 0.75rem;
+		padding: 1rem 1.25rem;
+	}
+
+	.serviceRow > .statusDot { grid-column: 1; grid-row: 1; }
+	.serviceRow > .serviceNameBlock { grid-column: 2; grid-row: 1; }
+	.serviceRow > .serviceTimeline { grid-column: 1 / -1; grid-row: 2; }
+	.serviceRow > .serviceMeta { grid-column: 1 / -1; grid-row: 3; justify-content: flex-start; }
+}
+
+.serviceNameBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 0.125rem;
+	min-width: 0;
+}
+
+.serviceName {
+	font-size: 0.9375rem;
+	font-weight: 500;
+	color: var(--text-primary);
+}
+
+.serviceMessage {
+	font-size: 0.8125rem;
+	color: var(--text-secondary);
+	line-height: 1.3;
+}
+
+.serviceTimeline {
+	min-width: 0;
+}
+
+.serviceTimeline .timelineBar {
+	height: 20px;
+}
+
+.serviceMeta {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-shrink: 0;
+	justify-content: flex-end;
+}
+
+.serviceMeta span:first-child {
+	font-size: 0.8125rem;
+	font-weight: 500;
+}
+
+.timelineBar {
+	display: flex;
+	gap: 2px;
+	width: 100%;
+	min-width: 0;
+}
+
+.timelineSegment {
+	width: 100%;
+	min-width: 2px;
+	height: 20px;
+	border-radius: 2px;
+	flex: 1;
+}
+
+.timelineSegment.statusHealthy {
+	background: var(--status-success, #57f287);
+}
+
+.timelineSegment.statusDegraded {
+	background: var(--status-warning, #fee75c);
+}
+
+.timelineSegment.statusUnhealthy {
+	background: var(--status-danger, #ed4245);
+}
+
+.timelineSegment.statusDisabled {
+	background: var(--text-muted);
+}
+
+.latency {
+	font-size: 0.8125rem;
+	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.statusDot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.statusDot.statusHealthy {
+	background: var(--status-success, #57f287);
+}
+
+.statusDot.statusDegraded {
+	background: var(--status-warning, #fee75c);
+}
+
+.statusDot.statusUnhealthy {
+	background: var(--status-danger, #ed4245);
+}
+
+.statusDot.statusDisabled {
+	background: var(--text-muted);
+}
+
+.statusHealthy {
+	color: var(--status-success, #57f287);
+}
+
+.statusDegraded {
+	color: var(--status-warning, #fee75c);
+}
+
+.statusUnhealthy {
+	color: var(--status-danger, #ed4245);
+}
+
+.statusDisabled {
+	color: var(--text-muted);
+}

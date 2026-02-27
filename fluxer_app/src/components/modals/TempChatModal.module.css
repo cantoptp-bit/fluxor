@@ -1,0 +1,97 @@
+.content {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+	max-height: 60vh;
+	padding: 0;
+	overflow: hidden;
+}
+
+.inner {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
+.scroller {
+	flex: 1;
+	min-height: 0;
+}
+
+.messageList {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px;
+}
+
+.bubbleOwn {
+	align-self: flex-end;
+	max-width: 80%;
+	padding: 8px 12px;
+	border-radius: 12px;
+	background: var(--background-secondary);
+	color: var(--text-normal);
+}
+
+.bubbleOther {
+	align-self: flex-start;
+	max-width: 80%;
+	padding: 8px 12px;
+	border-radius: 12px;
+	background: var(--background-tertiary);
+	color: var(--text-normal);
+}
+
+.decryptError {
+	padding: 8px;
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.inputRow {
+	display: flex;
+	gap: 8px;
+	padding: 12px;
+	border-top: 1px solid var(--background-modifier-accent);
+}
+
+.input {
+	flex: 1;
+	padding: 8px 12px;
+	border-radius: 8px;
+	border: 1px solid var(--background-modifier-accent);
+	background: var(--background-secondary);
+	color: var(--text-normal);
+	font-size: 14px;
+}
+
+.input:focus {
+	outline: none;
+	border-color: var(--interactive-active);
+}
+
+.loading {
+	padding: 24px;
+	text-align: center;
+	color: var(--text-muted);
+}
+
+.headerActions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 4px;
+}
+
+.subtitle {
+	margin: 0;
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.deleteButton {
+	margin-left: auto;
+}

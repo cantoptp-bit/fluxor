@@ -1,0 +1,22 @@
+{
+	"recommendations": [
+		"TypeScriptTeam.native-preview",
+		"biomejs.biome",
+		"clinyong.vscode-css-modules",
+		"pgourlain.erlang",
+		"golang.go",
+		"rust-lang.rust-analyzer",
+		"bradlc.vscode-tailwindcss",
+		"editorconfig.editorconfig",
+		"redhat.vscode-yaml",
+		"ms-azuretools.vscode-docker",
+		"ZixuanChen.vitest-explorer",
+		"unifiedjs.vscode-mdx",
+		"jnoortheen.nix-ide",
+		"usernamehw.errorlens",
+		"humao.rest-client",
+		"eamodio.gitlens",
+		"christian-kohler.path-intellisense",
+		"streetsidesoftware.code-spell-checker"
+	]
+}

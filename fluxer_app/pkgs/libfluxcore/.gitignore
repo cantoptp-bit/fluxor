@@ -1,0 +1,8 @@
+# Ignore everything by default; allow built artifacts so Vercel can build without Rust
+*
+!.gitignore
+!package.json
+!libfluxcore.js
+!libfluxcore.d.ts
+!libfluxcore_bg.wasm.d.ts
+!libfluxcore_bg.wasm
