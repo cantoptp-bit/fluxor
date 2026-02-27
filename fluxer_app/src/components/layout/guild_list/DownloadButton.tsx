@@ -24,7 +24,8 @@ import {Tooltip} from '@app/components/uikit/tooltip/Tooltip';
 import {useHover} from '@app/hooks/useHover';
 import {useMergeRefs} from '@app/hooks/useMergeRefs';
 import AccessibilityStore from '@app/stores/AccessibilityStore';
-import {openExternalUrl} from '@app/utils/NativeUtils';
+import {Routes} from '@app/Routes';
+import NavigationStore from '@app/stores/NavigationStore';
 import {useLingui} from '@lingui/react/macro';
 import {DownloadSimpleIcon} from '@phosphor-icons/react';
 import {motion} from 'framer-motion';
@@ -39,16 +40,16 @@ export const DownloadButton = observer(() => {
 	const mergedButtonRef = useMergeRefs([hoverRef, buttonRef]);
 
 	const handleDownload = () => {
-		openExternalUrl('https://fluxer.app/download');
+		void NavigationStore.navigate(Routes.DOWNLOAD_DESKTOP);
 	};
 
 	return (
 		<div className={guildStyles.addGuildButton}>
-			<Tooltip position="right" size="large" text={() => t`Download Fluxer`}>
+			<Tooltip position="right" size="large" text={() => t`Download Pegasus`}>
 				<FocusRing offset={-2} focusTarget={buttonRef} ringTarget={iconRef}>
 					<button
 						type="button"
-						aria-label={t`Download Fluxer`}
+						aria-label={t`Download Pegasus`}
 						data-guild-list-focus-item="true"
 						onClick={handleDownload}
 						className={styles.button}

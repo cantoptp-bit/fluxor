@@ -2,9 +2,9 @@
 	"name": "fluxer_app",
 	"version": "0.0.0",
 	"private": true,
-	"description": "Fluxer is a free and open source instant messaging and VoIP platform built for friends, groups, and communities.",
-	"homepage": "https://fluxer.app",
-	"author": "Fluxer Contributors <developers@fluxer.app>",
+	"description": "Pegasus is a free and open source instant messaging and VoIP platform built for friends, groups, and communities.",
+	"homepage": "https://pegasus.app",
+	"author": "Pegasus Contributors <developers@pegasus.app>",
 	"sideEffects": [
 		"*.css",
 		"**/*.css"

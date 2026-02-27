@@ -21,6 +21,7 @@ import {marketingUrl} from '@app/utils/UrlUtils';
 
 export const Routes = {
 	HOME: '/',
+	DOWNLOAD_DESKTOP: '/download',
 	LOGIN: '/login',
 	REGISTER: '/register',
 	FORGOT_PASSWORD: '/forgot',

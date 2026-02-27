@@ -17,7 +17,7 @@
  * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
  */
 
-export const APP_PROTOCOL = 'fluxer';
+export const APP_PROTOCOL = 'pegasus';
 export const STABLE_APP_URL = 'https://fluxor-rust.vercel.app';
 export const CANARY_APP_URL = 'https://fluxor-rust.vercel.app';
 export const DEFAULT_WINDOW_WIDTH = 1280;

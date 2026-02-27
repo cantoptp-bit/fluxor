@@ -20,7 +20,7 @@ describe('Vercel login page (smoke)', () => {
 		expect(res.status).toBe(200);
 		expect(res.headers.get('content-type')).toMatch(/text\/html/);
 		const html = await res.text();
-		expect(html).toContain('<title>Fluxer</title>');
+		expect(html).toContain('<title>Pegasus</title>');
 		expect(html).toContain('id="root"');
 	});
 
@@ -58,14 +58,14 @@ describe('EXE target URL (no Cloudflare error)', () => {
 		expect(html).not.toContain('home.auroraplayer.com');
 	});
 
-	test('home page returns Fluxer app shell so EXE window renders', async () => {
+	test('home page returns Pegasus app shell so EXE window renders', async () => {
 		const res = await fetch(EXE_APP_URL, {
 			redirect: 'follow',
 			headers: {Accept: 'text/html'},
 		});
 		expect(res.status).toBe(200);
 		const html = await res.text();
-		expect(html).toContain('<title>Fluxer</title>');
+		expect(html).toContain('<title>Pegasus</title>');
 		expect(html).toContain('id="root"');
 	});
 

@@ -1,8 +1,8 @@
 {
 	"name": "fluxer_desktop",
 	"version": "0.0.0",
-	"description": "Fluxer Desktop Client",
-	"author": "Fluxer Contributors",
+	"description": "Pegasus Desktop Client",
+	"author": "Pegasus Contributors",
 	"private": true,
 	"type": "module",
 	"main": "dist/main/index.js",
@@ -16,8 +16,8 @@
 		"pack:dir": "pnpm build && electron-builder --win --dir"
 	},
 	"build": {
-		"appId": "app.fluxer",
-		"productName": "Fluxer",
+		"appId": "app.pegasus",
+		"productName": "Pegasus",
 		"directories": {
 			"buildResources": "build_resources",
 			"output": "dist-electron"

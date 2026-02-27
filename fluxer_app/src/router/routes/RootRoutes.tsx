@@ -17,15 +17,16 @@
  * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { NotFoundPage } from '@app/components/pages/NotFoundPage';
-import { StatusPage } from '@app/components/pages/StatusPage';
-import { createRootRoute, createRoute } from '@app/lib/router/Builder';
-import { Redirect } from '@app/lib/router/RouterTypes';
-import { Routes } from '@app/Routes';
-import { RootComponent } from '@app/router/components/RootComponent';
+import {DownloadDesktopPage} from '@app/components/pages/DownloadDesktopPage';
+import {NotFoundPage} from '@app/components/pages/NotFoundPage';
+import {StatusPage} from '@app/components/pages/StatusPage';
+import {createRootRoute, createRoute} from '@app/lib/router/Builder';
+import {Redirect} from '@app/lib/router/RouterTypes';
+import {Routes} from '@app/Routes';
+import {RootComponent} from '@app/router/components/RootComponent';
 
 export const rootRoute = createRootRoute({
-	layout: ({ children }) => <RootComponent>{children}</RootComponent>,
+	layout: ({children}) => <RootComponent>{children}</RootComponent>,
 });
 
 export const notFoundRoute = createRoute({
@@ -39,6 +40,13 @@ export const homeRoute = createRoute({
 	id: 'home',
 	path: '/',
 	onEnter: () => new Redirect(Routes.ME),
+});
+
+export const downloadDesktopRoute = createRoute({
+	getParentRoute: () => rootRoute,
+	id: 'downloadDesktop',
+	path: Routes.DOWNLOAD_DESKTOP,
+	component: () => <DownloadDesktopPage />,
 });
 
 export const channelsFallbackRoute = createRoute({
