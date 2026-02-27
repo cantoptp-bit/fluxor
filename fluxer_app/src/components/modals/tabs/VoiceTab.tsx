@@ -38,7 +38,8 @@ import NativePermissionStore from '@app/stores/NativePermissionStore';
 import NewDeviceMonitoringStore from '@app/stores/NewDeviceMonitoringStore';
 import type VoiceSettingsStore from '@app/stores/VoiceSettingsStore';
 import MediaEngineStore from '@app/stores/voice/MediaEngineFacade';
-import {openExternalUrl} from '@app/utils/NativeUtils';
+import {Routes} from '@app/Routes';
+import NavigationStore from '@app/stores/NavigationStore';
 import {hasDeviceLabels, resolveEffectiveDeviceId} from '@app/utils/VoiceDeviceManager';
 import {Trans, useLingui} from '@lingui/react/macro';
 import {observer} from 'mobx-react-lite';
@@ -149,7 +150,7 @@ export const VoiceTab: React.FC<VoiceTabProps> = observer(({voiceSettings, autoR
 						primaryVariant="primary"
 						secondaryText={t`I understand`}
 						onPrimary={() => {
-							void openExternalUrl('https://fluxer.app/download');
+							void NavigationStore.navigate(Routes.DOWNLOAD_DESKTOP);
 						}}
 						onSecondary={() => {
 							KeybindStore.setTransmitMode(mode);
@@ -312,7 +313,7 @@ export const VoiceTab: React.FC<VoiceTabProps> = observer(({voiceSettings, autoR
 								!isNativeDesktop
 									? {
 											label: <Trans>Download the desktop app for system-wide Push-to-Talk</Trans>,
-											onClick: () => void openExternalUrl('https://fluxer.app/download'),
+											onClick: () => void NavigationStore.navigate(Routes.DOWNLOAD_DESKTOP),
 										}
 									: {
 											label: <Trans>Enable Input Monitoring permission</Trans>,

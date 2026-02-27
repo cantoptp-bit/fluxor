@@ -392,7 +392,28 @@ class RuntimeConfigStore {
 			} catch (connectError) {
 				// On Vercel, if discovery fails (CORS, backend down, etc.) still show the login page
 				// with a minimal config so the user sees the form instead of "Connection Issue".
+				// Do not use minimal config when the bootstrap URL is localhost or same-origin, or
+				// sign-in would send requests there and the user would get a network error.
 				if (isVercel) {
+					try {
+						const u = new URL(
+							bootstrapEndpoint.startsWith('/')
+								? (typeof window !== 'undefined' ? window.location.origin : '') + bootstrapEndpoint
+								: bootstrapEndpoint,
+						);
+						const origin = typeof window !== 'undefined' ? window.location.origin : '';
+						if (
+							u.hostname === 'localhost' ||
+							u.hostname === '127.0.0.1' ||
+							u.origin === origin
+						) {
+							throw new Error(
+								'FLUXER_PUBLIC_DOMAIN is not set or backend is unreachable. Set it in Vercel → Settings → Environment Variables to your backend hostname (e.g. from ngrok), ensure the backend is running and allows CORS from your Vercel origin, then refresh.',
+							);
+						}
+					} catch (e) {
+						if (e instanceof Error && e.message.includes('FLUXER_PUBLIC_DOMAIN')) throw e;
+					}
 					runInAction(() => {
 						const minimal = this.buildMinimalInstanceFromBootstrapUrl(bootstrapEndpoint);
 						this.updateFromInstance(minimal);

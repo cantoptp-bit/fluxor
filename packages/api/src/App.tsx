@@ -48,20 +48,22 @@ export async function createAPIApp(options: CreateAPIAppOptions): Promise<APIApp
 
 	const routes = new Hono<HonoEnv>({ strict: true });
 
-	// In development, allow any origin. In production, allow webApp + marketing + Vercel so the deployed frontend can reach this backend (e.g. via ngrok).
-	const VERCEL_ORIGIN = 'https://fluxor-rust.vercel.app';
-	const productionOrigins = [
+	// In development, allow any origin. In production, allow webApp + marketing + any *.vercel.app so the deployed frontend can reach this backend (e.g. via ngrok).
+	const allowedOriginList = [
 		config.endpoints.webApp,
 		config.endpoints.marketing,
-		VERCEL_ORIGIN,
+		'https://fluxor-rust.vercel.app',
 	].filter((o, i, a) => a.indexOf(o) === i);
+	const productionCorsOrigins = (origin: string): boolean =>
+		allowedOriginList.includes(origin) ||
+		(origin.startsWith('https://') && origin.includes('vercel.app'));
 	configureMiddleware(routes, {
 		logger,
 		nodeEnv: config.nodeEnv,
 		corsOrigins:
 			config.nodeEnv === 'development' || config.dev.testModeEnabled
 				? '*'
-				: productionOrigins,
+				: productionCorsOrigins,
 		setSentryUser,
 		isTelemetryActive,
 	});

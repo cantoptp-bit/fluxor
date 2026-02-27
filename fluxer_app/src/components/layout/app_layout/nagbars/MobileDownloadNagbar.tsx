@@ -22,14 +22,15 @@ import styles from '@app/components/layout/app_layout/nagbars/MobileDownloadNagb
 import {Nagbar} from '@app/components/layout/Nagbar';
 import {NagbarButton} from '@app/components/layout/NagbarButton';
 import {NagbarContent} from '@app/components/layout/NagbarContent';
-import {openExternalUrl} from '@app/utils/NativeUtils';
+import {Routes} from '@app/Routes';
+import NavigationStore from '@app/stores/NavigationStore';
 import {Trans} from '@lingui/react/macro';
 import {AndroidLogoIcon, AppleLogoIcon} from '@phosphor-icons/react';
 import {observer} from 'mobx-react-lite';
 
 export const MobileDownloadNagbar = observer(({isMobile}: {isMobile: boolean}) => {
 	const handleDownload = () => {
-		openExternalUrl('https://fluxer.app/download#mobile');
+		void NavigationStore.navigate(Routes.DOWNLOAD_DESKTOP);
 	};
 
 	const handleDismiss = () => {

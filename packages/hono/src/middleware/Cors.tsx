@@ -21,7 +21,8 @@ import type { MiddlewareHandler } from 'hono';
 
 export interface CorsOptions {
 	enabled?: boolean;
-	origins?: Array<string> | '*';
+	/** Exact origins, '*' for all, or predicate to allow by origin (e.g. (o) => o.endsWith('.vercel.app')) */
+	origins?: Array<string> | '*' | ((origin: string) => boolean);
 	methods?: Array<string>;
 	allowedHeaders?: Array<string>;
 	exposedHeaders?: Array<string>;
@@ -63,6 +64,9 @@ export function cors(options: CorsOptions = {}): MiddlewareHandler {
 
 		if (origins === '*') {
 			c.header('Access-Control-Allow-Origin', '*');
+		} else if (typeof origins === 'function' && requestOrigin && origins(requestOrigin)) {
+			c.header('Access-Control-Allow-Origin', requestOrigin);
+			c.header('Vary', 'Origin');
 		} else if (Array.isArray(origins) && requestOrigin && origins.includes(requestOrigin)) {
 			c.header('Access-Control-Allow-Origin', requestOrigin);
 			c.header('Vary', 'Origin');

@@ -17,13 +17,14 @@
  * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { RouteConfig } from '@app/lib/router/RouterTypes';
-import { appRouteTree, connectionCallbackRoute, premiumCallbackRoute } from '@app/router/routes/AppRoutes';
-import { authRouteTree, changelogRoute } from '@app/router/routes/AuthRoutes';
+import type {RouteConfig} from '@app/lib/router/RouterTypes';
+import {appRouteTree, connectionCallbackRoute, premiumCallbackRoute} from '@app/router/routes/AppRoutes';
+import {authRouteTree, changelogRoute} from '@app/router/routes/AuthRoutes';
 import {
 	channeFallbackRoute,
 	channelsAtMeFallbackRoute,
 	channelsFallbackRoute,
+	downloadDesktopRoute,
 	homeRoute,
 	notFoundRoute,
 	rootRoute,
@@ -37,6 +38,7 @@ const routeTree = rootRoute.addChildren([
 	channelsAtMeFallbackRoute,
 	statusRoute,
 	notFoundRoute,
+	downloadDesktopRoute,
 	premiumCallbackRoute,
 	connectionCallbackRoute,
 	changelogRoute,

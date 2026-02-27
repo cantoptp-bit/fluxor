@@ -25,6 +25,8 @@ import {ConfirmModal} from '@app/components/modals/ConfirmModal';
 import {InputMonitoringSection} from '@app/components/modals/tabs/components/InputMonitoringSection';
 import styles from '@app/components/modals/tabs/KeybindsTab.module.css';
 import {Button} from '@app/components/uikit/button/Button';
+import {Routes} from '@app/Routes';
+import NavigationStore from '@app/stores/NavigationStore';
 import {IS_DEV} from '@app/lib/Env';
 import KeybindManager from '@app/lib/KeybindManager';
 import KeybindStore, {getDefaultKeybind, type KeybindConfig, type KeyCombo} from '@app/stores/KeybindStore';
@@ -43,7 +45,6 @@ const KeybindRow = observer(
 			KeybindStore.toggleGlobal(entry.action, value);
 		};
 		const defaultCombo = getDefaultKeybind(entry.action, i18n);
-		const downloadUrl = 'https://fluxer.app/download';
 
 		return (
 			<div className={`${styles.rowWrapper} ${entry.allowGlobal ? styles.hasFooterWrapper : ''}`}>
@@ -108,7 +109,7 @@ const KeybindRow = observer(
 									variant="inverted"
 									small
 									leftIcon={<DownloadSimpleIcon size={16} weight="fill" />}
-									onClick={() => window.open(downloadUrl, '_blank', 'noopener')}
+									onClick={() => void NavigationStore.navigate(Routes.DOWNLOAD_DESKTOP)}
 									title={t`Global shortcuts are available in the desktop app`}
 								>
 									<Trans>Get desktop app</Trans>

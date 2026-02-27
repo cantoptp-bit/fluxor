@@ -12,7 +12,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const indexPath = path.join(root, 'fluxer_app', 'dist', 'index.html');
 
-const domain = process.env.FLUXER_PUBLIC_DOMAIN?.trim();
+const raw = process.env.FLUXER_PUBLIC_DOMAIN?.trim();
+if (!raw) {
+	process.exit(0);
+}
+// Hostname only (no protocol/path) so we never write https://https://...
+const domain = raw.replace(/^https?:\/\//, '').split('/')[0];
 if (!domain) {
 	process.exit(0);
 }

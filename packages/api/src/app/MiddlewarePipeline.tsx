@@ -38,7 +38,7 @@ import type { Context as HonoContext } from 'hono';
 export interface MiddlewarePipelineOptions {
 	logger: ILogger;
 	nodeEnv: string;
-	corsOrigins: Array<string> | '*';
+	corsOrigins: Array<string> | '*' | ((origin: string) => boolean);
 	setSentryUser?: (user: { id?: string; username?: string; email?: string; ip_address?: string }) => void;
 	isTelemetryActive?: () => boolean;
 }
