@@ -44,6 +44,15 @@ import type { Context } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 
 const logger = createLogger('errors');
+
+/** Merges CORS Access-Control-Allow-Origin from context onto the response so error responses are CORS-visible. */
+function withCorsFromContext<E extends BaseHonoEnv>(ctx: Context<E>, res: Response): Response {
+	const allowOrigin = ctx.get('corsAllowOrigin');
+	if (!allowOrigin) return res;
+	const headers = new Headers(res.headers);
+	headers.set('Access-Control-Allow-Origin', allowOrigin);
+	return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
+}
 const LOCALE_LOOKUP = new Map<string, string>(Object.values(Locales).map((locale) => [locale.toLowerCase(), locale]));
 
 function isExpectedError(err: Error): boolean {
@@ -166,12 +175,15 @@ function handleLocalizedValidationErrors<E extends BaseHonoEnv>(
 			});
 		}
 
-		return createJsonErrorResponse({
-			status: 400,
-			code: APIErrorCodes.INVALID_FORM_BODY,
-			message: localizedMessage,
-			data: { errors: resolvedErrors },
-		});
+		return withCorsFromContext(
+			ctx,
+			createJsonErrorResponse({
+				status: 400,
+				code: APIErrorCodes.INVALID_FORM_BODY,
+				message: localizedMessage,
+				data: { errors: resolvedErrors },
+			}),
+		);
 	} catch {
 		logger.warn({ err }, 'Failed to resolve localized validation errors, falling back to default error response');
 		return null;
@@ -195,13 +207,16 @@ function handleFluxerError<E extends BaseHonoEnv>(err: FluxerError, ctx: Context
 		err.message,
 	);
 
-	return createJsonErrorResponse({
-		status: err.status,
-		code: err.code,
-		message: resolvedMessage,
-		data: err.data,
-		headers: err.headers,
-	});
+	return withCorsFromContext(
+		ctx,
+		createJsonErrorResponse({
+			status: err.status,
+			code: err.code,
+			message: resolvedMessage,
+			data: err.data,
+			headers: err.headers,
+		}),
+	);
 }
 
 function handleKnownErrorCode<E extends BaseHonoEnv>(err: unknown, errorCode: string, ctx: Context<E>): Response {
@@ -216,13 +231,16 @@ function handleKnownErrorCode<E extends BaseHonoEnv>(err: unknown, errorCode: st
 
 	const status = resolveErrorStatus(err) ?? (errorCode === APIErrorCodes.GENERAL_ERROR ? 500 : 400);
 
-	return createJsonErrorResponse({
-		status,
-		code: errorCode,
-		message: resolvedMessage,
-		data: resolveErrorData(err),
-		headers: resolveErrorHeaders(err),
-	});
+	return withCorsFromContext(
+		ctx,
+		createJsonErrorResponse({
+			status,
+			code: errorCode,
+			message: resolvedMessage,
+			data: resolveErrorData(err),
+			headers: resolveErrorHeaders(err),
+		}),
+	);
 }
 
 const HTTP_STATUS_TO_ERROR_CODE: Partial<Record<number, string>> = {
@@ -251,24 +269,30 @@ function handleHTTPException<E extends BaseHonoEnv>(err: HTTPException, ctx: Con
 			err.message,
 		);
 
-		return createJsonErrorResponse({
-			status: err.status,
-			code: errorRecord.code,
-			message: resolvedMessage,
-			data: resolveErrorData(err),
-			headers: resolveErrorHeaders(err),
-		});
+		return withCorsFromContext(
+			ctx,
+			createJsonErrorResponse({
+				status: err.status,
+				code: errorRecord.code,
+				message: resolvedMessage,
+				data: resolveErrorData(err),
+				headers: resolveErrorHeaders(err),
+			}),
+		);
 	}
 
 	const code = HTTP_STATUS_TO_ERROR_CODE[err.status] ?? APIErrorCodes.GENERAL_ERROR;
 	const { errorI18nService, locale } = getI18nContext(ctx);
 	const resolvedMessage = resolveLocalizedMessage(errorI18nService, code, locale, undefined, err.message);
 
-	return createJsonErrorResponse({
-		status: err.status,
-		code,
-		message: resolvedMessage,
-	});
+	return withCorsFromContext(
+		ctx,
+		createJsonErrorResponse({
+			status: err.status,
+			code,
+			message: resolvedMessage,
+		}),
+	);
 }
 
 function handleUnexpectedError<E extends BaseHonoEnv>(err: Error, ctx: Context<E>): Response {
@@ -276,12 +300,15 @@ function handleUnexpectedError<E extends BaseHonoEnv>(err: Error, ctx: Context<E
 	const { errorI18nService, locale } = getI18nContext(ctx);
 	const resolvedMessage = resolveLocalizedMessage(errorI18nService, code, locale, undefined, undefined);
 
-	return createJsonErrorResponse({
-		status: 500,
-		code,
-		message: resolvedMessage,
-		data: { error_message: err.message, error_stack: err.stack }
-	});
+	return withCorsFromContext(
+		ctx,
+		createJsonErrorResponse({
+			status: 500,
+			code,
+			message: resolvedMessage,
+			data: { error_message: err.message, error_stack: err.stack }
+		}),
+	);
 }
 
 export function AppErrorHandler<E extends BaseHonoEnv = BaseHonoEnv>(
@@ -295,7 +322,7 @@ export function AppErrorHandler<E extends BaseHonoEnv = BaseHonoEnv>(
 	}
 
 	if (err instanceof OAuth2Error) {
-		return err.getResponse();
+		return withCorsFromContext(ctx, err.getResponse());
 	}
 
 	if (err instanceof FluxerError) {
@@ -313,11 +340,14 @@ export function AppErrorHandler<E extends BaseHonoEnv = BaseHonoEnv>(
 
 	if (isExpectedError(err)) {
 		logger.warn({ err }, 'Expected error occurred');
-		return createJsonErrorResponse({
-			status: 400,
-			code: APIErrorCodes.GENERAL_ERROR,
-			message: err.message,
-		});
+		return withCorsFromContext(
+			ctx,
+			createJsonErrorResponse({
+				status: 400,
+				code: APIErrorCodes.GENERAL_ERROR,
+				message: err.message,
+			}),
+		);
 	}
 
 	logger.error({ err }, 'Unhandled error occurred');
@@ -329,9 +359,12 @@ export function AppNotFoundHandler<E extends BaseHonoEnv = BaseHonoEnv>(ctx: Con
 	const { errorI18nService, locale } = getI18nContext(ctx);
 	const resolvedMessage = resolveLocalizedMessage(errorI18nService, code, locale, undefined, undefined);
 
-	return createJsonErrorResponse({
-		status: 404,
-		code,
-		message: resolvedMessage,
-	});
+	return withCorsFromContext(
+		ctx,
+		createJsonErrorResponse({
+			status: 404,
+			code,
+			message: resolvedMessage,
+		}),
+	);
 }

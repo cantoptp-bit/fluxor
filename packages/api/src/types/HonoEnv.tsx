@@ -208,6 +208,8 @@ export interface HonoEnv {
 		requestLocale: string;
 		errorI18nService: ErrorI18nService;
 		channelUpdateType?: number;
+		/** Set by CORS middleware so error responses can include Access-Control-Allow-Origin */
+		corsAllowOrigin?: string;
 	};
 }
 

@@ -57,21 +57,23 @@ export function cors(options: CorsOptions = {}): MiddlewareHandler {
 	} = options;
 
 	return async (c, next) => {
+		const requestOrigin = c.req.header('origin');
 		if (!enabled) {
 			await next();
 			return;
 		}
 
-		const requestOrigin = c.req.header('origin');
-
 		if (origins === '*') {
 			c.header('Access-Control-Allow-Origin', '*');
+			(c as { set: (k: string, v: string) => void }).set('corsAllowOrigin', '*');
 		} else if (typeof origins === 'function' && requestOrigin && origins(requestOrigin)) {
 			c.header('Access-Control-Allow-Origin', requestOrigin);
 			c.header('Vary', 'Origin');
+			(c as { set: (k: string, v: string) => void }).set('corsAllowOrigin', requestOrigin);
 		} else if (Array.isArray(origins) && requestOrigin && origins.includes(requestOrigin)) {
 			c.header('Access-Control-Allow-Origin', requestOrigin);
 			c.header('Vary', 'Origin');
+			(c as { set: (k: string, v: string) => void }).set('corsAllowOrigin', requestOrigin);
 		}
 
 		if (credentials) {

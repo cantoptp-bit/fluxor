@@ -31,5 +31,7 @@ export interface BaseHonoEnv {
 		errorI18nService?: ErrorI18nService;
 		requestLocale?: string;
 		requestId?: string;
+		/** Set by CORS middleware so error responses can include Access-Control-Allow-Origin */
+		corsAllowOrigin?: string;
 	};
 }
