@@ -21,7 +21,7 @@ import * as MediaViewerActionCreators from '@app/actions/MediaViewerActionCreato
 import * as ModalActionCreators from '@app/actions/ModalActionCreators';
 import {modal} from '@app/actions/ModalActionCreators';
 import styles from '@app/components/channel/ChannelAttachmentArea.module.css';
-import EmbedVideo from '@app/components/channel/embeds/media/EmbedVideo';
+import EmbedVideo from './embeds/media/EmbedVideo';
 import {computeHorizontalDropPosition} from '@app/components/layout/dnd/DndDropPosition';
 import {type AttachmentDragItem, type AttachmentDropResult, DND_TYPES} from '@app/components/layout/types/DndTypes';
 import {AttachmentEditModal} from '@app/components/modals/AttachmentEditModal';
