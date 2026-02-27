@@ -45,7 +45,8 @@ import {observer} from 'mobx-react-lite';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import styles from '@app/components/pages/TempChatFullPage.module.css';
 
-function parseOtherUserId(tempChatId: string, currentUserId: string): string | null {
+/** Legacy id is "lo_hi"; V2 id is numeric (chat_id). Returns other user id from legacy id, or null (use list to resolve). */
+function parseOtherUserIdFromLegacyId(tempChatId: string, currentUserId: string): string | null {
 	const parts = tempChatId.split('_');
 	if (parts.length !== 2) return null;
 	const [a, b] = parts;
@@ -73,13 +74,13 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 	const unlockModalPushedRef = useRef(false);
 	const scrollerRef = useRef<ScrollerHandle>(null);
 
-	// Resolve other participant from temp chat list or parse from id
+	// Resolve other participant: from legacy id "lo_hi", or from list for V2 (numeric) ids
 	useEffect(() => {
 		let cancelled = false;
 		(async () => {
-			const otherId = parseOtherUserId(tempChatId, currentUserId);
-			if (otherId) {
-				const user = UserStore.getUser(otherId);
+			const otherIdFromLegacy = parseOtherUserIdFromLegacyId(tempChatId, currentUserId);
+			if (otherIdFromLegacy) {
+				const user = UserStore.getUser(otherIdFromLegacy);
 				if (user && !cancelled) {
 					setOtherUser(user);
 				} else {
@@ -88,11 +89,20 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 					const chat = list.find((c) => c.id === tempChatId);
 					if (chat) {
 						const id = chat.participant_ids[0] === currentUserId ? chat.participant_ids[1] : chat.participant_ids[0];
-						setOtherUser(UserStore.getUser(id) ?? null);
+						if (!cancelled) setOtherUser(UserStore.getUser(id) ?? null);
 					}
 				}
+			} else {
+				// V2 id (numeric) or unknown: resolve from list
+				const list = await TempChatApi.listTempChats();
+				if (cancelled) return;
+				const chat = list.find((c) => c.id === tempChatId);
+				if (chat) {
+					const id = chat.participant_ids[0] === currentUserId ? chat.participant_ids[1] : chat.participant_ids[0];
+					if (!cancelled) setOtherUser(UserStore.getUser(id) ?? null);
+				}
 			}
-			setLoadingUser(false);
+			if (!cancelled) setLoadingUser(false);
 		})();
 		return () => {
 			cancelled = true;
@@ -294,15 +304,15 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 				</div>
 				<div className={styles.headerActions}>
 					{hasChatPassword ? (
-						<Button variant="secondary" size="small" onClick={handleRemoveChatPassword}>
+						<Button variant="secondary" small onClick={handleRemoveChatPassword}>
 							{t`Remove chat password`}
 						</Button>
 					) : (
-						<Button variant="secondary" size="small" onClick={handleSetChatPassword}>
+						<Button variant="secondary" small onClick={handleSetChatPassword}>
 							{t`Set password for this chat`}
 						</Button>
 					)}
-					<Button variant="secondary" size="small" onClick={handleDeleteChat} className={styles.deleteButton}>
+					<Button variant="secondary" small onClick={handleDeleteChat} className={styles.deleteButton}>
 						{t`Delete chat`}
 					</Button>
 				</div>

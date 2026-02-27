@@ -62,15 +62,28 @@ describe('TempChatService.requestDelete', () => {
 	const userId2 = createUserID(200n);
 	const tempChatId = '100_200';
 
+	const baseMockRepo: ITempChatRepository = {
+		addDeleteRequest: vi.fn(),
+		addDeleteRequestV2: vi.fn(),
+		clearDeleteRequests: vi.fn(),
+		clearDeleteRequestsV2: vi.fn(),
+		createOrGet: vi.fn(),
+		createV2: vi.fn(),
+		delete: vi.fn(),
+		deleteByChatId: vi.fn(),
+		getByChatId: vi.fn(),
+		getByUserIds: vi.fn(),
+		listByUserId: vi.fn(),
+		listByUserIdV2: vi.fn(),
+		listDeleteRequestUserIds: vi.fn(),
+		listDeleteRequestUserIdsV2: vi.fn(),
+	};
+
 	it('returns deleted: false when only one user has requested', async () => {
 		const mockRepo: ITempChatRepository = {
+			...baseMockRepo,
 			addDeleteRequest: vi.fn().mockResolvedValue(undefined),
 			listDeleteRequestUserIds: vi.fn().mockResolvedValue([userId1]),
-			clearDeleteRequests: vi.fn(),
-			createOrGet: vi.fn(),
-			delete: vi.fn(),
-			getByUserIds: vi.fn(),
-			listByUserId: vi.fn(),
 		};
 		const service = new TempChatService(
 			{} as never,
@@ -86,13 +99,11 @@ describe('TempChatService.requestDelete', () => {
 
 	it('returns deleted: true and deletes when both users have requested', async () => {
 		const mockRepo: ITempChatRepository = {
+			...baseMockRepo,
 			addDeleteRequest: vi.fn().mockResolvedValue(undefined),
 			listDeleteRequestUserIds: vi.fn().mockResolvedValue([userId1, userId2]),
 			clearDeleteRequests: vi.fn().mockResolvedValue(undefined),
-			createOrGet: vi.fn(),
 			delete: vi.fn().mockResolvedValue(undefined),
-			getByUserIds: vi.fn(),
-			listByUserId: vi.fn(),
 		};
 		const service = new TempChatService(
 			{} as never,
@@ -107,15 +118,7 @@ describe('TempChatService.requestDelete', () => {
 	});
 
 	it('throws TEMP_CHAT_NOT_FOUND for invalid tempChatId', async () => {
-		const mockRepo: ITempChatRepository = {
-			addDeleteRequest: vi.fn(),
-			listDeleteRequestUserIds: vi.fn(),
-			clearDeleteRequests: vi.fn(),
-			createOrGet: vi.fn(),
-			delete: vi.fn(),
-			getByUserIds: vi.fn(),
-			listByUserId: vi.fn(),
-		};
+		const mockRepo: ITempChatRepository = { ...baseMockRepo };
 		const service = new TempChatService(
 			{} as never,
 			mockRepo,
@@ -128,15 +131,7 @@ describe('TempChatService.requestDelete', () => {
 
 	it('throws TEMP_CHAT_FORBIDDEN when user is not a participant', async () => {
 		const otherUser = createUserID(999n);
-		const mockRepo: ITempChatRepository = {
-			addDeleteRequest: vi.fn(),
-			listDeleteRequestUserIds: vi.fn(),
-			clearDeleteRequests: vi.fn(),
-			createOrGet: vi.fn(),
-			delete: vi.fn(),
-			getByUserIds: vi.fn(),
-			listByUserId: vi.fn(),
-		};
+		const mockRepo: ITempChatRepository = { ...baseMockRepo };
 		const service = new TempChatService(
 			{} as never,
 			mockRepo,

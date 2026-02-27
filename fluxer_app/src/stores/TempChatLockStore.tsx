@@ -63,6 +63,11 @@ function getSessionKey(userId: string): string {
 	return `${SESSION_KEY_PREFIX}${userId}`;
 }
 
+/** Copy Uint8Array to a plain ArrayBuffer for Web Crypto and base64 helpers. */
+function toArrayBuffer(u: Uint8Array): ArrayBuffer {
+	return u.buffer.slice(u.byteOffset, u.byteOffset + u.byteLength) as ArrayBuffer;
+}
+
 async function deriveKeyFromPassword(password: string, salt: Uint8Array): Promise<CryptoKey> {
 	const enc = new TextEncoder();
 	const keyMaterial = await crypto.subtle.importKey(
@@ -72,10 +77,11 @@ async function deriveKeyFromPassword(password: string, salt: Uint8Array): Promis
 		false,
 		['deriveBits'],
 	);
+	const saltBuf = toArrayBuffer(salt);
 	const bits = await crypto.subtle.deriveBits(
 		{
 			name: 'PBKDF2',
-			salt,
+			salt: saltBuf,
 			iterations: PBKDF2_ITERATIONS,
 			hash: 'SHA-256',
 		},
@@ -101,8 +107,9 @@ async function hashPasswordForVerify(password: string, salt: Uint8Array): Promis
 		false,
 		['deriveBits'],
 	);
+	const saltBuf = toArrayBuffer(salt);
 	const bits = await crypto.subtle.deriveBits(
-		{ name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+		{ name: 'PBKDF2', salt: saltBuf, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
 		keyMaterial,
 		256,
 	);
@@ -131,17 +138,18 @@ async function encryptPrivateKeyWithPassword(
 	const key = await deriveKeyFromPassword(password, salt);
 	const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
 	const enc = new TextEncoder();
+	const ivBuf = toArrayBuffer(iv);
 	const cipher = await crypto.subtle.encrypt(
-		{ name: 'AES-GCM', iv, tagLength: 128 },
+		{ name: 'AES-GCM', iv: ivBuf, tagLength: 128 },
 		key,
 		enc.encode(privateKeyBase64),
 	);
 	const verifyHash = await hashPasswordForVerify(password, salt);
 	return {
-		saltB64: arrayBufferToBase64(salt),
+		saltB64: arrayBufferToBase64(toArrayBuffer(salt)),
 		passwordHashB64: arrayBufferToBase64(verifyHash),
 		encryptedB64: arrayBufferToBase64(cipher),
-		ivB64: arrayBufferToBase64(iv),
+		ivB64: arrayBufferToBase64(toArrayBuffer(iv)),
 	};
 }
 
@@ -153,9 +161,10 @@ async function decryptPrivateKeyWithPassword(
 ): Promise<string> {
 	const key = await deriveKeyFromPassword(password, new Uint8Array(base64ToArrayBuffer(saltB64)));
 	const iv = new Uint8Array(base64ToArrayBuffer(ivB64));
+	const ivBuf = toArrayBuffer(iv);
 	const cipher = base64ToArrayBuffer(encryptedB64);
 	const dec = await crypto.subtle.decrypt(
-		{ name: 'AES-GCM', iv, tagLength: 128 },
+		{ name: 'AES-GCM', iv: ivBuf, tagLength: 128 },
 		key,
 		cipher,
 	);

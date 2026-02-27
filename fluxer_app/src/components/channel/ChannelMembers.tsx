@@ -317,8 +317,17 @@ const LazyMemberList = observer(function LazyMemberList({guild, channel}: LazyMe
 		);
 	}
 
+	const memberList = memberListState;
+	if (!memberList) {
+		return (
+			<MemberListContainer channelId={channel.id}>
+				<MemberListUnavailableFallback />
+			</MemberListContainer>
+		);
+	}
+
 	const groupedItems: Map<string, Array<GuildMemberRecord>> = new Map();
-	const groups = memberListState!.groups;
+	const groups = memberList.groups;
 	const seenMemberIds = new Set<string>();
 	const groupCounts = new Map<string, number>();
 	const orderedMembers: Array<GuildMemberRecord> = [];
@@ -328,7 +337,7 @@ const LazyMemberList = observer(function LazyMemberList({guild, channel}: LazyMe
 		groupCounts.set(group.id, group.count);
 	}
 
-	const sortedItems = Array.from(memberListState.items.entries()).sort(([leftIndex], [rightIndex]) => {
+	const sortedItems = Array.from(memberList.items.entries()).sort(([leftIndex], [rightIndex]) => {
 		return leftIndex - rightIndex;
 	});
 	let groupIndex = 0;
@@ -394,7 +403,7 @@ const LazyMemberList = observer(function LazyMemberList({guild, channel}: LazyMe
 			groupedItems.set('offline', offlineMembers);
 		}
 
-		const isFullyLoaded = seenMemberIds.size >= memberListState.memberCount;
+		const isFullyLoaded = seenMemberIds.size >= memberList.memberCount;
 		if (isFullyLoaded) {
 			if (groupCounts.has('online')) {
 				groupCounts.set('online', onlineMembers.length);

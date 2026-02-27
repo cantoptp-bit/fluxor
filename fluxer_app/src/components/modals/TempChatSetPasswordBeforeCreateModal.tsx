@@ -20,7 +20,7 @@
 import * as Modal from '@app/components/modals/Modal';
 import {Button} from '@app/components/uikit/button/Button';
 import type {UserRecord} from '@app/records/UserRecord';
-import {useLingui} from '@lingui/react/macro';
+import {Trans, useLingui} from '@lingui/react/macro';
 import {observer} from 'mobx-react-lite';
 import {useCallback, useRef, useState} from 'react';
 import styles from '@app/components/modals/TempChatUnlockModal.module.css';
@@ -44,8 +44,6 @@ export const TempChatSetPasswordBeforeCreateModal = observer(
 		const [error, setError] = useState<string | null>(null);
 		const [submitting, setSubmitting] = useState(false);
 		const inputRef = useRef<HTMLInputElement>(null);
-
-		const displayName = user.username ?? user.global_name ?? user.id;
 
 		const handleSubmit = useCallback(async () => {
 			if (password !== confirm) {
@@ -76,7 +74,10 @@ export const TempChatSetPasswordBeforeCreateModal = observer(
 			<Modal.Root size="small" initialFocusRef={inputRef} centered>
 				<Modal.Header title={t`Set password for this chat`}>
 					<p className={styles.subtitle}>
-						{t`Set a password to protect this temp chat with ${displayName}. You'll need it to open this chat again.`}
+						<Trans>
+							Set a password to protect this temp chat with <strong>{user.username ?? user.globalName ?? user.id}</strong>.
+							You'll need it to open this chat again.
+						</Trans>
 					</p>
 				</Modal.Header>
 				<Modal.Content>

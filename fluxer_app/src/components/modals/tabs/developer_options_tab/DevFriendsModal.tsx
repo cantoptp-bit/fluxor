@@ -110,7 +110,7 @@ export const DevFriendsModal = observer(() => {
 			} catch {
 				// Friends were added but refetch failed (e.g. network); still show success
 				ToastActionCreators.createToast({
-					type: 'warning',
+					type: 'info',
 					children: t`Friends added; open the Friends tab to refresh the list.`,
 				});
 			}
@@ -123,7 +123,7 @@ export const DevFriendsModal = observer(() => {
 				ToastActionCreators.createToast({ type: 'success', children: t`Added ${added} friend(s). Open Friends to see them.` });
 			} else if (errors.length > 0) {
 				ToastActionCreators.createToast({
-					type: 'warning',
+					type: 'info',
 					children: t`Some failed: ${errors.map((e) => e.error).join(', ')}`,
 				});
 			} else {
@@ -158,7 +158,7 @@ export const DevFriendsModal = observer(() => {
 					<>
 						{users.length > 0 && selectableCount > 0 && (
 							<div className={styles.toolbar}>
-								<Button variant="secondary" size="small" onClick={toggleAll}>
+								<Button variant="secondary" small onClick={toggleAll}>
 									{t`Select all`}
 								</Button>
 							</div>
@@ -191,7 +191,7 @@ export const DevFriendsModal = observer(() => {
 							<div className={styles.loadMore}>
 								<Button
 									variant="secondary"
-									size="small"
+									small
 									onClick={() => void loadPage(nextAfter)}
 									submitting={loadingMore}
 									disabled={loadingMore}

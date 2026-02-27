@@ -19,12 +19,16 @@
 
 import {createUserID, type UserID} from '@fluxer/api/src/BrandedTypes';
 import {deleteOneOrMany, fetchMany, upsertOne} from '@fluxer/api/src/database/Cassandra';
-import type {TempChatMessageRow} from '@fluxer/api/src/database/types/TempChatTypes';
-import {TempChatMessages} from '@fluxer/api/src/Tables';
+import type {TempChatMessageRow, TempChatMessageRowV2} from '@fluxer/api/src/database/types/TempChatTypes';
+import {TempChatMessages, TempChatMessagesV2} from '@fluxer/api/src/Tables';
 import type {ITempChatMessageRepository} from '@fluxer/api/src/user/repositories/ITempChatMessageRepository';
 
 const LIST_MESSAGES_CQL = TempChatMessages.selectCql({
 	where: [TempChatMessages.where.eq('user_id_1'), TempChatMessages.where.eq('user_id_2')],
+});
+
+const LIST_MESSAGES_V2_CQL = TempChatMessagesV2.selectCql({
+	where: TempChatMessagesV2.where.eq('chat_id'),
 });
 
 export class TempChatMessageRepository implements ITempChatMessageRepository {
@@ -56,5 +60,26 @@ export class TempChatMessageRepository implements ITempChatMessageRepository {
 				user_id_2: userId2,
 			}),
 		);
+	}
+
+	async insertV2(row: TempChatMessageRowV2): Promise<void> {
+		await upsertOne(TempChatMessagesV2.upsertAll(row));
+	}
+
+	async listByChatIdV2(chatId: bigint): Promise<Array<TempChatMessageRowV2>> {
+		const rows = await fetchMany<TempChatMessageRowV2>(LIST_MESSAGES_V2_CQL, {chat_id: chatId});
+		return rows.map((r) => ({
+			chat_id: r.chat_id,
+			message_id: r.message_id,
+			sender_id: createUserID(r.sender_id),
+			ciphertext: r.ciphertext,
+			iv: r.iv,
+			ephemeral_public_key: r.ephemeral_public_key,
+			created_at: r.created_at,
+		}));
+	}
+
+	async deleteAllForChatV2(chatId: bigint): Promise<void> {
+		await deleteOneOrMany(TempChatMessagesV2.deletePartition({chat_id: chatId}));
 	}
 }

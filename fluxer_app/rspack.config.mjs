@@ -69,6 +69,11 @@ function readConfig() {
 	if (!isPlainObject(parsed)) {
 		throw new Error('Invalid JSON config: expected an object at root.');
 	}
+	// For Vercel (or any host): point frontend at your backend by setting FLUXER_PUBLIC_DOMAIN (e.g. your-ngrok.io)
+	const publicDomain = process.env.FLUXER_PUBLIC_DOMAIN?.trim();
+	if (publicDomain) {
+		parsed.domain = { ...(parsed.domain || {}), base_domain: publicDomain, public_scheme: 'https' };
+	}
 	return parsed;
 }
 

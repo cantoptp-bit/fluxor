@@ -193,7 +193,7 @@ export const TempChatModal = observer(({tempChatId, otherUser, onClose}: TempCha
 			<Modal.Header title={otherUser.username}>
 				<div className={styles.headerActions}>
 					<p className={styles.subtitle}>{t`Temporary encrypted chat`}</p>
-					<Button variant="secondary" size="small" onClick={handleDeleteChat} className={styles.deleteButton}>
+					<Button variant="secondary" small onClick={handleDeleteChat} className={styles.deleteButton}>
 						{t`Delete chat`}
 					</Button>
 				</div>

@@ -1395,7 +1395,7 @@ export const DMList = observer(() => {
 											? chat.participant_ids[1]
 											: chat.participant_ids[0];
 									const otherUser = UserStore.getUser(otherId);
-									const displayName = otherUser?.username ?? otherUser?.global_name ?? t`Unknown user`;
+									const displayName = otherUser?.username ?? otherUser?.globalName ?? t`Unknown user`;
 									const isSelected = currentTempChatId === chat.id;
 									return (
 										<FocusRing key={chat.id} offset={-2}>
@@ -1587,7 +1587,7 @@ export const DMList = observer(() => {
 												? chat.participant_ids[1]
 												: chat.participant_ids[0];
 										const otherUser = UserStore.getUser(otherId);
-										const displayName = otherUser?.username ?? otherUser?.global_name ?? t`Unknown user`;
+										const displayName = otherUser?.username ?? otherUser?.globalName ?? t`Unknown user`;
 										const isSelected = currentTempChatId === chat.id;
 										return (
 											<FocusRing key={chat.id} offset={-2}>

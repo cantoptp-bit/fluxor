@@ -58,7 +58,7 @@ const SendTempChatMessageRequest = z.object({
 	ephemeral_public_key: z.string(),
 });
 const TempChatIdParam = z.object({
-	temp_chat_id: z.string().describe('Temp chat ID (canonical user_id_1_user_id_2)'),
+	temp_chat_id: z.string().describe('Temp chat ID (legacy: user_id_1_user_id_2, or V2: numeric chat_id)'),
 });
 
 const SCHEMA_NOT_INITIALIZED_MESSAGE =
@@ -169,17 +169,17 @@ export function UserTempChatController(app: HonoApp) {
 		DefaultUserOnly,
 		Validator('json', CreateTempChatRequest),
 		OpenAPI({
-			operationId: 'create_or_get_temp_chat',
-			summary: 'Create or get temp chat',
+			operationId: 'create_temp_chat',
+			summary: 'Create temp chat',
 			responseSchema: TempChatSummaryResponse,
 			statusCode: 200,
 			security: ['bearerToken', 'sessionToken'],
 			tags: ['Users'],
-			description: 'Creates a temporary encrypted chat with a friend, or returns the existing one. Requires friendship.',
+			description: 'Creates a new temporary encrypted chat with a friend. Each call creates a distinct chat (supports multiple temp chats per pair). Requires friendship.',
 		}),
 		async (ctx) => {
 			try {
-				const response = await ctx.get('tempChatRequestService').createOrGetTempChat(
+				const response = await ctx.get('tempChatRequestService').createTempChat(
 					ctx.get('user').id,
 					createUserID(ctx.req.valid('json').recipient_id),
 				);

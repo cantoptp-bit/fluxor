@@ -60,6 +60,17 @@ export class TempChatRequestService {
 		return this.userE2EKeyService.getPublicKey(otherUserId);
 	}
 
+	/** Creates a new temp chat (unique id). Use for multiple temp chats per user pair. */
+	async createTempChat(userId: UserID, recipientId: UserID): Promise<TempChatSummary> {
+		const chat = await this.tempChatService.create(userId, recipientId);
+		return {
+			id: chat.id,
+			participant_ids: [chat.user_id_1, chat.user_id_2],
+			created_at: chat.created_at,
+		};
+	}
+
+	/** Legacy: create or return existing one-per-pair chat. Prefer createTempChat for new flows. */
 	async createOrGetTempChat(userId: UserID, recipientId: UserID): Promise<TempChatSummary> {
 		const chat = await this.tempChatService.createOrGet(userId, recipientId);
 		return {

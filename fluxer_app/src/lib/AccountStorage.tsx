@@ -315,6 +315,7 @@ class AccountStorage {
 					? JSON.parse(JSON.stringify(instance.limits))
 					: createEmptyLimitConfig(),
 			relayDirectoryUrl: instance.relayDirectoryUrl ?? null,
+			testModeEnabled: instance.testModeEnabled,
 		};
 	}
 

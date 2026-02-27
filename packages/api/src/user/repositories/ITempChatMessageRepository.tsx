@@ -18,11 +18,17 @@
  */
 
 import type {UserID} from '@fluxer/api/src/BrandedTypes';
-import type {TempChatMessageRow} from '@fluxer/api/src/database/types/TempChatTypes';
+import type {TempChatMessageRow, TempChatMessageRowV2} from '@fluxer/api/src/database/types/TempChatTypes';
 
 export interface ITempChatMessageRepository {
 	insert(row: TempChatMessageRow): Promise<void>;
 	listByChat(userId1: UserID, userId2: UserID): Promise<Array<TempChatMessageRow>>;
 	/** Delete all messages for this temp chat (by partition). */
 	deleteAllForChat(userId1: UserID, userId2: UserID): Promise<void>;
+	/** V2: Insert message for chat_id. */
+	insertV2(row: TempChatMessageRowV2): Promise<void>;
+	/** V2: List messages for chat_id. */
+	listByChatIdV2(chatId: bigint): Promise<Array<TempChatMessageRowV2>>;
+	/** V2: Delete all messages for this chat_id. */
+	deleteAllForChatV2(chatId: bigint): Promise<void>;
 }

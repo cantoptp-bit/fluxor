@@ -123,8 +123,8 @@ export class GuildRecord {
 		// Support both snake_case (API) and camelCase (some gateway payloads)
 		const resolved =
 			value ??
-			(guild as Record<string, unknown>).guild_type ??
-			(guild as Record<string, unknown>).guildType;
+			(guild as unknown as Record<string, unknown>).guild_type ??
+			(guild as unknown as Record<string, unknown>).guildType;
 		return (resolved === 'community' ? 'community' : 'server') as GuildType;
 	}
 
@@ -275,7 +275,14 @@ export class GuildRecord {
 			(acc, role) => ({
 				// biome-ignore lint/performance/noAccumulatingSpread: acceptable for guild roles - manageable dataset size and immutability required
 				...acc,
-				[role.id]: new GuildRoleRecord(guildId, role),
+				[role.id]: new GuildRoleRecord(guildId, {
+					...role,
+					name: role.name ?? '',
+					color: role.color ?? 0,
+					position: role.position ?? 0,
+					hoist: role.hoist ?? false,
+					mentionable: role.mentionable ?? false,
+				}),
 			}),
 			{},
 		);
@@ -302,9 +309,9 @@ export class GuildRecord {
 			{
 				...(properties as Record<string, unknown>),
 				roles,
-				joined_at: joinedAt,
+				joined_at: joinedAt ?? undefined,
 				unavailable,
-			},
+			} as unknown as GuildInput,
 			{instanceId},
 		);
 	}

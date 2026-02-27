@@ -128,6 +128,7 @@ const ManageRolesMenuContent: React.FC<ManageRolesMenuContentProps> = observer(f
 	userId,
 	onClose,
 }) {
+	const {t} = useLingui();
 	const guild = GuildStore.getGuild(guildId);
 	const currentMember = GuildMemberStore.getMember(guildId, userId);
 	const {canManageRole} = useRoleHierarchy(guild);

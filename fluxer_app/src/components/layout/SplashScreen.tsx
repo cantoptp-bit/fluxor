@@ -28,7 +28,7 @@ import DeveloperOptionsStore from '@app/stores/DeveloperOptionsStore';
 import GatewayConnectionStore from '@app/stores/gateway/GatewayConnectionStore';
 import InitializationStore from '@app/stores/InitializationStore';
 import {getReducedMotionProps} from '@app/utils/ReducedMotionAnimation';
-import {Trans} from '@lingui/macro';
+import {Trans} from '@lingui/react/macro';
 import {AnimatePresence, motion} from 'framer-motion';
 import {observer} from 'mobx-react-lite';
 import {useEffect, useState} from 'react';

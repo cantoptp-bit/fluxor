@@ -624,6 +624,10 @@ export async function refreshAccountUserDataIfMock(userId: string): Promise<bool
 			id: userId,
 			username: userData.username,
 			discriminator: userData.discriminator,
+			global_name: null,
+			avatar: userData.avatar ?? null,
+			avatar_color: null,
+			flags: 0,
 		});
 	}
 	logger.debug('Refreshed account userData (was mock/stale)', { userId });

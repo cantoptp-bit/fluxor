@@ -252,7 +252,7 @@ export class VoiceStateGatewayHandler {
 
 		logger.debug('Guild voice states loaded', {
 			guildId: guild.id,
-			voiceStateCount: guild.voice_states.length,
+			voiceStateCount: guild.voice_states?.length ?? 0,
 		});
 	}
 

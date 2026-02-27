@@ -1,0 +1,12 @@
+{
+	"env": "production",
+	"instance": { "self_hosted": true },
+	"domain": {
+		"base_domain": "localhost",
+		"public_scheme": "https"
+	},
+	"app_public": {
+		"sentry_dsn": "",
+		"api_version": "1"
+	}
+}

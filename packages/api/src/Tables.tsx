@@ -225,14 +225,22 @@ import {
 } from '@fluxer/api/src/database/types/UserTypes';
 import {
 	TEMP_CHAT_BY_USER_COLUMNS,
+	TEMP_CHAT_BY_USER_V2_COLUMNS,
 	TEMP_CHAT_COLUMNS,
 	TEMP_CHAT_DELETE_REQUEST_COLUMNS,
+	TEMP_CHAT_DELETE_REQUEST_V2_COLUMNS,
 	TEMP_CHAT_MESSAGE_COLUMNS,
+	TEMP_CHAT_MESSAGE_V2_COLUMNS,
+	TEMP_CHAT_V2_COLUMNS,
 	USER_E2E_KEY_COLUMNS,
 	type TempChatByUserRow,
+	type TempChatByUserRowV2,
 	type TempChatDeleteRequestRow,
+	type TempChatDeleteRequestRowV2,
 	type TempChatMessageRow,
+	type TempChatMessageRowV2,
 	type TempChatRow,
+	type TempChatRowV2,
 	type UserE2EKeyRow,
 } from '@fluxer/api/src/database/types/TempChatTypes';
 import {ATTACHMENT_DECAY_COLUMNS, type AttachmentDecayRow} from '@fluxer/api/src/types/AttachmentDecayTypes';
@@ -1093,6 +1101,46 @@ export const TempChatMessages = defineTable<
 	columns: TEMP_CHAT_MESSAGE_COLUMNS,
 	primaryKey: ['user_id_1', 'user_id_2', 'message_id'],
 	partitionKey: ['user_id_1', 'user_id_2'],
+});
+
+/** V2: multiple temp chats per user pair; chat_id is snowflake. */
+export const TempChatsV2 = defineTable<TempChatRowV2, 'chat_id'>({
+	name: 'temp_chats_v2',
+	columns: TEMP_CHAT_V2_COLUMNS,
+	primaryKey: ['chat_id'],
+});
+
+export const TempChatsByUserV2 = defineTable<
+	TempChatByUserRowV2,
+	'user_id' | 'chat_id',
+	'user_id'
+>({
+	name: 'temp_chats_by_user_v2',
+	columns: TEMP_CHAT_BY_USER_V2_COLUMNS,
+	primaryKey: ['user_id', 'chat_id'],
+	partitionKey: ['user_id'],
+});
+
+export const TempChatMessagesV2 = defineTable<
+	TempChatMessageRowV2,
+	'chat_id' | 'message_id',
+	'chat_id'
+>({
+	name: 'temp_chat_messages_v2',
+	columns: TEMP_CHAT_MESSAGE_V2_COLUMNS,
+	primaryKey: ['chat_id', 'message_id'],
+	partitionKey: ['chat_id'],
+});
+
+export const TempChatDeleteRequestsV2 = defineTable<
+	TempChatDeleteRequestRowV2,
+	'chat_id' | 'user_id',
+	'chat_id'
+>({
+	name: 'temp_chat_delete_requests_v2',
+	columns: TEMP_CHAT_DELETE_REQUEST_V2_COLUMNS,
+	primaryKey: ['chat_id', 'user_id'],
+	partitionKey: ['chat_id'],
 });
 
 export const UserE2EKeys = defineTable<UserE2EKeyRow, 'user_id'>({

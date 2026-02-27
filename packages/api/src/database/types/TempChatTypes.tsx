@@ -73,6 +73,64 @@ export const TEMP_CHAT_MESSAGE_COLUMNS = [
 	'created_at',
 ] as const satisfies ReadonlyArray<keyof TempChatMessageRow>;
 
+// --- V2: multiple temp chats per user pair (chat_id = snowflake) ---
+
+export interface TempChatRowV2 {
+	chat_id: bigint;
+	user_id_1: UserID;
+	user_id_2: UserID;
+	created_at: Date;
+}
+
+export const TEMP_CHAT_V2_COLUMNS = ['chat_id', 'user_id_1', 'user_id_2', 'created_at'] as const satisfies ReadonlyArray<
+	keyof TempChatRowV2
+>;
+
+export interface TempChatByUserRowV2 {
+	user_id: UserID;
+	chat_id: bigint;
+	user_id_1: UserID;
+	user_id_2: UserID;
+	created_at: Date;
+}
+
+export const TEMP_CHAT_BY_USER_V2_COLUMNS = [
+	'user_id',
+	'chat_id',
+	'user_id_1',
+	'user_id_2',
+	'created_at',
+] as const satisfies ReadonlyArray<keyof TempChatByUserRowV2>;
+
+export interface TempChatDeleteRequestRowV2 {
+	chat_id: bigint;
+	user_id: UserID;
+}
+
+export const TEMP_CHAT_DELETE_REQUEST_V2_COLUMNS = ['chat_id', 'user_id'] as const satisfies ReadonlyArray<
+	keyof TempChatDeleteRequestRowV2
+>;
+
+export interface TempChatMessageRowV2 {
+	chat_id: bigint;
+	message_id: bigint;
+	sender_id: UserID;
+	ciphertext: string;
+	iv: string;
+	ephemeral_public_key: string;
+	created_at: Date;
+}
+
+export const TEMP_CHAT_MESSAGE_V2_COLUMNS = [
+	'chat_id',
+	'message_id',
+	'sender_id',
+	'ciphertext',
+	'iv',
+	'ephemeral_public_key',
+	'created_at',
+] as const satisfies ReadonlyArray<keyof TempChatMessageRowV2>;
+
 export interface UserE2EKeyRow {
 	user_id: UserID;
 	public_key_base64: string;
