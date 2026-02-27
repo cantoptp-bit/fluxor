@@ -91,6 +91,7 @@ export const AuthLoginLayout = observer(function AuthLoginLayout({
 	const [isSwitching, setIsSwitching] = useState(false);
 	const [switchError, setSwitchError] = useState<string | null>(null);
 	const [prefillEmail, setPrefillEmail] = useState<string | null>(() => initialEmail ?? null);
+	const [dismissBackendHint, setDismissBackendHint] = useState(false);
 
 	const showLoginFormForAccount = useCallback((account: Account, message?: string | null) => {
 		setShowAccountSelector(false);
@@ -278,9 +279,28 @@ export const AuthLoginLayout = observer(function AuthLoginLayout({
 		);
 	}
 
+	const showBackendUnreachableHint =
+		RuntimeConfigStore.usedMinimalConfig && !dismissBackendHint;
+
 	return (
 		<>
 			{extraTopContent}
+
+			{showBackendUnreachableHint ? (
+				<div className={styles.loginNotice} role="status">
+					<Trans>
+						Could not reach the backend. If you can't log in, ensure your backend and tunnel (e.g. ngrok) are running, then refresh.
+					</Trans>
+					<button
+						type="button"
+						className={styles.link}
+						onClick={() => setDismissBackendHint(true)}
+						style={{ marginLeft: '0.5rem' }}
+					>
+						<Trans>Dismiss</Trans>
+					</button>
+				</div>
+			) : null}
 
 			{showTitle ? <h1 className={styles.title}>{title ?? <Trans>Welcome back</Trans>}</h1> : null}
 

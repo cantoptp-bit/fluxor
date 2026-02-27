@@ -160,6 +160,9 @@ class RuntimeConfigStore {
 
 	testModeEnabled: boolean = false;
 
+	/** True when we loaded from minimal config (Vercel fallback) because discovery failed; login page may show a "backend unreachable" hint. */
+	usedMinimalConfig: boolean = false;
+
 	get relayModeEnabled(): boolean {
 		return this.relayDirectoryUrl != null;
 	}
@@ -381,7 +384,27 @@ class RuntimeConfigStore {
 			]);
 
 			const bootstrapEndpoint = await this.resolveBootstrapEndpoint();
-			await this.connectToEndpointWithRetry(bootstrapEndpoint);
+			const isVercel =
+				typeof window !== 'undefined' && window.location.origin.includes('vercel.app');
+
+			try {
+				await this.connectToEndpointWithRetry(bootstrapEndpoint);
+			} catch (connectError) {
+				// On Vercel, if discovery fails (CORS, backend down, etc.) still show the login page
+				// with a minimal config so the user sees the form instead of "Connection Issue".
+				if (isVercel) {
+					runInAction(() => {
+						const minimal = this.buildMinimalInstanceFromBootstrapUrl(bootstrapEndpoint);
+						this.updateFromInstance(minimal);
+						this.usedMinimalConfig = true;
+						this._initState = 'ready';
+						this._initError = null;
+					});
+					this._resolveInit();
+					return;
+				}
+				throw connectError;
+			}
 
 			runInAction(() => {
 				this._initState = 'ready';
@@ -397,6 +420,49 @@ class RuntimeConfigStore {
 			});
 			this._rejectInit(err);
 		}
+	}
+
+	/** Build minimal discovery payload from bootstrap API URL so the app can load when /.well-known/fluxer is unreachable (e.g. CORS or backend down). */
+	private buildMinimalInstanceFromBootstrapUrl(apiEndpoint: string): InstanceDiscoveryResponse {
+		const normalized = this.normalizeEndpoint(apiEndpoint);
+		let base: string;
+		try {
+			const u = new URL(normalized);
+			u.pathname = '';
+			u.search = '';
+			u.hash = '';
+			base = u.toString().replace(/\/$/, '');
+		} catch {
+			base = normalized.replace(/\/api\/?$/, '');
+		}
+		const gatewayBase = base.replace(/^http:/, 'ws:').replace(/^https:/, 'wss:');
+		return {
+			api_code_version: API_CODE_VERSION,
+			endpoints: {
+				api: normalized,
+				api_client: normalized,
+				api_public: normalized,
+				gateway: `${gatewayBase}/gateway`,
+				media: `${base}/media`,
+				static_cdn: `${base}/cdn`,
+				marketing: `${base}/marketing`,
+				admin: `${base}/admin`,
+				invite: `${base}/invite`,
+				gift: `${base}/gift`,
+				webapp: base,
+			},
+			captcha: { provider: 'none', hcaptcha_site_key: null, turnstile_site_key: null },
+			features: {
+				sms_mfa_enabled: false,
+				voice_enabled: false,
+				stripe_enabled: false,
+				self_hosted: false,
+				manual_review_enabled: false,
+			},
+			limits: { version: 1, traitDefinitions: [], rules: [] },
+			app_public: { sentry_dsn: '' },
+			test_mode_enabled: false,
+		};
 	}
 
 	/**
