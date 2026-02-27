@@ -76,6 +76,7 @@ export const RootComponent: React.FC<{children?: React.ReactNode}> = observer(({
 			pathname.startsWith(Routes.OAUTH_AUTHORIZE) ||
 			pathname.startsWith(Routes.REPORT) ||
 			pathname === Routes.STATUS ||
+			pathname === Routes.CHANGELOG ||
 			pathname.startsWith(Routes.PREMIUM_CALLBACK) ||
 			pathname.startsWith(Routes.CONNECTION_CALLBACK) ||
 			pathname === '/__notfound' ||

@@ -30,6 +30,8 @@ export interface TempChatSetPasswordBeforeCreateModalProps {
 	user: UserRecord;
 	onConfirm: (password: string) => Promise<void>;
 	onCancel: () => void;
+	/** If provided, shows "Open without password" so the user can start the chat without setting a password (e.g. for testing). */
+	onSkip?: () => void;
 }
 
 /**
@@ -37,7 +39,7 @@ export interface TempChatSetPasswordBeforeCreateModalProps {
  * Supports multiple temp chats with the same user; each chat has its own password.
  */
 export const TempChatSetPasswordBeforeCreateModal = observer(
-	({user, onConfirm, onCancel}: TempChatSetPasswordBeforeCreateModalProps) => {
+	({user, onConfirm, onCancel, onSkip}: TempChatSetPasswordBeforeCreateModalProps) => {
 		const {t} = useLingui();
 		const [password, setPassword] = useState('');
 		const [confirm, setConfirm] = useState('');
@@ -117,6 +119,11 @@ export const TempChatSetPasswordBeforeCreateModal = observer(
 					</div>
 				</Modal.Content>
 				<Modal.Footer className={styles.footer}>
+					{onSkip != null && (
+						<Button variant="tertiary" onClick={onSkip} className={styles.skipButton}>
+							{t`Open without password`}
+						</Button>
+					)}
 					<Button variant="secondary" onClick={onCancel}>
 						{t`Cancel`}
 					</Button>

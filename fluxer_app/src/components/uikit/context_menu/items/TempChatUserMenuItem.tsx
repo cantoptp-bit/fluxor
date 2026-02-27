@@ -59,6 +59,18 @@ export const TempChatUserMenuItem: React.FC<TempChatUserMenuItemProps> = observe
 						}
 					}}
 					onCancel={() => ModalActionCreators.pop()}
+					onSkip={async () => {
+						ModalActionCreators.pop();
+						try {
+							await openTempChatForUser(user);
+						} catch (err) {
+							const message =
+								err && typeof err === 'object' && 'message' in err
+									? String((err as {message: string}).message)
+									: t`Failed to open temp chat`;
+							ToastActionCreators.createToast({type: 'error', children: message});
+						}
+					}}
 				/>
 			)),
 		);

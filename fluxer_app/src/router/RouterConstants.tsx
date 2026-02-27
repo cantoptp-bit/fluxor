@@ -27,6 +27,7 @@ const AUTO_REDIRECT_EXEMPT_PATHS = new Set<string>([
 	Routes.OAUTH_AUTHORIZE,
 	Routes.REPORT,
 	Routes.STATUS,
+	Routes.CHANGELOG,
 ]);
 
 const AUTO_REDIRECT_EXEMPT_PREFIXES = ['/invite/', '/gift/', '/theme/', '/oauth2/'];

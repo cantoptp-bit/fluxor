@@ -68,3 +68,8 @@
 	flex: 1;
 	min-width: fit-content;
 }
+
+.skipButton {
+	flex: 0 0 auto;
+	margin-right: auto;
+}

@@ -43,7 +43,8 @@ export const ServersButton = observer(
 		const iconRef = useRef<HTMLDivElement | null>(null);
 		const mergedRef = useMergeRefs([hoverRef, iconRef]);
 		const isClickable = typeof onToggle === 'function';
-		const tooltipText = itemCount > 0 ? t`Servers (${itemCount})` : t`Servers`;
+		const tooltipText =
+			itemCount > 0 ? t`Servers · ${itemCount}` : t`Servers`;
 
 		const wrapperClassName = clsx(
 			styles.fluxerButton,
@@ -99,7 +100,7 @@ export const ServersButton = observer(
 						ref={mergedRef}
 						type="button"
 						className={wrapperClassName}
-						aria-label={t`Servers`}
+						aria-label={itemCount > 0 ? t`Servers, ${itemCount}` : t`Servers`}
 						aria-expanded={expanded}
 						data-guild-list-focus-item="true"
 						onClick={(e) => {

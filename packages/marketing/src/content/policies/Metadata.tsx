@@ -32,9 +32,9 @@ export const POLICY_METADATA: ReadonlyArray<PolicyMetadata> = [
 	{
 		slug: 'terms',
 		title: 'Terms of Service',
-		description: 'The legal agreement between you and Fluxer that governs your use of our platform and services.',
+		description: 'The legal agreement between you and the operator of this Fluxer instance that governs your use of our platform and services.',
 		category: 'Legal',
-		lastUpdated: '2026-02-13',
+		lastUpdated: '2026-02-25',
 	},
 	{
 		slug: 'privacy',

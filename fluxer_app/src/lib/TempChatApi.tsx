@@ -49,9 +49,11 @@ export async function setMyE2EKey(publicKeyBase64: string): Promise<void> {
 	});
 }
 
+/** Returns the other user's E2E public key, or null if 404/not set (so we can show a friendly message instead of throwing). */
 export async function getOtherUserE2EKey(userId: string): Promise<string | null> {
 	const res = await http.get<{public_key_base64: string}>({
 		url: Endpoints.USER_E2E_KEY_BY_USER(userId),
+		rejectWithError: false,
 	});
 	if (!res.ok || res.body == null) return null;
 	return res.body.public_key_base64 ?? null;
@@ -127,4 +129,23 @@ export async function requestDeleteTempChat(tempChatId: string): Promise<{delete
 	});
 	if (!res.ok || !res.body) throw new Error((res.body as {error?: string})?.error ?? 'Failed to request delete');
 	return res.body;
+}
+
+/** Dev only: provision E2E key for the other participant so you can send without them opening the chat. 404 in production. */
+export async function provisionRecipientKeyForTesting(tempChatId: string): Promise<void> {
+	const res = await http.post({
+		url: Endpoints.USER_TEMP_CHAT_PROVISION_RECIPIENT_KEY(tempChatId),
+		rejectWithError: false,
+	});
+	if (!res.ok) throw new Error((res.body as {error?: string})?.error ?? 'Failed to provision (dev only)');
+}
+
+/** Dev only: get server-provisioned private key if any. 404 in production or when none. */
+export async function getMyE2EPrivateKey(): Promise<string | null> {
+	const res = await http.get<{private_key_base64: string}>({
+		url: Endpoints.USER_E2E_PRIVATE_KEY,
+		rejectWithError: false,
+	});
+	if (!res.ok || res.body == null) return null;
+	return res.body.private_key_base64 ?? null;
 }

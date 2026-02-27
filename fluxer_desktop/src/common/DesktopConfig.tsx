@@ -59,11 +59,24 @@ export function loadDesktopConfig(userDataPath: string): void {
 	}
 }
 
-export function getAppUrl(): string {
-	if (config.app_url) {
-		return config.app_url;
+/** Host that is configured as a Cloudflare Tunnel but often unreachable (Error 1033). */
+const DEPRECATED_TUNNEL_HOST = 'home.auroraplayer.com';
+
+function isDeprecatedAppUrl(url: string): boolean {
+	try {
+		return new URL(url).hostname === DEPRECATED_TUNNEL_HOST;
+	} catch {
+		return false;
 	}
-	return BUILD_CHANNEL === 'canary' ? CANARY_APP_URL : STABLE_APP_URL;
+}
+
+export function getAppUrl(): string {
+	const raw = config.app_url ?? (BUILD_CHANNEL === 'canary' ? CANARY_APP_URL : STABLE_APP_URL);
+	if (isDeprecatedAppUrl(raw)) {
+		log.info('Desktop: skipping deprecated tunnel URL (use fluxor-rust.vercel.app)', { skipped: raw });
+		return BUILD_CHANNEL === 'canary' ? CANARY_APP_URL : STABLE_APP_URL;
+	}
+	return raw;
 }
 
 export function getCustomAppUrl(): string | null {

@@ -19,9 +19,11 @@
 
 import type {UserID} from '@fluxer/api/src/BrandedTypes';
 import type {IUserRepository} from '@fluxer/api/src/user/IUserRepository';
+import {getProvisionedPrivateKey, setProvisionedPrivateKey} from '@fluxer/api/src/user/services/DevE2EKeyStore';
 import type {TempChatService} from '@fluxer/api/src/user/services/TempChatService';
 import type {UserE2EKeyService} from '@fluxer/api/src/user/services/UserE2EKeyService';
 import {RelationshipTypes} from '@fluxer/constants/src/UserConstants';
+import {generateKeyPairSync} from 'node:crypto';
 
 export interface TempChatSummary {
 	id: string;
@@ -117,5 +119,27 @@ export class TempChatRequestService {
 	/** Request delete; chat is only deleted when both participants have requested. Returns true if deleted. */
 	async requestDeleteTempChat(userId: UserID, tempChatId: string): Promise<{deleted: boolean}> {
 		return this.tempChatService.requestDelete(userId, tempChatId);
+	}
+
+	/**
+	 * Dev only: provision an E2E key for the other participant so the caller can send without them opening the chat.
+	 * Generates a key pair, sets the recipient's public key, and stores the recipient's private key in memory
+	 * so they can decrypt when they open the chat (via getProvisionedPrivateKey).
+	 */
+	async provisionRecipientKeyForTesting(callerUserId: UserID, tempChatId: string): Promise<void> {
+		const {pair} = await this.tempChatService.assertParticipant(callerUserId, tempChatId);
+		const otherUserId: UserID = pair[0] === callerUserId ? pair[1] : pair[0];
+		const {publicKey, privateKey} = generateKeyPairSync('x25519');
+		const rawPublic = publicKey.export({format: 'raw'}) as Buffer;
+		const publicKeyBase64 = rawPublic.toString('base64');
+		const privateKeyDer = privateKey.export({type: 'pkcs8', format: 'der'}) as Buffer;
+		const privateKeyBase64 = privateKeyDer.toString('base64');
+		await this.userE2EKeyService.setPublicKey(otherUserId, publicKeyBase64);
+		setProvisionedPrivateKey(otherUserId, privateKeyBase64);
+	}
+
+	/** Dev only: return the provisioned private key for this user if any. */
+	async getProvisionedPrivateKeyForTesting(userId: UserID): Promise<string | null> {
+		return getProvisionedPrivateKey(userId);
 	}
 }

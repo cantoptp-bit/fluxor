@@ -41,3 +41,42 @@ describe('Vercel login page (smoke)', () => {
 		expect(hasBackend).toBe(true);
 	});
 });
+
+/** EXE target URL: desktop app loads this; must not show Cloudflare tunnel Error 1033. */
+describe('EXE target URL (no Cloudflare error)', () => {
+	const EXE_APP_URL = process.env.VERCEL_BASE_URL ?? 'https://fluxor-rust.vercel.app';
+
+	test('home page loads and is not Cloudflare Error 1033', async () => {
+		const res = await fetch(EXE_APP_URL, {
+			redirect: 'follow',
+			headers: {Accept: 'text/html'},
+		});
+		expect(res.status).toBe(200);
+		const html = await res.text();
+		expect(html).not.toContain('Error 1033');
+		expect(html).not.toContain('Cloudflare Tunnel error');
+		expect(html).not.toContain('home.auroraplayer.com');
+	});
+
+	test('home page returns Fluxer app shell so EXE window renders', async () => {
+		const res = await fetch(EXE_APP_URL, {
+			redirect: 'follow',
+			headers: {Accept: 'text/html'},
+		});
+		expect(res.status).toBe(200);
+		const html = await res.text();
+		expect(html).toContain('<title>Fluxer</title>');
+		expect(html).toContain('id="root"');
+	});
+
+	test('login page loads and is not Cloudflare error', async () => {
+		const res = await fetch(`${EXE_APP_URL}/login`, {
+			redirect: 'follow',
+			headers: {Accept: 'text/html'},
+		});
+		expect(res.status).toBe(200);
+		const html = await res.text();
+		expect(html).not.toContain('Error 1033');
+		expect(html).not.toContain('Cloudflare Tunnel error');
+	});
+});

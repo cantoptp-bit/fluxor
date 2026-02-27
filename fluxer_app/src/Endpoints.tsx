@@ -217,7 +217,12 @@ export const Endpoints = {
 	DEV_ADD_FRIENDS: '/_dev/relationships/friends',
 	USER_E2E_KEY: '/users/@me/e2e-key',
 	USER_E2E_KEY_BY_USER: (userId: string) => `/users/${userId}/e2e-key`,
+	/** Dev only: get server-provisioned private key for testing. */
+	USER_E2E_PRIVATE_KEY: '/users/@me/e2e-private-key',
 	USER_TEMP_CHATS: '/users/@me/temp-chats',
+	/** Dev only: provision E2E key for the other participant so sender can test without them opening the chat. */
+	USER_TEMP_CHAT_PROVISION_RECIPIENT_KEY: (tempChatId: string) =>
+		`/users/@me/temp-chats/${tempChatId}/provision-recipient-key`,
 	USER_TEMP_CHAT: (tempChatId: string) => `/users/@me/temp-chats/${tempChatId}`,
 	USER_TEMP_CHAT_REQUEST_DELETE: (tempChatId: string) => `/users/@me/temp-chats/${tempChatId}/request-delete`,
 	USER_TEMP_CHAT_MESSAGES: (tempChatId: string) => `/users/@me/temp-chats/${tempChatId}/messages`,

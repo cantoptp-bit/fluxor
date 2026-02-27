@@ -17,7 +17,6 @@
  * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {makePersistent} from '@app/lib/MobXPersistence';
 import {makeAutoObservable} from 'mobx';
 
 class GuildFolderExpandedStore {
@@ -25,11 +24,6 @@ class GuildFolderExpandedStore {
 
 	constructor() {
 		makeAutoObservable(this, {}, {autoBind: true});
-		void this.initPersistence();
-	}
-
-	private async initPersistence(): Promise<void> {
-		await makePersistent(this, 'GuildFolderExpandedStore', ['expandedFolderIds']);
 	}
 
 	isExpanded(folderId: number): boolean {

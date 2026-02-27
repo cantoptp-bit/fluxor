@@ -162,6 +162,48 @@ export function UserTempChatController(app: HonoApp) {
 		},
 	);
 
+	// Dev only: provision E2E key for the other participant so sender can test without recipient opening the chat
+	app.post(
+		'/users/@me/temp-chats/:temp_chat_id/provision-recipient-key',
+		RateLimitMiddleware(RateLimitConfigs.USER_TEMP_CHATS),
+		LoginRequired,
+		DefaultUserOnly,
+		Validator('param', TempChatIdParam),
+		async (ctx) => {
+			if (Config.nodeEnv !== 'development') {
+				return ctx.json({error: 'Not found'}, 404);
+			}
+			try {
+				await ctx.get('tempChatRequestService').provisionRecipientKeyForTesting(
+					ctx.get('user').id,
+					ctx.req.valid('param').temp_chat_id,
+				);
+				return ctx.body(null, 204);
+			} catch (err) {
+				const {status, message, detail} = handleTempChatError(err);
+				const body =
+					status === 500 && detail ? {error: message, detail} : {error: message};
+				return ctx.json(body, status);
+			}
+		},
+	);
+
+	// Dev only: return provisioned private key so recipient can decrypt when they open the chat
+	app.get(
+		'/users/@me/e2e-private-key',
+		RateLimitMiddleware(RateLimitConfigs.USER_E2E_KEY),
+		LoginRequired,
+		DefaultUserOnly,
+		async (ctx) => {
+			if (Config.nodeEnv !== 'development') {
+				return ctx.json({error: 'Not found'}, 404);
+			}
+			const key = await ctx.get('tempChatRequestService').getProvisionedPrivateKeyForTesting(ctx.get('user').id);
+			if (key === null) return ctx.json({error: 'Not found'}, 404);
+			return ctx.json({private_key_base64: key});
+		},
+	);
+
 	app.post(
 		'/users/@me/temp-chats',
 		RateLimitMiddleware(RateLimitConfigs.USER_TEMP_CHATS),

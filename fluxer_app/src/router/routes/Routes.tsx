@@ -19,7 +19,7 @@
 
 import type { RouteConfig } from '@app/lib/router/RouterTypes';
 import { appRouteTree, connectionCallbackRoute, premiumCallbackRoute } from '@app/router/routes/AppRoutes';
-import { authRouteTree } from '@app/router/routes/AuthRoutes';
+import { authRouteTree, changelogRoute } from '@app/router/routes/AuthRoutes';
 import {
 	channeFallbackRoute,
 	channelsAtMeFallbackRoute,
@@ -39,6 +39,7 @@ const routeTree = rootRoute.addChildren([
 	notFoundRoute,
 	premiumCallbackRoute,
 	connectionCallbackRoute,
+	changelogRoute,
 	authRouteTree,
 	appRouteTree,
 ]);

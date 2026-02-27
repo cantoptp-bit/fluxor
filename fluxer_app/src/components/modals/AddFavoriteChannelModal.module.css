@@ -56,8 +56,6 @@
 .sidebarLabel {
 	font-size: 10px;
 	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
 	color: var(--text-tertiary);
 	padding: 0 8px;
 	text-align: center;

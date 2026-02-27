@@ -22,6 +22,7 @@ import * as InviteActionCreators from '@app/actions/InviteActionCreators';
 import * as ThemeActionCreators from '@app/actions/ThemeActionCreators';
 import {AuthLayout} from '@app/components/layout/AuthLayout';
 import AuthorizeIPPage from '@app/components/pages/AuthorizeIPPage';
+import ChangelogPage from '@app/components/pages/ChangelogPage';
 import EmailRevertPage from '@app/components/pages/EmailRevertPage';
 import ForgotPasswordPage from '@app/components/pages/ForgotPasswordPage';
 import GiftLoginPage from '@app/components/pages/GiftLoginPage';
@@ -293,6 +294,13 @@ const reportRoute = createRoute({
 	component: () => <ReportPage />,
 });
 
+const changelogRoute = createRoute({
+	getParentRoute: () => rootRoute,
+	id: 'changelog',
+	path: Routes.CHANGELOG,
+	component: () => <ChangelogPage />,
+});
+
 const themeRegisterRoute = createRoute({
 	getParentRoute: () => authLayoutRoute,
 	id: 'themeRegister',
@@ -342,3 +350,5 @@ export const authRouteTree = authLayoutRoute.addChildren([
 	reportRoute,
 	...(RuntimeConfigStore.isSelfHosted() ? [] : [giftRegisterRoute, giftLoginRoute]),
 ]);
+
+export {changelogRoute};

@@ -1,8 +1,8 @@
 ## Welcome to Fluxer
 
-These terms of service ("Terms") constitute a legally binding contract between you and Fluxer Platform AB (Swedish organization number: 559537-3993). We are based in Stockholm County, Sweden, and we operate the Fluxer chat platform and related services. Throughout these Terms, references to "Fluxer", "we", "us" or "our" refer to Fluxer Platform AB and our Services.
+These terms of service ("Terms") constitute a legally binding agreement between you and the operator of this Fluxer instance ("Operator"). The Operator runs this instance of the Fluxer chat platform and related services using the open-source Fluxer software. Throughout these Terms, references to "Fluxer", "we", "us" or "our" refer to the Operator and our Services.
 
-By creating an account or using Fluxer in any way, you agree to be bound by these Terms, our [Privacy Policy](/privacy), and our [Community Guidelines](/guidelines). If you do not agree to these Terms, you must not use Fluxer.
+By creating an account or using this Fluxer instance in any way, you agree to be bound by these Terms, our [Privacy Policy](/privacy), and our [Community Guidelines](/guidelines). If you do not agree to these Terms, you must not use Fluxer.
 
 If there is any conflict between these Terms and any applicable local mandatory law, the mandatory law will prevail.
 
@@ -10,12 +10,12 @@ If there is any conflict between these Terms and any applicable local mandatory 
 
 For the purposes of these Terms:
 
-- **"Services"** means the Fluxer applications (web, mobile, desktop), HTTP and WebSocket APIs, related websites and domains, and any other products, software, features, or services provided by Fluxer.
+- **"Services"** means this Fluxer instance and its applications (web, mobile, desktop), HTTP and WebSocket APIs, related websites and domains, and any other products, software, features, or services provided through this instance.
 - **"User Content"** means any data, text, messages, media, files, communities, reactions, or metadata you or other users submit, upload, transmit, store, or display on or through the Services.
 - **"Plutonium"** means Fluxer's optional paid subscription offering that provides enhanced features and benefits.
 - **"Community"** means a server, space, or similar environment created or administered on Fluxer where users can communicate or share content.
 - **"Community Owners"** means users who create, own, or administer Communities and who are responsible for setting rules (subject to these Terms and our Community Guidelines) and moderating those Communities.
-- **"Account"** means a user account registered with Fluxer that is associated with a unique identifier and, typically, an email address.
+- **"Account"** means a user account registered with this Fluxer instance that is associated with a unique identifier and, typically, an email address.
 - **"Privacy Policy"** means our [Privacy Policy](/privacy), which explains how we collect, use, and protect personal data.
 - **"Community Guidelines"** means our [Community Guidelines](/guidelines), which govern acceptable behavior and content on Fluxer.
 
@@ -120,7 +120,7 @@ You are responsible for ensuring that you have all necessary rights, licenses, a
 
 To operate, secure, and improve the Services, you grant Fluxer a limited license to your User Content.
 
-Specifically, by submitting, uploading, or otherwise making User Content available on or through the Services, you grant Fluxer a worldwide, non-exclusive, royalty-free, transferable, and sublicensable license to:
+Specifically, by submitting, uploading, or otherwise making User Content available on or through the Services, you grant us a worldwide, non-exclusive, royalty-free, transferable, and sublicensable license to:
 
 - host, cache, store, reproduce, and display your User Content;
 - use your User Content to operate, maintain, secure, and provide the Services;
@@ -145,9 +145,9 @@ In particular:
 
 - Deleted content may persist in backup systems and certain logs for a limited period before it is fully removed.
 - Cached files on our content delivery networks (CDNs) may require additional time to clear from all global locations.
-- Attachments may only remain available for a limited time and may expire based on factors such as file size and age. Items you save to Saved Media are treated differently and are not subject to the same expiry rules as regular attachments. For the most up-to-date details on how attachment availability and expiry work, see [the help article on attachment expiry](/help/attachment-expiry).
+- Attachments may only remain available for a limited time and may expire based on factors such as file size and age.
 
-If you plan to delete messages or your Account, download any attachments or other content you wish to keep before deletion or expiry. For information about exporting your data, see [the help article on exporting your account data](/help/data-export).
+If you plan to delete messages or your Account, download any attachments or other content you wish to keep before deletion or expiry.
 
 We may retain certain information even after you delete content or close your Account where we have a legitimate business need or legal obligation to do so, such as for security, fraud prevention, or compliance with legal obligations. Such retained data is handled in accordance with our [Privacy Policy](/privacy).
 
@@ -157,14 +157,14 @@ We use automated systems and, where required, human review to help keep the Serv
 
 In particular:
 
-- We scan user-uploaded media (such as avatars, emojis, stickers, and attachments) to help detect and prevent child sexual abuse material (CSAM) and to comply with our legal obligations. We use the Arachnid Shield API, operated by the Canadian Centre for Child Protection (C3P), which checks uploaded media against databases of known CSAM maintained by child safety organizations worldwide. This process does not use AI or content analysis – it only matches against media that has already been identified as CSAM by law enforcement or child safety organizations. Scanning happens in real time during upload – when prohibited content is detected, the upload is immediately rejected and the content is not delivered to any user. Where required or permitted by law, we preserve the matched media and related records for reporting, legal compliance, and evidence preservation. We take appropriate action, which may include reporting to relevant authorities and terminating Accounts. For more details, see Section 5 of our [Privacy Policy](/privacy).
+- We may scan user-uploaded media (such as avatars, emojis, stickers, and attachments) to help detect and prevent child sexual abuse material (CSAM) and to comply with our legal obligations. Where prohibited content is detected, the upload may be immediately rejected. Where required or permitted by law, we may preserve matched media and related records for reporting, legal compliance, and evidence preservation. We take appropriate action, which may include reporting to relevant authorities and terminating Accounts.
 - We may also use automated tools and signals to detect spam, malware, and other harmful or abusive content or behavior, as described in our [Privacy Policy](/privacy) and our [Community Guidelines](/guidelines).
 
 Our safety and moderation systems are designed to protect both users and the integrity of the platform. However, no system is perfect, and we cannot guarantee that all harmful content or behaviors will be identified or prevented.
 
 ### 3.5 Copyright and Intellectual Property
 
-If you believe that content on Fluxer infringes your copyrights, please notify us at dmca@fluxer.app with the following information:
+If you believe that content on Fluxer infringes your copyrights, please notify us at support@fluxer.app with the following information:
 
 - your full name and contact details;
 - a description of the copyrighted work you claim has been infringed;
@@ -183,9 +183,8 @@ We take your privacy seriously. Our [Privacy Policy](/privacy) explains in detai
 In summary:
 
 - We do not sell, rent, or trade your personal data.
-- The Services are not end-to-end encrypted. However, we use strong encryption for data in transit (for example, Transport Layer Security) and for data at rest.
+- The Services are not end-to-end encrypted by default. However, we use strong encryption for data in transit (for example, Transport Layer Security) and for data at rest.
 - We aim to collect only the minimum data necessary to operate, secure, and improve the Services.
-- Your data is primarily stored in data centers in the United States and the European Union/EEA, and certain user-generated content may be cached on content delivery networks with edge locations worldwide, as described in our [Privacy Policy](/privacy).
 - We may geolocate your IP address for security features, regional compliance, fraud prevention, and to determine eligibility for the Services.
 - You can export, manage, and delete your data through your privacy dashboard and by using the tools described in our [Privacy Policy](/privacy).
 - Depending on where you live, you may have rights such as access, rectification, deletion, data portability, objection, and restriction of processing.
@@ -229,9 +228,9 @@ By providing a payment method to Fluxer, you:
 
 - authorize us to charge your payment method for any Services you purchase, including recurring subscription fees where applicable;
 - confirm that you have the legal right and authority to use that payment method;
-- authorize our payment processor (currently Stripe) to store your payment information securely for current and future transactions, and authorize us to receive and store limited billing information (such as billing country, partial card details, and payment status) necessary to manage your purchases;
+- authorize our payment processor to store your payment information securely for current and future transactions, and authorize us to receive and store limited billing information (such as billing country, partial card details, and payment status) necessary to manage your purchases;
 - authorize us to retry failed payments or charge backup payment methods if you have added them to your Account; and
-- agree that we may share necessary payment information with Stripe and other payment providers solely to process transactions, prevent fraud, and comply with legal obligations.
+- agree that we may share necessary payment information with payment providers solely to process transactions, prevent fraud, and comply with legal obligations.
 
 You are responsible for all applicable taxes, fees, and charges related to your purchases, except where we are required by law to collect and remit them.
 
@@ -289,7 +288,7 @@ If a payment fails to process:
 - we will automatically attempt to retry charging your payment method a reasonable number of times;
 - we may charge any backup payment methods you have added to your Account;
 - we may suspend or downgrade your access to premium features until payment is successfully processed; and
-- you remain responsible for any unpaid amounts owed to Fluxer.
+- you remain responsible for any unpaid amounts owed to us.
 
 We are not responsible for any fees, charges, penalties, or interest imposed by your bank, payment provider, or financial institution in connection with failed payments or chargebacks.
 
@@ -297,7 +296,7 @@ We are not responsible for any fees, charges, penalties, or interest imposed by 
 
 If you believe there is an error or unauthorized charge on your Account, we encourage you to contact us first at support@fluxer.app so we can investigate and attempt to resolve the issue quickly.
 
-If you initiate a chargeback or payment dispute with your bank or payment provider for a payment made to Fluxer, we may:
+If you initiate a chargeback or payment dispute with your bank or payment provider for a payment made to us, we may:
 
 - temporarily suspend or restrict your access to paid features while the dispute is investigated; and
 - limit your ability to make future purchases if we reasonably believe the dispute is unfounded or forms part of a pattern of abusive behavior.
@@ -306,15 +305,13 @@ If a chargeback is resolved against us and we have a reasonable basis to believe
 
 Chargebacks can cause significant costs and processing burdens, including penalty fees and increased fraud scrutiny from payment providers. Please contact us before initiating a chargeback whenever possible so we can try to resolve the issue.
 
-Stripe or your payment provider may also contact you directly with receipts, alerts, or dispute notices.
-
 ## 7. Third-Party Services
 
 Fluxer integrates with and relies upon various third-party services to provide the Services, including hosting and infrastructure providers, payment processors, content delivery networks, security services, and communication platforms.
 
 For a description of the categories of third-party services we use and how they handle data, please see our [Privacy Policy](/privacy).
 
-These third-party services have their own independent terms of service and privacy policies. Your use of such services may be subject to those additional terms. Fluxer is not responsible for the content, availability, policies, or practices of third-party services.
+These third-party services have their own independent terms of service and privacy policies. Your use of such services may be subject to those additional terms. We are not responsible for the content, availability, policies, or practices of third-party services.
 
 Some integrations involve you interacting directly with third-party content (for example, playing an embedded YouTube video). In those cases, the third party may receive information directly from your device and process it as an independent controller under its own terms and privacy policy.
 
@@ -324,7 +321,7 @@ Where required by law or by the terms of our agreements with providers that proc
 
 ### 8.1 Voluntary Account Deletion
 
-You may delete your Fluxer Account at any time through your Account settings. While we will be sorry to see you go, we respect your choice and will process your deletion request in accordance with our data retention practices and applicable law. For details about the deletion process, including any grace period during which you can cancel deletion, see [the guide to deleting or disabling an account](/help/delete-account).
+You may delete your Fluxer Account at any time through your Account settings. We respect your choice and will process your deletion request in accordance with our data retention practices and applicable law.
 
 ### 8.2 Suspension and Termination by Fluxer
 
@@ -340,7 +337,7 @@ We will typically provide advance warning before suspending or terminating an Ac
 
 If we terminate your Account for cause, you may lose access to your User Content and any associated data, subject to applicable law and our data retention practices.
 
-If you believe we have made a mistake in suspending or terminating your Account, you may appeal in accordance with our [Community Guidelines](/guidelines), for example by emailing appeals@fluxer.app from the email address associated with your Account.
+If you believe we have made a mistake in suspending or terminating your Account, you may appeal by emailing support@fluxer.app from the email address associated with your Account.
 
 ### 8.3 Account Inactivity and Deletion
 
@@ -348,14 +345,11 @@ To protect user privacy and manage resources, we may delete inactive Accounts in
 
 - When an Account has been inactive (no sign-ins or other meaningful activity) for an extended period, it may be scheduled for deletion.
 - Where feasible, we will provide advance notice to the registered email address of the Account before deletion due to inactivity.
-- We document the current criteria for inactivity, any applicable notice periods, and account deletion timelines in [the guide to deleting or disabling an account](/help/delete-account) and [the article about requesting data deletion](/help/data-deletion).
 
 When an Account is deleted:
 
-- messages and content you posted in Communities or direct messages may remain visible to other users, unless you delete them first (for example, via your Privacy Dashboard or other tools we provide); and
+- messages and content you posted in Communities or direct messages may remain visible to other users, unless you delete them first; and
 - you may no longer be able to access your User Content, unless you exported or downloaded it beforehand.
-
-You can remove messages and other content through your Privacy Dashboard or by contacting privacy@fluxer.app before deletion, subject to technical and legal limitations.
 
 ## 9. Disclaimers, Limitation of Liability, and Indemnification
 
@@ -363,7 +357,7 @@ You can remove messages and other content through your Privacy Dashboard or by c
 
 We work diligently to maintain Fluxer as a reliable and stable platform, but the Services are provided on an "as is" and "as available" basis.
 
-To the fullest extent permitted by law, Fluxer and its affiliates make no express or implied warranties or representations about the Services, including but not limited to warranties of merchantability, fitness for a particular purpose, non-infringement, or that the Services will be uninterrupted, secure, or error-free.
+To the fullest extent permitted by law, we make no express or implied warranties or representations about the Services, including but not limited to warranties of merchantability, fitness for a particular purpose, non-infringement, or that the Services will be uninterrupted, secure, or error-free.
 
 We cannot guarantee:
 
@@ -373,7 +367,7 @@ We cannot guarantee:
 
 ### 9.2 Limitation of Liability
 
-To the maximum extent permitted by applicable law, Fluxer and its affiliates will not be liable for:
+To the maximum extent permitted by applicable law, we will not be liable for:
 
 - any indirect, incidental, consequential, special, or punitive damages; or
 - any loss of profits, revenues, data, goodwill, or other intangible losses;
@@ -382,8 +376,8 @@ arising out of or in connection with your use of, or inability to use, the Servi
 
 To the extent we are liable under applicable law, our total aggregate liability for all claims arising out of or relating to the Services or these Terms will be limited to the greater of:
 
-- EUR 100; or
-- the total amount you have paid to Fluxer for the Services during the twelve (12) months immediately preceding the event giving rise to the claim.
+- USD 100; or
+- the total amount you have paid to us for the Services during the twelve (12) months immediately preceding the event giving rise to the claim.
 
 Nothing in these Terms limits or excludes:
 
@@ -394,7 +388,7 @@ If you are a consumer residing in the EU/EEA, the United Kingdom, or another jur
 
 ### 9.3 Indemnification
 
-To the extent permitted by applicable law, you agree to defend, indemnify, and hold harmless Fluxer, its officers, directors, employees, and agents from and against any claims, demands, actions, damages, losses, and expenses (including reasonable legal fees) arising out of or related to:
+To the extent permitted by applicable law, you agree to defend, indemnify, and hold harmless the Operator, its officers, directors, employees, and agents from and against any claims, demands, actions, damages, losses, and expenses (including reasonable legal fees) arising out of or related to:
 
 - your violation of these Terms or our [Community Guidelines](/guidelines);
 - your violation of any applicable law or regulation; or
@@ -407,8 +401,9 @@ This indemnity obligation does not apply to the extent that a claim arises due t
 We want to resolve disputes fairly and efficiently.
 
 - **Informal resolution first:** If you have a concern or dispute with us, please contact support@fluxer.app first. We will try to work with you in good faith to resolve the issue informally.
-- **Governing law and courts:** Unless otherwise required by mandatory local law, these Terms and any disputes arising out of or relating to them or the Services are governed by Swedish law, without regard to its conflict-of-law rules. Any dispute, controversy, or claim arising out of or in connection with these Terms or the Services will be submitted to the courts of Stockholm, Sweden, which will have exclusive jurisdiction, subject to the small-claims provision below.
-- **Small claims:** Either party may bring an individual claim in a competent small-claims court in a jurisdiction where venue is proper, instead of in the courts of Stockholm, Sweden.
+- **Governing law:** Unless otherwise required by mandatory local law, these Terms and any disputes arising out of or relating to them or the Services are governed by the laws of the jurisdiction in which the Operator is located, without regard to conflict-of-law rules.
+- **Jurisdiction:** Any dispute, controversy, or claim arising out of or in connection with these Terms or the Services will be submitted to the competent courts of the jurisdiction in which the Operator is located, subject to the provisions below.
+- **Small claims:** Either party may bring an individual claim in a competent small-claims court in a jurisdiction where venue is proper.
 - **Consumers in the EU/EEA and other regions:** If you are a consumer residing in the EU, EEA, or another jurisdiction that grants you mandatory rights to bring claims in the courts of your country of residence, nothing in these Terms limits those rights.
 - **Class and representative actions:** To the maximum extent permitted by applicable law, any claims must be brought on an individual basis, and not as a plaintiff or class member in any class, collective, or representative action. If a waiver of class or representative actions is not enforceable for a particular claim, that claim may proceed as required by law in a court with proper jurisdiction, and the class or representative aspects of that claim will be handled as that court determines.
 
@@ -423,39 +418,34 @@ If we make significant changes to these Terms, we will:
 - provide at least 30 days' advance notice, where reasonably practicable, via email, in-app notifications, or by posting a notice on our website; and
 - make the updated Terms available, indicating the date on which they take effect.
 
-We maintain a changelog or archive of prior versions of these Terms for reference.
-
 Your continued use of the Services after the updated Terms take effect constitutes your acceptance of the changes. If you do not agree to the updated Terms, you must stop using the Services and, if you wish, delete your Account before the changes take effect.
 
 ## 12. Account Communications and Verification
 
-All account-related communications with Fluxer should be sent from the email address associated with your Account. We use this as our primary method of verifying your identity and ensuring we are communicating with the actual Account holder.
+All account-related communications should be sent from the email address associated with your Account. We use this as our primary method of verifying your identity and ensuring we are communicating with the actual Account holder.
 
 For security reasons, we normally only provide account support, share sensitive information, or make changes to your Account when you contact us from that email address. If you lose access to your registered email address, we may need additional information to verify your identity and might not always be able to recover or modify your Account.
 
-Fluxer will never ask you to provide your password, full payment card number, or other highly sensitive security information via email. All official Fluxer emails and communications originate from email addresses ending in `@fluxer.app` or `@m.fluxer.app`. Be cautious of phishing attempts using similar-looking domain names or requesting sensitive information.
+We will never ask you to provide your password, full payment card number, or other highly sensitive security information via email. Be cautious of phishing attempts using similar-looking domain names or requesting sensitive information.
 
 If you receive a suspicious message claiming to be from Fluxer, please do not click any links or provide any information. Instead, contact us directly at support@fluxer.app.
 
-## 13. Contact Information
+## 13. Open-Source Software
+
+Fluxer is open-source software licensed under the GNU Affero General Public License (AGPL) version 3 or later. The source code is publicly available and may be freely used, modified, and distributed in accordance with the terms of that license.
+
+These Terms of Service govern your use of this particular Fluxer instance as a user of the platform. They are separate from and do not modify the open-source license that applies to the Fluxer software itself. Your rights under the AGPL are preserved regardless of these Terms.
+
+## 14. Contact Information
 
 If you have questions, concerns, or need assistance with the Services or these Terms, you can contact us at:
 
-- **Support email:** support@fluxer.app (for account-related matters, please contact us from the email address associated with your Account where possible)
-- **Privacy email:** privacy@fluxer.app (for privacy and data protection requests)
-- **Website:** [https://fluxer.app](https://fluxer.app)
+- **Support email:** support@fluxer.app
+- **Privacy email:** privacy@fluxer.app
 
-### Postal Address
+For account-related matters, please contact us from the email address associated with your Account where possible.
 
-Fluxer Platform AB
-Norra Kronans Gata 430
-136 76 Brandbergen
-Stockholm County, Sweden
-Organization number: 559537-3993
-
-For additional contact details (including press, security, and legal requests), see our company information page or the [Privacy Policy](/privacy).
-
-## 14. Export Controls and Sanctions
+## 15. Export Controls and Sanctions
 
 You must comply with all applicable export control, sanctions, and related laws and regulations when using the Services.
 

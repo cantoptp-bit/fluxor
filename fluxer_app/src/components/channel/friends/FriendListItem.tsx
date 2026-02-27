@@ -31,6 +31,7 @@ import {CustomStatusDisplay} from '@app/components/common/custom_status_display/
 import {ConfirmModal} from '@app/components/modals/ConfirmModal';
 import {StartVideoCallMenuItem, StartVoiceCallMenuItem} from '@app/components/uikit/context_menu/items/CallMenuItems';
 import {RemoveFriendMenuItem} from '@app/components/uikit/context_menu/items/RelationshipMenuItems';
+import {TempChatUserMenuItem} from '@app/components/uikit/context_menu/items/TempChatUserMenuItem';
 import {MenuGroup} from '@app/components/uikit/context_menu/MenuGroup';
 import {UserContextMenu} from '@app/components/uikit/context_menu/UserContextMenu';
 import FocusRing from '@app/components/uikit/focus_ring/FocusRing';
@@ -208,6 +209,7 @@ export const FriendListItem: React.FC<FriendListItemProps> = observer((props) =>
 					<MenuGroup>
 						<StartVoiceCallMenuItem user={user} onClose={onClose} />
 						<StartVideoCallMenuItem user={user} onClose={onClose} />
+						<TempChatUserMenuItem user={user} onClose={onClose} />
 					</MenuGroup>
 					<MenuGroup>
 						<RemoveFriendMenuItem user={user} onClose={onClose} />

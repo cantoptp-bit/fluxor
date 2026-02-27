@@ -449,24 +449,43 @@
 
 .fluxerButtonIcon {
 	composes: guildIcon;
-	background-color: var(--guilds-layout-item-bg, var(--guild-list-foreground));
+	background: linear-gradient(
+		145deg,
+		color-mix(in srgb, var(--guilds-layout-item-bg, var(--guild-list-foreground)) 90%, white),
+		color-mix(in srgb, var(--guilds-layout-item-bg, var(--guild-list-foreground)) 90%, black)
+	);
 	color: var(--text-primary);
-	transition-property: background-color, color, border-radius;
+	transition-property: background, color, border-radius, box-shadow, transform;
 	transition-duration: 70ms;
 	transition-timing-function: ease-out;
+	box-shadow:
+		0 3px 6px rgba(0, 0, 0, 0.25),
+		0 1px 2px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.12);
+	border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .fluxerButtonIconSelected {
-	background-color: var(--brand-primary);
+	background: linear-gradient(145deg, color-mix(in srgb, var(--brand-primary) 92%, white), var(--brand-primary));
 	color: white;
+	box-shadow:
+		0 3px 6px rgba(0, 0, 0, 0.3),
+		0 1px 2px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	border-color: rgba(0, 0, 0, 0.15);
 }
 
 @media (hover: hover) and (pointer: fine) {
 	.fluxerButton:hover .fluxerButtonIcon,
 	.fluxerButtonIcon:hover,
 	.fluxerButton.contextMenuHover .fluxerButtonIcon {
-		background-color: var(--brand-primary);
+		background: linear-gradient(145deg, color-mix(in srgb, var(--brand-primary) 92%, white), var(--brand-primary));
 		color: white;
+		box-shadow:
+			0 4px 8px rgba(0, 0, 0, 0.3),
+			0 2px 4px rgba(0, 0, 0, 0.2),
+			inset 0 1px 0 rgba(255, 255, 255, 0.2);
+		border-color: rgba(0, 0, 0, 0.15);
 	}
 }
 

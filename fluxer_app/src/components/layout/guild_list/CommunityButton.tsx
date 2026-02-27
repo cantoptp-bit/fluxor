@@ -43,7 +43,8 @@ export const CommunityButton = observer(
 		const iconRef = useRef<HTMLDivElement | null>(null);
 		const mergedRef = useMergeRefs([hoverRef, iconRef]);
 		const isClickable = typeof onToggle === 'function';
-		const tooltipText = itemCount > 0 ? t`Communities (${itemCount})` : t`Communities`;
+		const tooltipText =
+			itemCount > 0 ? t`Communities · ${itemCount}` : t`Communities`;
 
 		const wrapperClassName = clsx(
 			styles.fluxerButton,
@@ -99,7 +100,7 @@ export const CommunityButton = observer(
 						ref={mergedRef}
 						type="button"
 						className={wrapperClassName}
-						aria-label={t`Communities`}
+						aria-label={itemCount > 0 ? t`Communities, ${itemCount}` : t`Communities`}
 						aria-expanded={expanded}
 						data-guild-list-focus-item="true"
 						onClick={(e) => {

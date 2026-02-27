@@ -59,7 +59,31 @@ export async function getOrCreateKeyPair(
 				};
 			}
 		} catch {
-			// Invalid or outdated stored key; regenerate below.
+			// Invalid or outdated stored key; try provisioned key or regenerate below.
+		}
+	}
+
+	// Dev only: if server has our public key but we have no local key, use server-provisioned private key (testing bypass)
+	const serverKey = await TempChatApi.getMyE2EKey();
+	if (serverKey) {
+		const provisionedPrivate = await TempChatApi.getMyE2EPrivateKey();
+		if (provisionedPrivate) {
+			try {
+				const privateKey = await importPrivateKeyFromBase64(provisionedPrivate);
+				const publicKey = await importPublicKey(serverKey);
+				const keyPair: X25519KeyPair = {
+					privateKey,
+					publicKey,
+					publicKeyBase64: serverKey,
+				};
+				// Persist so we don't need to fetch again
+				if (typeof sessionStorage !== 'undefined') {
+					sessionStorage.setItem(storageKey, provisionedPrivate);
+				}
+				return keyPair;
+			} catch {
+				// Fall through to generate new key
+			}
 		}
 	}
 

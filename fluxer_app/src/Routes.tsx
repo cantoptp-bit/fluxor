@@ -29,6 +29,7 @@ export const Routes = {
 	AUTHORIZE_IP: '/authorize-ip',
 	EMAIL_REVERT: '/wasntme',
 	PENDING: '/pending',
+	CHANGELOG: '/changelog',
 	OAUTH_AUTHORIZE: '/oauth2/authorize',
 
 	INVITE_REGISTER: '/invite/:code',

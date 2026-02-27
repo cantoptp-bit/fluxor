@@ -192,6 +192,12 @@ if (!proxyPortReady) {
 }
 console.log('Proxy is up at http://localhost:48763. Starting app (first compile may take 1–2 min)...\n');
 
+try {
+  execSync('pnpm --filter @fluxer/marketing run build:css', { cwd: ROOT, stdio: 'pipe' });
+} catch (_) {
+  console.warn('Marketing CSS build failed; /terms and other pages may render without styles.');
+}
+
 const appProcess = run('fluxer_app', 'pnpm', ['--filter', 'fluxer_app', 'dev'], {
   env: { ...env, FLUXER_APP_DEV_PORT: '49427' },
 });

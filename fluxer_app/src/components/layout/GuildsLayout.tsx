@@ -67,7 +67,7 @@ import * as SnowflakeUtils from '@fluxer/snowflake/src/SnowflakeUtils';
 import {useLingui} from '@lingui/react/macro';
 import {ExclamationMarkIcon} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
-import {motion} from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
 import {observer} from 'mobx-react-lite';
 import type React from 'react';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
@@ -239,8 +239,8 @@ const GuildList = observer(() => {
 	);
 	const getGuildScrollContainer = useCallback(() => scrollRef.current?.getScrollerNode() ?? null, []);
 	const [visibleDMChannels, setVisibleDMChannels] = useState(unreadDMChannels);
-	const [serversExpanded, setServersExpanded] = useState(true);
-	const [communitiesExpanded, setCommunitiesExpanded] = useState(true);
+	const [serversExpanded, setServersExpanded] = useState(false);
+	const [communitiesExpanded, setCommunitiesExpanded] = useState(false);
 	const pinnedCallChannel =
 		MediaEngineStore.connected && MediaEngineStore.channelId
 			? (() => {
@@ -256,11 +256,14 @@ const GuildList = observer(() => {
 		? visibleDMChannels.filter((channel) => channel.id !== pinnedCallChannel.id)
 		: visibleDMChannels;
 	const hasVisibleDMChannels = filteredDMChannels.length > 0 || Boolean(pinnedCallChannel);
-	const shouldShowTopDivider = (guilds.length > 0 || hasUnavailableGuilds) && !hasVisibleDMChannels;
-	const shouldShowEmptyStateDivider =
-		!hasVisibleDMChannels && !hasUnavailableGuilds && guilds.length === 0;
 	const hasServerItems = serverItems.length > 0;
 	const hasCommunityItems = communityItems.length > 0;
+	const shouldShowTopDivider =
+		(guilds.length > 0 || hasUnavailableGuilds) &&
+		!hasVisibleDMChannels &&
+		!(hasServerItems || hasCommunityItems);
+	const shouldShowEmptyStateDivider =
+		!hasVisibleDMChannels && !hasUnavailableGuilds && guilds.length === 0;
 	const removalTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 	const guildListNavigationRef = useRovingFocusList<HTMLDivElement>({
 		focusableSelector: GUILD_LIST_FOCUSABLE_SELECTOR,
@@ -525,144 +528,169 @@ const GuildList = observer(() => {
 						<FluxerButton />
 						<FavoritesButton />
 
+						{/* Servers and Community headers first; expanded content renders below the line */}
 						<div className={styles.guildListSection}>
 							<ServersButton
 								expanded={serversExpanded}
 								onToggle={() => setServersExpanded((e) => !e)}
 								itemCount={serverItems.length}
 							/>
-							{serversExpanded && hasServerItems && (
-								<div className={styles.guildListSectionContent}>
-									<div className={styles.guildListItems}>
-										{serverItems.map((item, index) => {
-									const selectedGuildIndex = guilds.findIndex((g) =>
-										isSelectedPath(location.pathname, Routes.guildChannel(g.id)),
-									);
-									if (item.type === 'folder') {
-										const isFolderSelected = item.guilds.some((guild) =>
-											isSelectedPath(location.pathname, Routes.guildChannel(guild.id)),
-										);
-										return (
-											<motion.div
-												className={styles.guildListItemSlot}
-												key={getOrganizedItemKey(item)}
-												initial={{ opacity: 0, y: 6 }}
-												animate={{ opacity: 1, y: 0 }}
-												transition={{
-													delay: index * 0.04,
-													duration: 0.22,
-													ease: [0.25, 0.1, 0.25, 1],
-												}}
-											>
-												<GuildFolderItem
-													folder={item.folder}
-													guilds={item.guilds}
-													isSelected={isFolderSelected}
-													onGuildDrop={undefined}
-													onDragStateChange={undefined}
-													disableDrag={true}
-												/>
-											</motion.div>
-										);
-									}
-									return (
-										<motion.div
-											className={styles.guildListItemSlot}
-											key={item.guild.id}
-											initial={{ opacity: 0, y: 6 }}
-											animate={{ opacity: 1, y: 0 }}
-											transition={{
-												delay: index * 0.04,
-												duration: 0.22,
-												ease: [0.25, 0.1, 0.25, 1],
-											}}
-										>
-											<GuildListItem
-												isSortingList={false}
-												guild={item.guild}
-												isSelected={isSelectedPath(location.pathname, Routes.guildChannel(item.guild.id))}
-												guildIndex={index}
-												selectedGuildIndex={selectedGuildIndex}
-												onGuildDrop={handleGuildDrop}
-												onDragStateChange={handleDragStateChange}
-												disableDrag={true}
-											/>
-										</motion.div>
-									);
-								})}
-									</div>
-								</div>
-							)}
-						</div>
-
-						<div className={styles.guildListSection}>
 							<CommunityButton
 								expanded={communitiesExpanded}
 								onToggle={() => setCommunitiesExpanded((e) => !e)}
 								itemCount={communityItems.length}
 							/>
-							{communitiesExpanded && hasCommunityItems && (
-								<div className={styles.guildListSectionContent}>
-									<div className={styles.guildListItems}>
-										{communityItems.map((item, index) => {
-									const selectedGuildIndex = guilds.findIndex((g) =>
-										isSelectedPath(location.pathname, Routes.guildChannel(g.id)),
-									);
-									if (item.type === 'folder') {
-										const isFolderSelected = item.guilds.some((guild) =>
-											isSelectedPath(location.pathname, Routes.guildChannel(guild.id)),
-										);
-										return (
-											<motion.div
-												className={styles.guildListItemSlot}
-												key={getOrganizedItemKey(item)}
-												initial={{ opacity: 0, y: 6 }}
-												animate={{ opacity: 1, y: 0 }}
-												transition={{
-													delay: index * 0.04,
-													duration: 0.22,
-													ease: [0.25, 0.1, 0.25, 1],
-												}}
-											>
-												<GuildFolderItem
-													folder={item.folder}
-													guilds={item.guilds}
-													isSelected={isFolderSelected}
-													onGuildDrop={undefined}
-													onDragStateChange={undefined}
-													disableDrag={true}
-												/>
-											</motion.div>
-										);
-									}
-									return (
-										<motion.div
-											className={styles.guildListItemSlot}
-											key={item.guild.id}
-											initial={{ opacity: 0, y: 6 }}
-											animate={{ opacity: 1, y: 0 }}
-											transition={{
-												delay: index * 0.04,
-												duration: 0.22,
-												ease: [0.25, 0.1, 0.25, 1],
-											}}
-										>
-											<GuildListItem
-												isSortingList={false}
-												guild={item.guild}
-												isSelected={isSelectedPath(location.pathname, Routes.guildChannel(item.guild.id))}
-												guildIndex={index}
-												selectedGuildIndex={selectedGuildIndex}
-												onGuildDrop={handleGuildDrop}
-												onDragStateChange={handleDragStateChange}
-												disableDrag={true}
-											/>
-										</motion.div>
-									);
-								})}
-									</div>
-								</div>
-							)}
+						</div>
+
+						{/* Line stays visible; servers and communities expand under it */}
+						{(hasServerItems || hasCommunityItems) && <div className={styles.guildDivider} />}
+
+						{/* Expanded content: servers list then communities list, both under the line */}
+						<div className={styles.guildListSection}>
+							<AnimatePresence initial={false}>
+								{serversExpanded && hasServerItems && (
+									<motion.div
+										key="servers-content"
+										className={styles.guildListSectionContent}
+										initial={{ height: 0, opacity: 0 }}
+										animate={{ height: 'auto', opacity: 1 }}
+										exit={{ height: 0, opacity: 0 }}
+										transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+										style={{ overflow: 'hidden' }}
+									>
+										<div className={styles.guildListItems}>
+											{serverItems.map((item, index) => {
+												const selectedGuildIndex = guilds.findIndex((g) =>
+													isSelectedPath(location.pathname, Routes.guildChannel(g.id)),
+												);
+												if (item.type === 'folder') {
+													const isFolderSelected = item.guilds.some((guild) =>
+														isSelectedPath(location.pathname, Routes.guildChannel(guild.id)),
+													);
+													return (
+														<motion.div
+															className={styles.guildListItemSlot}
+															key={getOrganizedItemKey(item)}
+															initial={{ opacity: 0, y: 6 }}
+															animate={{ opacity: 1, y: 0 }}
+															transition={{
+																delay: index * 0.04,
+																duration: 0.22,
+																ease: [0.25, 0.1, 0.25, 1],
+															}}
+														>
+															<GuildFolderItem
+																folder={item.folder}
+																guilds={item.guilds}
+																isSelected={isFolderSelected}
+																onGuildDrop={undefined}
+																onDragStateChange={undefined}
+																disableDrag={true}
+															/>
+														</motion.div>
+													);
+												}
+												return (
+													<motion.div
+														className={styles.guildListItemSlot}
+														key={item.guild.id}
+														initial={{ opacity: 0, y: 6 }}
+														animate={{ opacity: 1, y: 0 }}
+														transition={{
+															delay: index * 0.04,
+															duration: 0.22,
+															ease: [0.25, 0.1, 0.25, 1],
+														}}
+													>
+														<GuildListItem
+															isSortingList={false}
+															guild={item.guild}
+															isSelected={isSelectedPath(location.pathname, Routes.guildChannel(item.guild.id))}
+															guildIndex={index}
+															selectedGuildIndex={selectedGuildIndex}
+															onGuildDrop={handleGuildDrop}
+															onDragStateChange={handleDragStateChange}
+															disableDrag={true}
+														/>
+													</motion.div>
+												);
+											})}
+										</div>
+									</motion.div>
+								)}
+							</AnimatePresence>
+							<AnimatePresence initial={false}>
+								{communitiesExpanded && hasCommunityItems && (
+									<motion.div
+										key="communities-content"
+										className={styles.guildListSectionContent}
+										initial={{ height: 0, opacity: 0 }}
+										animate={{ height: 'auto', opacity: 1 }}
+										exit={{ height: 0, opacity: 0 }}
+										transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+										style={{ overflow: 'hidden' }}
+									>
+										<div className={styles.guildListItems}>
+											{communityItems.map((item, index) => {
+												const selectedGuildIndex = guilds.findIndex((g) =>
+													isSelectedPath(location.pathname, Routes.guildChannel(g.id)),
+												);
+												if (item.type === 'folder') {
+													const isFolderSelected = item.guilds.some((guild) =>
+														isSelectedPath(location.pathname, Routes.guildChannel(guild.id)),
+													);
+													return (
+														<motion.div
+															className={styles.guildListItemSlot}
+															key={getOrganizedItemKey(item)}
+															initial={{ opacity: 0, y: 6 }}
+															animate={{ opacity: 1, y: 0 }}
+															transition={{
+																delay: index * 0.04,
+																duration: 0.22,
+																ease: [0.25, 0.1, 0.25, 1],
+															}}
+														>
+															<GuildFolderItem
+																folder={item.folder}
+																guilds={item.guilds}
+																isSelected={isFolderSelected}
+																onGuildDrop={undefined}
+																onDragStateChange={undefined}
+																disableDrag={true}
+															/>
+														</motion.div>
+													);
+												}
+												return (
+													<motion.div
+														className={styles.guildListItemSlot}
+														key={item.guild.id}
+														initial={{ opacity: 0, y: 6 }}
+														animate={{ opacity: 1, y: 0 }}
+														transition={{
+															delay: index * 0.04,
+															duration: 0.22,
+															ease: [0.25, 0.1, 0.25, 1],
+														}}
+													>
+														<GuildListItem
+															isSortingList={false}
+															guild={item.guild}
+															isSelected={isSelectedPath(location.pathname, Routes.guildChannel(item.guild.id))}
+															guildIndex={index}
+															selectedGuildIndex={selectedGuildIndex}
+															onGuildDrop={handleGuildDrop}
+															onDragStateChange={handleDragStateChange}
+															disableDrag={true}
+														/>
+													</motion.div>
+												);
+											})}
+										</div>
+									</motion.div>
+								)}
+							</AnimatePresence>
 						</div>
 
 						<div className={styles.dmListSection}>

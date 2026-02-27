@@ -18,8 +18,8 @@
  */
 
 export const APP_PROTOCOL = 'fluxer';
-export const STABLE_APP_URL = 'https://home.auroraplayer.com';
-export const CANARY_APP_URL = 'https://home.auroraplayer.com';
+export const STABLE_APP_URL = 'https://fluxor-rust.vercel.app';
+export const CANARY_APP_URL = 'https://fluxor-rust.vercel.app';
 export const DEFAULT_WINDOW_WIDTH = 1280;
 export const DEFAULT_WINDOW_HEIGHT = 800;
 export const MIN_WINDOW_WIDTH = 800;

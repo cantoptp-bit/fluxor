@@ -20,7 +20,7 @@
 .title {
 	margin-bottom: 2rem;
 	text-align: center;
-	font-size: 1.25rem;
+	font-size: 1.5rem;
 	font-weight: 600;
 	letter-spacing: 0.025em;
 	color: var(--text-primary);
@@ -47,23 +47,31 @@
 	display: flex;
 	flex-direction: column;
 	gap: 1.5rem;
+	width: 100%;
+}
+
+.form > * {
+	width: 100%;
+	box-sizing: border-box;
 }
 
 .formLinks {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+	justify-content: flex-start;
 	gap: 0.25rem;
+	margin-top: -0.25rem;
 }
 
 .link {
 	font-size: 0.875rem;
-	color: var(--text-tertiary);
+	color: #4c8bf5;
 	text-decoration: none;
 	cursor: pointer;
 }
 
 .link:hover {
-	color: var(--text-primary);
+	color: #6ba3f7;
 	text-decoration: underline;
 }
 
@@ -77,10 +85,10 @@
 .primaryButton {
 	width: 100%;
 	padding: 0.75rem 1rem;
-	border-radius: 10px;
+	border-radius: 8px;
 	border: none;
-	background: var(--accent-primary);
-	color: var(--text-on-accent);
+	background: #5865f2;
+	color: #fff;
 	font-weight: 600;
 	font-size: 0.95rem;
 	cursor: pointer;
@@ -93,7 +101,7 @@
 }
 
 .primaryButton:hover:not(:disabled) {
-	background: var(--accent-primary-strong);
+	background: #4752c4;
 }
 
 .ssoSubtitle {
@@ -129,6 +137,16 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
+}
+
+.passkeyActions button {
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	background-color: #3c3c41;
+}
+
+.passkeyActions button:hover:not(:disabled) {
+	border-color: rgba(255, 255, 255, 0.4);
+	background-color: #45454a;
 }
 
 .divider {
@@ -167,13 +185,13 @@
 
 .footerLink {
 	font-size: 0.875rem;
-	color: var(--text-link);
+	color: #4c8bf5;
 	text-decoration: none;
 	cursor: pointer;
 }
 
 .footerLink:hover {
-	color: var(--text-link);
+	color: #6ba3f7;
 	text-decoration: underline;
 }
 

@@ -9,7 +9,11 @@
 	"scripts": {
 		"build": "node scripts/build.mjs",
 		"set-channel": "node scripts/set-build-channel.mjs",
-		"typecheck": "tsgo --noEmit"
+		"typecheck": "tsgo --noEmit",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"pack": "pnpm build && electron-builder --win",
+		"pack:dir": "pnpm build && electron-builder --win --dir"
 	},
 	"build": {
 		"appId": "app.fluxer",
@@ -25,7 +29,8 @@
 		],
 		"asar": true,
 		"win": {
-			"target": "dir"
+			"target": ["portable", "nsis"],
+			"signAndEditExecutable": false
 		}
 	},
 	"dependencies": {
@@ -41,7 +46,8 @@
 		"electron": "40.0.0",
 		"electron-builder": "26.4.0",
 		"electron-builder-squirrel-windows": "26.4.0",
-		"esbuild": "0.27.2"
+		"esbuild": "0.27.2",
+		"vitest": "4.0.18"
 	},
 	"optionalDependencies": {
 		"electron-log": "5.4.3",

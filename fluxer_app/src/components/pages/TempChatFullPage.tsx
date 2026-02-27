@@ -19,6 +19,7 @@
 import * as ModalActionCreators from '@app/actions/ModalActionCreators';
 import {modal} from '@app/actions/ModalActionCreators';
 import * as ToastActionCreators from '@app/actions/ToastActionCreators';
+import {Divider} from '@app/components/channel/Divider';
 import {ConfirmModal} from '@app/components/modals/ConfirmModal';
 import {TempChatSetChatPasswordModal} from '@app/components/modals/TempChatSetChatPasswordModal';
 import {TempChatUnlockModal} from '@app/components/modals/TempChatUnlockModal';
@@ -40,9 +41,11 @@ import {
 	setSentPlaintext,
 	type DecryptedMessage,
 } from '@app/utils/TempChatSentCache';
+import {MESSAGE_GROUP_TIMEOUT} from '@app/utils/MessageGroupingUtils';
 import {useLingui} from '@lingui/react/macro';
+import {PaperPlaneTiltIcon} from '@phosphor-icons/react';
 import {observer} from 'mobx-react-lite';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@app/components/pages/TempChatFullPage.module.css';
 
 /** Legacy id is "lo_hi"; V2 id is numeric (chat_id). Returns other user id from legacy id, or null (use list to resolve). */
@@ -53,6 +56,28 @@ function parseOtherUserIdFromLegacyId(tempChatId: string, currentUserId: string)
 	if (a === currentUserId) return b;
 	if (b === currentUserId) return a;
 	return null;
+}
+
+type ListItem = { type: 'divider'; date: string } | { type: 'message'; message: DecryptedMessage; grouped: boolean };
+
+function buildMessageListWithDividers(messages: Array<DecryptedMessage>): Array<ListItem> {
+	const list: Array<ListItem> = [];
+	let lastDate = '';
+	for (let i = 0; i < messages.length; i++) {
+		const m = messages[i];
+		const createdAt = typeof m.createdAt === 'string' ? new Date(m.createdAt) : m.createdAt;
+		const dateString = DateUtils.getFormattedFullDate(createdAt);
+		if (dateString !== lastDate) {
+			list.push({ type: 'divider', date: dateString });
+			lastDate = dateString;
+		}
+		const prev = messages[i - 1];
+		const prevTime = prev ? (typeof prev.createdAt === 'string' ? new Date(prev.createdAt).getTime() : prev.createdAt.getTime()) : 0;
+		const currTime = createdAt.getTime();
+		const grouped = !!prev && prev.senderId === m.senderId && currTime - prevTime <= MESSAGE_GROUP_TIMEOUT;
+		list.push({ type: 'message', message: m, grouped });
+	}
+	return list;
 }
 
 interface TempChatFullPageProps {
@@ -71,8 +96,12 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 	const [inputValue, setInputValue] = useState('');
 	const [decryptErrors, setDecryptErrors] = useState(0);
 	const [needUnlock, setNeedUnlock] = useState(false);
+	const [recipientKeyAvailable, setRecipientKeyAvailable] = useState<boolean | null>(null);
+	const [provisioningForTesting, setProvisioningForTesting] = useState(false);
 	const unlockModalPushedRef = useRef(false);
 	const scrollerRef = useRef<ScrollerHandle>(null);
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const inputValueRef = useRef('');
 
 	// Resolve other participant: from legacy id "lo_hi", or from list for V2 (numeric) ids
 	useEffect(() => {
@@ -128,7 +157,21 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 				(payload) => decryptFromSenderToString(payload, keyPair.privateKey),
 			);
 			setDecryptErrors(errors);
-			setMessages(decrypted);
+			// Merge with optimistic messages so sent messages stay visible until server returns them
+			setMessages((prev) => {
+				const serverIds = new Set(decrypted.map((m) => m.id));
+				const optimisticOnly = prev.filter(
+					(m) => m.senderId === currentUserId && !serverIds.has(m.id),
+				);
+				if (optimisticOnly.length === 0) return decrypted;
+				const merged = [...decrypted, ...optimisticOnly];
+				merged.sort((a, b) => {
+					const tA = typeof a.createdAt === 'string' ? new Date(a.createdAt).getTime() : a.createdAt.getTime();
+					const tB = typeof b.createdAt === 'string' ? new Date(b.createdAt).getTime() : b.createdAt.getTime();
+					return tA - tB;
+				});
+				return merged;
+			});
 		} catch {
 			ToastActionCreators.createToast({type: 'error', children: t`Failed to load messages`});
 		} finally {
@@ -142,6 +185,21 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 		const interval = setInterval(loadMessages, 5000);
 		return () => clearInterval(interval);
 	}, [otherUser, loadMessages]);
+
+	// Check if recipient has E2E key (so we know whether to show "Enable messaging for testing")
+	useEffect(() => {
+		if (!otherUser) {
+			setRecipientKeyAvailable(null);
+			return;
+		}
+		let cancelled = false;
+		TempChatApi.getOtherUserE2EKey(otherUser.id).then((key) => {
+			if (!cancelled) setRecipientKeyAvailable(key != null);
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, [otherUser]);
 
 	// When locked, show unlock modal once
 	useEffect(() => {
@@ -170,15 +228,35 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 	}, [needUnlock, currentUserId, tempChatId, otherUser, loadMessages]);
 
 	const handleSend = useCallback(async () => {
-		const text = inputValue.trim();
-		if (!text || !currentUserId || sending || !otherUser) return;
-		const recipientKey = await getRecipientPublicKey(otherUser.id);
-		if (!recipientKey) {
-			ToastActionCreators.createToast({type: 'error', children: t`Cannot send: recipient key not available`});
-			return;
-		}
+		if (!currentUserId || !otherUser) return;
+		if (sending) return;
+
+		// Read from all sources so we never miss the latest text (ref is synced in onChange; DOM/state as fallbacks)
+		const fromRef = inputValueRef.current ?? '';
+		const fromDom = textareaRef.current?.value ?? '';
+		const fromState = inputValue;
+		const rawText = fromRef || fromDom || fromState;
+		const text = rawText.trim();
+		if (!text) return;
+
+		// Clear input immediately so UI feels responsive; we already have `text` captured
+		setInputValue('');
+		inputValueRef.current = '';
 		setSending(true);
+
 		try {
+			const recipientKey = await getRecipientPublicKey(otherUser.id);
+			if (!recipientKey) {
+				const name = otherUser.username ?? otherUser.globalName ?? otherUser.id;
+				ToastActionCreators.createToast({
+					type: 'error',
+					children: t`Ask ${name} to open this chat once to enable messaging`,
+				});
+				setInputValue(text);
+				inputValueRef.current = text;
+				setSending(false);
+				return;
+			}
 			const payload = await encryptForRecipient(text, recipientKey);
 			const res = await TempChatApi.sendTempChatMessage(tempChatId, {
 				ciphertext: payload.ciphertext,
@@ -186,7 +264,6 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 				ephemeral_public_key: payload.ephemeralPublicKey,
 			});
 			setSentPlaintext(tempChatId, res.id, text);
-			setInputValue('');
 			setMessages((prev) => [
 				...prev,
 				{
@@ -196,13 +273,39 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 					createdAt: res.created_at,
 				},
 			]);
-			scrollerRef.current?.scrollToBottom();
-		} catch {
-			ToastActionCreators.createToast({type: 'error', children: t`Failed to send message`});
+			// Defer scroll so it runs after React commits; otherwise scroll uses old content height and the new message stays below viewport
+			requestAnimationFrame(() => {
+				scrollerRef.current?.scrollToBottom();
+			});
+		} catch (err) {
+			ToastActionCreators.createToast({
+				type: 'error',
+				children: err instanceof Error ? err.message : t`Failed to send message`,
+			});
+			setInputValue(text);
+			inputValueRef.current = text;
 		} finally {
 			setSending(false);
 		}
-	}, [inputValue, currentUserId, otherUser, sending, tempChatId, t]);
+	}, [currentUserId, otherUser, sending, tempChatId, inputValue, t]);
+
+	const handleProvisionRecipientForTesting = useCallback(async () => {
+		if (!otherUser) return;
+		setProvisioningForTesting(true);
+		try {
+			await TempChatApi.provisionRecipientKeyForTesting(tempChatId);
+			const key = await TempChatApi.getOtherUserE2EKey(otherUser.id);
+			setRecipientKeyAvailable(key != null);
+			ToastActionCreators.createToast({type: 'success', children: t`Messaging enabled for testing. You can send now.`});
+		} catch (err) {
+			ToastActionCreators.createToast({
+				type: 'error',
+				children: err instanceof Error ? err.message : t`Failed to enable (dev only)`,
+			});
+		} finally {
+			setProvisioningForTesting(false);
+		}
+	}, [otherUser, tempChatId, t]);
 
 	const handleDeleteChat = useCallback(() => {
 		ModalActionCreators.push(
@@ -239,6 +342,15 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 	}, []);
 
 	const hasChatPassword = TempChatLockStore.hasChatPassword(tempChatId);
+	const listItems = useMemo(() => buildMessageListWithDividers(messages), [messages]);
+
+	// Auto-resize textarea (single line by default, grows with Shift+Enter)
+	useEffect(() => {
+		const el = textareaRef.current;
+		if (!el) return;
+		el.style.height = 'auto';
+		el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+	}, [inputValue]);
 
 	const handleSetChatPassword = useCallback(() => {
 		ModalActionCreators.push(
@@ -328,39 +440,56 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 					<div className={styles.inner}>
 						<Scroller ref={scrollerRef} className={styles.scroller}>
 							<div className={styles.messageList}>
-								{messages.map((m) => {
+								{listItems.map((item) => {
+									if (item.type === 'divider') {
+										return (
+											<Divider key={item.date} spacing={16} isDate className={styles.dateDivider}>
+												{item.date}
+											</Divider>
+										);
+									}
+									const { message: m, grouped } = item;
 									const isOwn = m.senderId === currentUserId;
 									const senderUser = isOwn ? currentUser : otherUser;
-									const timestamp = new Date(m.createdAt);
+									const timestamp = typeof m.createdAt === 'string' ? new Date(m.createdAt) : m.createdAt;
 									const timeLabel = DateUtils.getRelativeDateString(timestamp, i18n);
+									const displayName = senderUser?.username ?? (isOwn ? t`You` : t`Unknown`);
 									return (
 										<div
 											key={m.id}
-											className={isOwn ? styles.messageRowOwn : styles.messageRowOther}
+											className={grouped ? styles.messageRowGrouped : styles.messageRow}
 										>
-											{!isOwn && (
+											<div className={styles.messageGutterLeft} />
+											{grouped ? (
+												<time
+													className={styles.messageTimestampHover}
+													dateTime={timestamp.toISOString()}
+													title={DateUtils.getFormattedDateTimeWithSeconds(timestamp)}
+												>
+													{timeLabel}
+												</time>
+											) : (
 												<div className={styles.messageAvatar}>
-													<StatusAwareAvatar user={senderUser} size={32} disablePresence />
+													<StatusAwareAvatar user={senderUser} size={40} disablePresence />
 												</div>
 											)}
+											<div className={styles.messageGutterRight} />
 											<div className={styles.messageContent}>
-												<div className={styles.messageMeta}>
-													<span className={styles.messageSender}>
-														{senderUser?.username ?? (isOwn ? t`You` : t`Unknown`)}
-													</span>
-													<time className={styles.messageTimestamp} dateTime={timestamp.toISOString()} title={DateUtils.getFormattedDateTimeWithSeconds(timestamp)}>
-														{timeLabel}
-													</time>
-												</div>
-												<div className={isOwn ? styles.bubbleOwn : styles.bubbleOther}>
-													{m.text}
-												</div>
+												{!grouped && (
+													<div className={styles.messageAuthorRow}>
+														<span className={styles.messageSender}>{displayName}</span>
+														<time
+															className={styles.messageTimestamp}
+															dateTime={timestamp.toISOString()}
+															title={DateUtils.getFormattedDateTimeWithSeconds(timestamp)}
+														>
+															{' — '}
+															{timeLabel}
+														</time>
+													</div>
+												)}
+												<div className={styles.messageText}>{m.text}</div>
 											</div>
-											{isOwn && (
-												<div className={styles.messageAvatar}>
-													<StatusAwareAvatar user={senderUser} size={32} disablePresence />
-												</div>
-											)}
 										</div>
 									);
 								})}
@@ -371,13 +500,36 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 								)}
 							</div>
 						</Scroller>
-						<div className={styles.inputRow}>
-							<input
-								type="text"
+						{recipientKeyAvailable === false && (
+							<div className={styles.testingBypassRow}>
+								<Button
+									variant="secondary"
+									small
+									onClick={handleProvisionRecipientForTesting}
+									disabled={provisioningForTesting}
+								>
+									{provisioningForTesting ? t`Enabling...` : t`Enable messaging for testing`}
+								</Button>
+								<span className={styles.testingBypassHint}>{t`Bypass: other user doesn't need to open the chat.`}</span>
+							</div>
+						)}
+						<form
+							className={styles.inputRow}
+							onSubmit={(e) => {
+								e.preventDefault();
+								handleSend();
+							}}
+						>
+							<textarea
+								ref={textareaRef}
 								className={styles.input}
-								placeholder={t`Message`}
+								placeholder={otherUser?.username ? t`Message @${otherUser.username}` : t`Message`}
 								value={inputValue}
-								onChange={(e) => setInputValue(e.target.value)}
+								onChange={(e) => {
+									const v = e.target.value;
+									inputValueRef.current = v;
+									setInputValue(v);
+								}}
 								onKeyDown={(e) => {
 									if (e.key === 'Enter' && !e.shiftKey) {
 										e.preventDefault();
@@ -385,11 +537,19 @@ export const TempChatFullPage = observer(({tempChatId}: TempChatFullPageProps) =
 									}
 								}}
 								disabled={sending}
+								rows={1}
+								aria-label={otherUser?.username ? t`Message @${otherUser.username}` : t`Message`}
 							/>
-							<Button onClick={handleSend} disabled={sending || !inputValue.trim()} submitting={sending}>
-								{t`Send`}
-							</Button>
-						</div>
+							<button
+								type="submit"
+								className={styles.sendButton}
+								disabled={sending || !inputValue.trim()}
+								aria-label={t`Send message`}
+								title={t`Send (Enter)`}
+							>
+								<PaperPlaneTiltIcon weight="fill" className={styles.sendButtonIcon} />
+							</button>
+						</form>
 					</div>
 				)}
 			</div>
