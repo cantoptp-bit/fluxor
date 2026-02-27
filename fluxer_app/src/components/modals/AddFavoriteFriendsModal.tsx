@@ -43,8 +43,9 @@ export const AddFavoriteFriendsModal = observer(() => {
 		const ids: Array<string> = [];
 		for (const fav of FavoritesStore.sortedChannels) {
 			const channel = ChannelStore.getChannel(fav.channelId);
-			if (channel?.isDM() && channel.recipientIds[0]) {
-				ids.push(channel.recipientIds[0]);
+			if (channel?.isDM()) {
+				const recipientId = channel.getRecipientId();
+				if (recipientId) ids.push(recipientId);
 			}
 		}
 		return ids;

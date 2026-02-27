@@ -58,8 +58,9 @@ export const useRecipientItems = () => {
 		const friendIds = new Set(friends.map((f) => f.id));
 
 		dmChannels.forEach((channel) => {
-			if (channel.type === ChannelTypes.DM && channel.recipientIds.length > 0) {
-				const recipientId = channel.recipientIds[0];
+			if (channel.type === ChannelTypes.DM) {
+				const recipientId = channel.getRecipientId();
+				if (!recipientId) return;
 				const user = UserStore.getUser(recipientId);
 				if (user && friendIds.has(recipientId)) {
 					recipients.push({

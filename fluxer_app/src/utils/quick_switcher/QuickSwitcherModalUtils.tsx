@@ -228,7 +228,8 @@ export function handleContextMenu(event: React.MouseEvent, result: QuickSwitcher
 			const channel = ChannelStore.getChannel(channelResult.channel.id);
 			if (channel) {
 				if (channel.isPrivate()) {
-					const recipient = channel.recipientIds?.[0] ? UserStore.getUser(channel.recipientIds[0]) : null;
+					const recipientId = channel.isDM() ? channel.getRecipientId() : channel.recipientIds?.[0];
+					const recipient = recipientId ? UserStore.getUser(recipientId) : null;
 					ContextMenuActionCreators.openFromEvent(event, ({onClose}) => (
 						<DMContextMenu channel={channel} recipient={recipient} onClose={onClose} />
 					));

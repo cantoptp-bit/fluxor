@@ -206,7 +206,7 @@ const FavoriteChannelItem = observer(
 		const mentionCount = ReadStateStore.getMentionCount(channel.id);
 		const isGroupDM = channel.isGroupDM();
 		const isDM = channel.isDM();
-		const recipientId = isDM ? (channel.recipientIds[0] ?? '') : '';
+		const recipientId = isDM ? (channel.getRecipientId() ?? '') : '';
 		const recipient = recipientId ? (UserStore.getUser(recipientId) ?? null) : null;
 		const isTyping = recipientId ? TypingStore.isTyping(channel.id, recipientId) : false;
 

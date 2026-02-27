@@ -51,8 +51,9 @@ export function useForwardedMessageContext(message: MessageRecord): ForwardedMes
 
 	const sourceUser = useMemo(() => {
 		if (!sourceChannel) return null;
-		if (sourceChannel.type === ChannelTypes.DM && sourceChannel.recipientIds.length > 0) {
-			return UserStore.getUser(sourceChannel.recipientIds[0]) ?? null;
+		if (sourceChannel.type === ChannelTypes.DM) {
+			const recipientId = sourceChannel.getRecipientId();
+			return recipientId ? UserStore.getUser(recipientId) ?? null : null;
 		}
 		return null;
 	}, [sourceChannel?.id, sourceChannel?.type, sourceChannel?.recipientIds]);

@@ -329,7 +329,7 @@ const CallParticipantsRow = observer(
 export const DMChannelView = observer(({channelId}: DMChannelViewProps) => {
 	const {t} = useLingui();
 	const channel = ChannelStore.getChannel(channelId);
-	const recipientId = channel?.recipientIds?.[0];
+	const recipientId = channel?.isDM() ? channel.getRecipientId() : channel?.recipientIds?.[0];
 	const recipient = recipientId ? UserStore.getUser(recipientId) : null;
 	const isRecipientBlocked = recipientId ? RelationshipStore.isBlocked(recipientId) : false;
 	const isCurrentUserUnclaimed = !UserStore.currentUser?.isClaimed();

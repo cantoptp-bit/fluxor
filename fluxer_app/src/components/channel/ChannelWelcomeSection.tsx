@@ -34,7 +34,7 @@ interface ChannelWelcomeSectionProps {
 }
 
 export const ChannelWelcomeSection = observer(({channel}: ChannelWelcomeSectionProps) => {
-	const recipient = UserStore.getUser(channel.recipientIds[0]);
+	const recipient = UserStore.getUser(channel.getRecipientId() ?? '');
 
 	if (channel.type === ChannelTypes.DM && recipient) {
 		return <DMWelcomeSection userId={recipient.id} channel={channel} />;

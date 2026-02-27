@@ -31,7 +31,7 @@ const getChannelSortSnowflake = (channel: ChannelRecord): string => {
 		return baseSnowflake;
 	}
 
-	const recipientId = channel.recipientIds[0];
+	const recipientId = channel.getRecipientId();
 	if (!recipientId) {
 		return baseSnowflake;
 	}

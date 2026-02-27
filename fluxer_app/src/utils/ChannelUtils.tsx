@@ -88,7 +88,11 @@ const getDirectMessageDisplayName = (channel: ChannelRecord): string => {
 		return i18n._(msg`Unknown User`);
 	}
 
-	const recipient = UserStore.getUser(channel.recipientIds[0]);
+	// For DM, recipientIds may include both participants; show the *other* user's name, not our own
+	const currentUser = UserStore.getCurrentUser();
+	const otherId =
+		channel.recipientIds.find((id) => id !== currentUser?.id) ?? channel.recipientIds[0];
+	const recipient = UserStore.getUser(otherId);
 	const nickname = recipient ? NicknameUtils.getNickname(recipient) : null;
 	return nickname ?? i18n._(msg`Unknown User`);
 };

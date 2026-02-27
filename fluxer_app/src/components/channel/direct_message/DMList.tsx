@@ -161,7 +161,7 @@ const DMListItem = observer(({channel, isSelected}: {channel: ChannelRecord; isS
 	const readState = ReadStateStore.get(channel.id);
 
 	const isGroupDM = channel.type === ChannelTypes.GROUP_DM;
-	const recipient = !isGroupDM ? UserStore.getUser(channel.recipientIds[0]) : null;
+	const recipient = !isGroupDM ? UserStore.getUser(channel.getRecipientId() ?? '') : null;
 	const recipientId = recipient?.id || '';
 	const isBotDM = Boolean(recipient?.bot || recipient?.system);
 	const isTyping = TypingStore.isTyping(channel.id, recipientId);

@@ -562,7 +562,7 @@ export const ChannelDetailsBottomSheet: React.FC<ChannelDetailsBottomSheetProps>
 		const isPersonalNotes = channel.type === ChannelTypes.DM_PERSONAL_NOTES;
 		const isGuildChannel = channel.guildId != null;
 		const guild = isGuildChannel ? GuildStore.getGuild(channel.guildId) : null;
-		const recipient = isDM && channel.recipientIds.length > 0 ? UserStore.getUser(channel.recipientIds[0]) : null;
+		const recipient = isDM ? UserStore.getUser(channel.getRecipientId() ?? '') : null;
 		const currentUser = UserStore.currentUser;
 		const currentUserId = AuthenticationStore.currentUserId;
 

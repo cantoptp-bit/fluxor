@@ -200,7 +200,10 @@ export class ChannelRecord {
 
 	getRecipientId(): string | undefined {
 		if (this.type !== ChannelTypes.DM) return undefined;
-		return this.recipientIds[0];
+		// For DM, recipientIds may include both participants; return the *other* user's id
+		const currentUser = UserStore.getCurrentUser();
+		const otherId = this.recipientIds.find((id) => id !== currentUser?.id);
+		return otherId ?? this.recipientIds[0];
 	}
 
 	get createdAt(): Date {

@@ -43,7 +43,7 @@ const renderChannelIcon = (channel: ChannelRecord): React.ReactNode => {
 	}
 
 	if (channel.isDM()) {
-		const recipientId = channel.recipientIds[0];
+		const recipientId = channel.getRecipientId();
 		const recipient = recipientId ? UserStore.getUser(recipientId) : null;
 
 		if (recipient) {

@@ -50,7 +50,11 @@ export const useChannelHeaderData = (channel?: ChannelRecord): ChannelHeaderData
 		if (!isDM || !channel?.recipientIds?.length) {
 			return null;
 		}
-		return UserStore.getUser(channel.recipientIds[0]) ?? null;
+		// For DM, recipientIds may include both participants; show the *other* user
+		const currentUser = UserStore.getCurrentUser();
+		const otherId =
+			channel.recipientIds.find((id) => id !== currentUser?.id) ?? channel.recipientIds[0];
+		return UserStore.getUser(otherId) ?? null;
 	}, [channel, isDM]);
 
 	const directMessageName = useMemo(() => {

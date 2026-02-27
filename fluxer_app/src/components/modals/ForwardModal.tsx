@@ -176,8 +176,8 @@ export const ForwardModal = observer(({message, user}: ForwardModalProps) => {
 			return <NotePencilIcon className={selectorStyles.itemIcon} weight="fill" size={iconSize} />;
 		}
 		if (ch.type === ChannelTypes.DM) {
-			const recipientId = ch.recipientIds[0];
-			const user = UserStore.getUser(recipientId);
+			const recipientId = ch.getRecipientId();
+			const user = recipientId ? UserStore.getUser(recipientId) : null;
 			if (!user) return null;
 			return (
 				<div className={selectorStyles.avatar}>

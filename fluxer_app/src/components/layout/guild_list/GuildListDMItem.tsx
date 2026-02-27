@@ -101,7 +101,7 @@ export const DMListItem = observer(({channel, isSelected, className, voiceCallAc
 	const dmScrollId = `dm-${channel.id}`;
 
 	const isGroupDM = channel.type === ChannelTypes.GROUP_DM;
-	const recipient = !isGroupDM ? UserStore.getUser(channel.recipientIds[0]) : null;
+	const recipient = !isGroupDM ? UserStore.getUser(channel.getRecipientId() ?? '') : null;
 	const isMuted = UserGuildSettingsStore.isChannelMuted(null, channel.id);
 
 	const directMessageName = recipient ? NicknameUtils.getNickname(recipient) : null;
