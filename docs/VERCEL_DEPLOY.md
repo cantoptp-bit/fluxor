@@ -21,7 +21,7 @@ Use **HTTPS** so the built app can use `wss://` for the gateway. Note the hostna
    - **Value:** your backend hostname only (no `https://`), e.g. `xxxx.ngrok-free.app`  
    - Apply to **Production** (and Preview if you want).
 
-   The app fetches this at runtime from `/api/fluxer-config`, so you can change it in Vercel and refresh the site—no redeploy needed.
+   **Redeploy after setting or changing it** so the backend URL is baked into the build and into `index.html`. (You can also run `.\scripts\set_vercel_backend_from_ngrok.ps1` with ngrok running to update the env, then trigger a redeploy.)
 
 3. Leave **Root Directory** as the repo root. The existing `vercel.json` is set up to build the frontend and output from `fluxer_app/dist`.
 

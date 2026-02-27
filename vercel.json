@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm install && FLUXER_CONFIG=config/config.vercel.json pnpm --filter fluxer_app run build:vercel",
+  "buildCommand": "pnpm install && FLUXER_CONFIG=config/config.vercel.json pnpm --filter fluxer_app run build:vercel && node scripts/inject-fluxer-domain.mjs",
   "outputDirectory": "fluxer_app/dist",
   "installCommand": "pnpm install",
   "framework": null,
