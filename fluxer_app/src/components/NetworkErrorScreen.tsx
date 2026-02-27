@@ -23,7 +23,11 @@ import {Button} from '@app/components/uikit/button/Button';
 import {Trans} from '@lingui/react/macro';
 import {useCallback} from 'react';
 
-export const NetworkErrorScreen = () => {
+interface NetworkErrorScreenProps {
+	message?: string | null;
+}
+
+export const NetworkErrorScreen = ({ message }: NetworkErrorScreenProps) => {
 	const handleRetry = useCallback(() => {
 		window.location.reload();
 	}, []);
@@ -35,12 +39,16 @@ export const NetworkErrorScreen = () => {
 				<h1 className={styles.errorFallbackTitle}>
 					<Trans>Connection Issue</Trans>
 				</h1>
-				<p className={styles.errorFallbackDescription}>
-					<Trans>
-						We're having trouble connecting to Fluxer's servers. This could be a temporary network issue or scheduled
-						maintenance.
-					</Trans>
-				</p>
+				{message ? (
+					<p className={styles.errorFallbackDescription}>{message}</p>
+				) : (
+					<p className={styles.errorFallbackDescription}>
+						<Trans>
+							We're having trouble connecting to Fluxer's servers. This could be a temporary network issue or scheduled
+							maintenance.
+						</Trans>
+					</p>
+				)}
 				<p className={styles.errorFallbackDescription}>
 					<Trans>
 						Check our{' '}

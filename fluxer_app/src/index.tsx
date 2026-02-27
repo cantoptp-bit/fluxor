@@ -251,10 +251,11 @@ async function bootstrap(): Promise<void> {
 		initSentry();
 	} catch (error) {
 		logger.error('Failed to initialize runtime config:', error);
+		const message = RuntimeConfigStore.initError?.message ?? null;
 		const root = ReactDOM.createRoot(document.getElementById('root')!);
 		root.render(
 			<I18nProvider i18n={i18n}>
-				<NetworkErrorScreen />
+				<NetworkErrorScreen message={message} />
 			</I18nProvider>,
 		);
 		return;
