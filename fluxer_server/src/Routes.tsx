@@ -77,8 +77,11 @@ export async function mountRoutes(options: MountRoutesOptions): Promise<MountedR
 		const cfgPort = config.domain.public_port ?? config.port;
 		const isStandard = (s: string, p: string) =>
 			(s === 'https' && (p === '443' || p === '')) || (s === 'http' && (p === '80' || p === ''));
-		const portVal = portFromHost ?? (cfgPort === 80 || cfgPort === 443 ? '' : String(cfgPort));
-		const port = isStandard(scheme, portVal) ? '' : `:${portVal}`;
+		// When behind a reverse proxy / tunnel, trust the Host header's port (or lack thereof) instead of the config port
+		const portVal = useForwarded
+			? (portFromHost ?? '')
+			: (portFromHost ?? (cfgPort === 80 || cfgPort === 443 ? '' : String(cfgPort)));
+		const port = isStandard(scheme, portVal) ? '' : (portVal ? `:${portVal}` : '');
 		const baseUrl = `${scheme}://${instanceDomain}${port}`;
 		const gatewayScheme = scheme === 'https' ? 'wss' : 'ws';
 
