@@ -23,6 +23,7 @@ import HttpClient from '@app/lib/HttpClient';
 import {makePersistent} from '@app/lib/MobXPersistence';
 import relayClient from '@app/lib/RelayClient';
 import DeveloperOptionsStore from '@app/stores/DeveloperOptionsStore';
+import {parseBackendConfigApiUrl} from '@app/utils/backendConfigUtils';
 import {API_CODE_VERSION} from '@fluxer/constants/src/AppConstants';
 import {expandWireFormat} from '@fluxer/limits/src/LimitDiffer';
 import type {LimitConfigSnapshot, LimitConfigWireFormat} from '@fluxer/limits/src/LimitTypes';
@@ -246,18 +247,42 @@ class RuntimeConfigStore {
 		if (typeof window === 'undefined') {
 			return this.getEffectiveBootstrapEndpoint();
 		}
-		// 1) Static file written at build (most reliable on Vercel; no serverless required)
+		const origin = window.location.origin;
+		const isVercel = origin.includes('vercel.app');
+		// On Vercel, try runtime config first so updating FLUXER_PUBLIC_DOMAIN + refresh works without redeploy
+		if (isVercel) {
+			try {
+				const res = await fetch(`${origin}/api/fluxer-config`, {
+					method: 'GET',
+					headers: { Accept: 'application/json' },
+					cache: 'no-store',
+				});
+				if (res.ok) {
+					const data = (await res.json()) as { base_domain?: string; api?: string };
+					const api = parseBackendConfigApiUrl(data);
+					if (api) return api;
+				}
+			} catch {
+				// ignore
+			}
+		}
+		// 1) Static file written at build (backend-config.json)
 		try {
-			const res = await fetch(`${window.location.origin}/backend-config.json`, {
+			const res = await fetch(`${origin}/backend-config.json`, {
 				method: 'GET',
 				headers: { Accept: 'application/json' },
 				cache: 'no-store',
 			});
+			let api: string | null = null;
 			if (res.ok) {
-				const data = (await res.json()) as { base_domain?: string; api?: string };
-				const api = data.api ?? (data.base_domain ? `https://${data.base_domain}/api` : null);
-				if (api) return api;
+				try {
+					const data = (await res.json()) as { base_domain?: string; api?: string };
+					api = parseBackendConfigApiUrl(data);
+				} catch {
+					api = null;
+				}
 			}
+			if (res.ok && api) return api;
 		} catch {
 			// ignore
 		}
@@ -267,22 +292,55 @@ class RuntimeConfigStore {
 			const d = injected.trim().replace(/^https?:\/\//, '').split('/')[0];
 			if (d) return `https://${d}/api`;
 		}
-		// 3) Runtime config from same-origin (e.g. Vercel serverless /api/fluxer-config)
-		try {
-			const res = await fetch(`${window.location.origin}/api/fluxer-config`, {
-				method: 'GET',
-				headers: { Accept: 'application/json' },
-				cache: 'no-store',
-			});
-			if (res.ok) {
-				const data = (await res.json()) as { base_domain?: string; api?: string };
-				const api = data.api ?? (data.base_domain ? `https://${data.base_domain}/api` : null);
-				if (api) return api;
+		// 3) Runtime config (non-Vercel or Vercel fallback)
+		if (!isVercel) {
+			try {
+				const res = await fetch(`${origin}/api/fluxer-config`, {
+					method: 'GET',
+					headers: { Accept: 'application/json' },
+					cache: 'no-store',
+				});
+				if (res.ok) {
+					const data = (await res.json()) as { base_domain?: string; api?: string };
+					const api = parseBackendConfigApiUrl(data);
+					if (api) return api;
+				}
+			} catch {
+				// ignore
 			}
-		} catch {
-			// ignore
 		}
-		return this.getEffectiveBootstrapEndpoint();
+		// On Vercel, retry fluxer-config once (transient failure or cold start)
+		if (isVercel) {
+			try {
+				const retryRes = await fetch(`${origin}/api/fluxer-config`, {
+					method: 'GET',
+					headers: { Accept: 'application/json' },
+					cache: 'reload',
+				});
+				if (retryRes.ok) {
+					const data = (await retryRes.json()) as { base_domain?: string; api?: string };
+					const api = parseBackendConfigApiUrl(data);
+					if (api) return api;
+				}
+			} catch {
+				// ignore
+			}
+		}
+		const fallback = this.getEffectiveBootstrapEndpoint();
+		// On Vercel, never use localhost (browser would hit user's machine; backend is elsewhere)
+		if (isVercel && fallback) {
+			try {
+				const u = new URL(fallback.startsWith('/') ? origin + fallback : fallback);
+				if (u.hostname === 'localhost' || u.hostname === '127.0.0.1') {
+					throw new Error(
+						'FLUXER_PUBLIC_DOMAIN is not set or not applied. Set it in Vercel Project Settings → Environment Variables and redeploy.',
+					);
+				}
+			} catch (e) {
+				if (e instanceof Error && e.message.includes('FLUXER_PUBLIC_DOMAIN')) throw e;
+			}
+		}
+		return fallback;
 	}
 
 	/** More retries after restart so backend has time to bind (proxy is up first, API may take 15–30s). */
@@ -317,7 +375,6 @@ class RuntimeConfigStore {
 			]);
 
 			const bootstrapEndpoint = await this.resolveBootstrapEndpoint();
-
 			await this.connectToEndpointWithRetry(bootstrapEndpoint);
 
 			runInAction(() => {
@@ -479,20 +536,23 @@ class RuntimeConfigStore {
 
 		const apiEndpoint = this.normalizeEndpoint(input);
 		const wellKnownUrl = this.buildWellKnownUrl(apiEndpoint);
-
 		const request: HttpRequestConfig = {url: wellKnownUrl};
 
-		const response = await HttpClient.get<InstanceDiscoveryResponse>(request);
+		try {
+			const response = await HttpClient.get<InstanceDiscoveryResponse>(request);
 
-		if (connectId !== this._connectSeq) {
-			return;
+			if (connectId !== this._connectSeq) {
+				return;
+			}
+
+			if (!response.ok) {
+				throw new Error(`Failed to reach ${wellKnownUrl} (${response.status})`);
+			}
+
+			this.updateFromInstance(response.body);
+		} catch (e) {
+			throw e;
 		}
-
-		if (!response.ok) {
-			throw new Error(`Failed to reach ${wellKnownUrl} (${response.status})`);
-		}
-
-		this.updateFromInstance(response.body);
 	}
 
 	private buildWellKnownUrl(apiEndpoint: string): string {

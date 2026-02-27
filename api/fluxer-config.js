@@ -1,24 +1,23 @@
 /**
- * Vercel serverless: returns backend URLs from FLUXER_PUBLIC_DOMAIN.
- * Used by the frontend when deployed on Vercel so the app can reach your backend
- * (e.g. ngrok) without baking the URL at build time.
- * Set FLUXER_PUBLIC_DOMAIN in Vercel env (e.g. your-ngrok.ngrok-free.app).
+ * Vercel serverless: returns backend config from FLUXER_PUBLIC_DOMAIN at runtime.
+ * So after you run scripts/set_vercel_backend_from_ngrok.ps1 you can refresh the
+ * Vercel site and the app will get the current backend URL without redeploying.
  */
-export const config = { runtime: 'edge' };
-
-export default function handler(_req) {
+export default function handler(_req, res) {
 	const domain = process.env.FLUXER_PUBLIC_DOMAIN?.trim();
 	if (!domain) {
-		return new Response(
-			JSON.stringify({ error: 'FLUXER_PUBLIC_DOMAIN not set' }),
-			{ status: 200, headers: { 'Content-Type': 'application/json' } }
-		);
+		res.status(200).json({ base_domain: null, api: null, gateway: null });
+		return;
 	}
-	const scheme = 'https';
-	const api = `${scheme}://${domain}/api`;
-	const gateway = `wss://${domain}/gateway`;
-	return new Response(
-		JSON.stringify({ base_domain: domain, api, gateway }),
-		{ status: 200, headers: { 'Content-Type': 'application/json' } }
-	);
+	const base = domain.replace(/^https?:\/\//, '').split('/')[0];
+	if (!base) {
+		res.status(200).json({ base_domain: null, api: null, gateway: null });
+		return;
+	}
+	res.setHeader('Cache-Control', 'no-store, max-age=0');
+	res.status(200).json({
+		base_domain: base,
+		api: `https://${base}/api`,
+		gateway: `wss://${base}/gateway`,
+	});
 }
