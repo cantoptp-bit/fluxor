@@ -64,9 +64,12 @@ export function configureMiddleware(routes: HonoApp, options: MiddlewarePipeline
 		skipPaths: ['/_health', '/internal/telemetry'],
 	});
 
+	// When using specific origins (production), allow credentials so cross-origin login from Vercel works reliably.
+	const corsCredentials =
+		corsOrigins !== '*' && (typeof corsOrigins === 'function' || Array.isArray(corsOrigins));
 	applyMiddlewareStack(routes, {
 		requestId: {},
-		cors: { origins: corsOrigins },
+		cors: { origins: corsOrigins, credentials: corsCredentials },
 		tracing: requestTelemetry.tracing,
 		metrics: {
 			enabled: true,

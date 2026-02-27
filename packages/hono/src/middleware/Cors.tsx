@@ -41,6 +41,8 @@ const DEFAULT_HEADERS = [
 	'X-Fluxer-Sudo-Mode-JWT',
 	'X-Fluxer-Test-Enable-Rate-Limits',
 	'X-Fluxer-Test-Global-Rate-Limit',
+	'X-Captcha-Token',
+	'X-Captcha-Type',
 ];
 
 export function cors(options: CorsOptions = {}): MiddlewareHandler {

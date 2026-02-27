@@ -108,11 +108,28 @@ export function useAuthForm({initialValues, onSubmit, redirectPath, firstFieldNa
 	};
 }
 
+const isNetworkError = (error: unknown): boolean =>
+	error instanceof Error &&
+	(error.message === 'Network error during request' ||
+		error.message === 'Failed to fetch' ||
+		error.name === 'TypeError');
+
 export const getAuthErrorMessage = (error: unknown, t?: LinguiT): string => {
 	const errorData = getErrorData(error);
+	if (errorData?.message) return errorData.message;
 	const unexpected = t ? t`An unexpected error occurred` : 'An unexpected error occurred';
 	const fallbackMessage = error instanceof Error ? error.message : unexpected;
-	return errorData?.message || fallbackMessage;
+	// On Vercel, network errors usually mean backend unreachable or CORS; show actionable message.
+	if (
+		typeof window !== 'undefined' &&
+		window.location.origin.includes('vercel.app') &&
+		isNetworkError(error)
+	) {
+		return t
+			? t`Cannot reach the server. Check that FLUXER_PUBLIC_DOMAIN is set in Vercel (Settings → Environment Variables) to your backend hostname, the backend is running, and it allows requests from this site.`
+			: 'Cannot reach the server. Check that FLUXER_PUBLIC_DOMAIN is set in Vercel (Settings → Environment Variables) to your backend hostname, the backend is running, and it allows requests from this site.';
+	}
+	return fallbackMessage;
 };
 
 const extractErrors = (
