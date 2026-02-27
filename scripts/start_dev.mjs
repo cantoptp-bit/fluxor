@@ -204,10 +204,10 @@ const appProcess = run('fluxer_app', 'pnpm', ['--filter', 'fluxer_app', 'dev'], 
 const serverProcess = run('fluxer_server', 'pnpm', ['--filter', 'fluxer_server', 'dev']);
 const marketingProcess = run('marketing', 'pnpm', ['--filter', 'fluxer_marketing', 'dev']);
 
-// Wait for API server and app in parallel so we know both are up
+// Wait for API server and app in parallel so we know both are up (API can be slow after Cassandra migrations)
 const [appPortReady, serverPortReady] = await Promise.all([
   waitForPort('127.0.0.1', 49427, 120000),
-  waitForPort('127.0.0.1', 49319, 45000),
+  waitForPort('127.0.0.1', 49319, 90000),
 ]);
 
 if (!serverPortReady) {

@@ -25,6 +25,17 @@ describe('parseBackendConfigApiUrl', () => {
 		expect(parseBackendConfigApiUrl({base_domain: 'mybackend.com'})).toBe('https://mybackend.com/api');
 	});
 
+	test('accepts .well-known/fluxer shape (endpoints.api)', () => {
+		expect(
+			parseBackendConfigApiUrl({
+				endpoints: { api: 'https://localhost:49319/api', api_client: 'https://localhost:49319/api' },
+			}),
+		).toBe('https://localhost:49319/api');
+		expect(parseBackendConfigApiUrl({ endpoints: { api_client: 'https://x.com/api' } })).toBe(
+			'https://x.com/api',
+		);
+	});
+
 	test('returns null when empty or no usable data', () => {
 		expect(parseBackendConfigApiUrl({})).toBeNull();
 		expect(parseBackendConfigApiUrl({api: ''})).toBeNull();

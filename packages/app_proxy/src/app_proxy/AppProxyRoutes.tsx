@@ -174,6 +174,14 @@ export function registerAppProxyRoutes(options: RegisterAppProxyRoutesOptions): 
 				pathOverride: '/_health',
 			}),
 		);
+		// Localhost parity with Vercel: /api/fluxer-config → backend /.well-known/fluxer
+		app.get('/api/fluxer-config', (c) =>
+			proxyAPI(c, {
+				apiEndpoint,
+				logger,
+				pathOverride: '/.well-known/fluxer',
+			}),
+		);
 		app.all('/api/*', (c) =>
 			proxyAPI(c, {
 				apiEndpoint,

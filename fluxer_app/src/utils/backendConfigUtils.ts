@@ -6,14 +6,21 @@ export interface BackendConfigData {
 	base_domain?: string;
 	api?: string;
 	gateway?: string;
+	/** Backend /.well-known/fluxer shape */
+	endpoints?: { api?: string; api_client?: string; gateway?: string };
 }
 
 /**
  * Returns the API URL from backend config, or null if not present.
+ * Accepts both Vercel fluxer-config shape (api, base_domain) and backend .well-known/fluxer (endpoints.api).
  */
 export function parseBackendConfigApiUrl(data: BackendConfigData | null | undefined): string | null {
 	if (!data) return null;
-	const api = data.api ?? (data.base_domain ? `https://${data.base_domain}/api` : null);
+	const api =
+		data.api ??
+		data.endpoints?.api ??
+		data.endpoints?.api_client ??
+		(data.base_domain ? `https://${data.base_domain}/api` : null);
 	return api?.trim() ? api : null;
 }
 
