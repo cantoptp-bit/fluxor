@@ -5,6 +5,7 @@
   "installCommand": "pnpm install",
   "framework": null,
   "rewrites": [
+    { "source": "/backend-config.json", "destination": "/backend-config.json" },
     { "source": "/api/:path*", "destination": "/api/:path*" },
     { "source": "/assets/:path*", "destination": "/assets/:path*" },
     { "source": "/manifest.json", "destination": "/manifest.json" },

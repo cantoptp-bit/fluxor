@@ -31,3 +31,13 @@ if (html.includes('__FLUXER_PUBLIC_DOMAIN__')) {
 }
 fs.writeFileSync(indexPath, html);
 console.log('inject-fluxer-domain: injected FLUXER_PUBLIC_DOMAIN into index.html');
+
+// Also write a static JSON so the app can fetch /backend-config.json (no serverless needed)
+const configPath = path.join(path.dirname(indexPath), 'backend-config.json');
+const config = {
+	base_domain: domain,
+	api: `https://${domain}/api`,
+	gateway: `wss://${domain}/gateway`,
+};
+fs.writeFileSync(configPath, JSON.stringify(config));
+console.log('inject-fluxer-domain: wrote backend-config.json');

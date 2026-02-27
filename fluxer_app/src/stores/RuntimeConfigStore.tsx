@@ -206,42 +206,73 @@ class RuntimeConfigStore {
 	}
 
 	/**
-	 * Resolve the bootstrap API URL. When the app is on Vercel and the config points to an
-	 * external backend (e.g. ngrok), we must use that URL—not same-origin /api.
+	 * Resolve the bootstrap API URL. When the app is on Vercel we must not use persisted
+	 * localhost; use build config or same-origin /api instead.
 	 */
 	private getEffectiveBootstrapEndpoint(): string {
-		const configured =
+		let configured =
 			this.apiEndpoint || Config.PUBLIC_BOOTSTRAP_API_ENDPOINT || '/api';
+		if (typeof window !== 'undefined' && configured) {
+			try {
+				const url = new URL(configured.startsWith('/') ? window.location.origin + configured : configured);
+				// Ignore persisted localhost when we're on a different origin (e.g. Vercel)
+				const isLocalhost =
+					url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+				if (
+					isLocalhost &&
+					window.location.origin !== url.origin
+				) {
+					configured = Config.PUBLIC_BOOTSTRAP_API_ENDPOINT || '/api';
+				}
+			} catch {
+				// keep configured
+			}
+		}
 		if (typeof window === 'undefined') return configured;
 		if (configured.startsWith('/')) return configured;
-		// Use the configured full URL so Vercel app can reach ngrok/other backend.
 		try {
 			new URL(configured);
 			return configured;
 		} catch {
-			// not a valid URL, use as-is
+			// not a valid URL
 		}
 		return configured;
 	}
 
 	/**
-	 * Resolve bootstrap API URL: injected domain (from index.html), runtime config, or build config.
+	 * Resolve bootstrap API URL: static config, injected domain, serverless config, or build config.
 	 */
 	private async resolveBootstrapEndpoint(): Promise<string> {
 		if (typeof window === 'undefined') {
 			return this.getEffectiveBootstrapEndpoint();
 		}
-		// 1) Build-time injection (scripts/inject-fluxer-domain.mjs on Vercel)
+		// 1) Static file written at build (most reliable on Vercel; no serverless required)
+		try {
+			const res = await fetch(`${window.location.origin}/backend-config.json`, {
+				method: 'GET',
+				headers: { Accept: 'application/json' },
+				cache: 'no-store',
+			});
+			if (res.ok) {
+				const data = (await res.json()) as { base_domain?: string; api?: string };
+				const api = data.api ?? (data.base_domain ? `https://${data.base_domain}/api` : null);
+				if (api) return api;
+			}
+		} catch {
+			// ignore
+		}
+		// 2) Build-time injection (scripts/inject-fluxer-domain.mjs)
 		const injected = (window as unknown as { __FLUXER_PUBLIC_DOMAIN__?: string }).__FLUXER_PUBLIC_DOMAIN__;
 		if (injected?.trim()) {
 			const d = injected.trim().replace(/^https?:\/\//, '').split('/')[0];
 			if (d) return `https://${d}/api`;
 		}
-		// 2) Runtime config from same-origin (e.g. Vercel serverless /api/fluxer-config)
+		// 3) Runtime config from same-origin (e.g. Vercel serverless /api/fluxer-config)
 		try {
 			const res = await fetch(`${window.location.origin}/api/fluxer-config`, {
 				method: 'GET',
 				headers: { Accept: 'application/json' },
+				cache: 'no-store',
 			});
 			if (res.ok) {
 				const data = (await res.json()) as { base_domain?: string; api?: string };
