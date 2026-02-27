@@ -225,6 +225,29 @@ class RuntimeConfigStore {
 		return configured;
 	}
 
+	/**
+	 * When the app is served from a host that exposes runtime backend config (e.g. Vercel with
+	 * FLUXER_PUBLIC_DOMAIN), fetch it so we can reach the backend without a redeploy.
+	 */
+	private async resolveBootstrapEndpoint(): Promise<string> {
+		if (typeof window === 'undefined') {
+			return this.getEffectiveBootstrapEndpoint();
+		}
+		try {
+			const res = await fetch(`${window.location.origin}/api/fluxer-config`, {
+				method: 'GET',
+				headers: { Accept: 'application/json' },
+			});
+			if (!res.ok) return this.getEffectiveBootstrapEndpoint();
+			const data = (await res.json()) as { base_domain?: string; api?: string };
+			const api = data.api ?? (data.base_domain ? `https://${data.base_domain}/api` : null);
+			if (api) return api;
+		} catch {
+			// ignore; use build-time or same-origin fallback
+		}
+		return this.getEffectiveBootstrapEndpoint();
+	}
+
 	/** More retries after restart so backend has time to bind (proxy is up first, API may take 15–30s). */
 	private static readonly BOOTSTRAP_RETRY_ATTEMPTS = 18;
 	private static readonly BOOTSTRAP_RETRY_DELAY_MS = 2000;
@@ -256,7 +279,7 @@ class RuntimeConfigStore {
 				'relayDirectoryUrl',
 			]);
 
-			const bootstrapEndpoint = this.getEffectiveBootstrapEndpoint();
+			const bootstrapEndpoint = await this.resolveBootstrapEndpoint();
 
 			await this.connectToEndpointWithRetry(bootstrapEndpoint);
 
