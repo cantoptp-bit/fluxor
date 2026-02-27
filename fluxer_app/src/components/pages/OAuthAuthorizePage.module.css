@@ -76,8 +76,11 @@
 }
 
 .pageWordmark {
-	height: 32px;
-	width: auto;
+	font-size: 1rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--text-primary);
 }
 
 .breadcrumbs {

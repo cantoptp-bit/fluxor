@@ -31,7 +31,6 @@ import { useSetLayoutVariant } from '@app/contexts/LayoutVariantContext';
 import { useAuthBackground } from '@app/hooks/useAuthBackground';
 import { useNativePlatform } from '@app/hooks/useNativePlatform';
 import i18n, { initI18n } from '@app/I18n';
-import FluxerWordmarkMonochrome from '@app/images/fluxer-logo-wordmark-monochrome.svg?react';
 import foodPatternUrl from '@app/images/i-like-food.svg';
 import { useLocation } from '@app/lib/router/React';
 import { isMobileExperienceEnabled } from '@app/utils/MobileExperience';
@@ -148,19 +147,19 @@ const AuthLayoutContent = observer(function AuthLayoutContent({ children }: { ch
 				<AuthLayoutContext.Provider value={authLayoutContextValue}>
 					<NativeDragRegion className={styles.topDragRegion} />
 					<div className={styles.scrollerWrapper}>
-						<Scroller
-							ref={scrollerRef}
-							className={styles.mobileContainer}
-							fade={false}
-							key="auth-layout-mobile-scroller"
-						>
-							<div className={styles.mobileContent}>
-								<div className={styles.mobileLogoContainer}>
-									<FluxerWordmarkMonochrome className={styles.mobileWordmark} />
-								</div>
-								{children}
-							</div>
-						</Scroller>
+								<Scroller
+									ref={scrollerRef}
+									className={styles.mobileContainer}
+									fade={false}
+									key="auth-layout-mobile-scroller"
+								>
+									<div className={styles.mobileContent}>
+										<div className={styles.mobileLogoContainer}>
+											<span className={styles.mobileWordmark}>Pegasus</span>
+										</div>
+										{children}
+									</div>
+								</Scroller>
 					</div>
 				</AuthLayoutContext.Provider>
 			</AuthRegisterDraftContext.Provider>
@@ -199,13 +198,13 @@ const AuthLayoutContent = observer(function AuthLayoutContent({ children }: { ch
 												<AnimatePresence mode="wait" initial={false}>
 													<motion.div
 														key={location.pathname}
-														initial={{ opacity: 0, x: 20, rotateY: 10 }}
-														animate={{ opacity: 1, x: 0, rotateY: 0 }}
-														exit={{ opacity: 0, x: -20, rotateY: -10 }}
+														initial={{ opacity: 0, y: 12 }}
+														animate={{ opacity: 1, y: 0 }}
+														exit={{ opacity: 0, y: -12 }}
 														transition={{
 															type: 'spring',
 															stiffness: 260,
-															damping: 20,
+															damping: 22,
 														}}
 														style={{ width: '100%', height: '100%' }}
 													>

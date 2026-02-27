@@ -35,7 +35,10 @@
 	position: fixed;
 	inset: 0;
 	display: flex;
-	background-color: var(--background-secondary);
+	background:
+		radial-gradient(circle at top left, rgba(37, 99, 235, 0.26) 0, transparent 52%),
+		radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.2) 0, transparent 55%),
+		var(--background-primary);
 }
 
 .container {
@@ -58,6 +61,7 @@
 	overflow: auto;
 	position: relative;
 	width: 100%;
+	background: transparent;
 }
 
 .rightSplit {
@@ -115,7 +119,7 @@
 	justify-content: center;
 	align-items: center;
 	width: 100%;
-	max-width: 28rem;
+	max-width: 30rem;
 	padding: 0 1.5rem 2rem;
 	box-sizing: border-box;
 }
@@ -126,8 +130,8 @@
 		top: 50%;
 		right: calc(clamp(1.5rem, 4vw, 3rem) + 3in);
 		transform: translateY(-50%);
-		width: 20rem;
-		max-width: 22rem;
+		width: 24rem;
+		max-width: 26rem;
 		padding: 0;
 		z-index: 20;
 	}
@@ -151,12 +155,11 @@
 .patternHost {
 	position: fixed;
 	inset: 0;
-	opacity: 0.06;
+	opacity: 0.03;
 	pointer-events: none;
 	z-index: 0;
 	background-repeat: repeat;
 	background-size: 260px 260px;
-	filter: invert(1);
 }
 
 .cardContainer {
@@ -169,7 +172,6 @@
 	justify-content: center;
 	padding: clamp(2rem, 6vw, 4rem);
 	box-sizing: border-box;
-	perspective: 2000px;
 }
 
 .card {
@@ -179,17 +181,15 @@
 	height: auto;
 	min-height: 500px;
 	width: 100%;
-	max-width: 56rem;
+	max-width: 52rem;
 	overflow: hidden;
-	border-radius: 1.5rem;
+	border-radius: 1.25rem;
 	background-color: var(--background-secondary);
 	box-shadow:
-		0 25px 50px -12px rgb(0 0 0 / 0.5),
-		0 10px 20px -5px rgb(0 0 0 / 0.3),
-		inset 0 1px 1px 0 rgb(255 255 255 / 0.1);
-	transform-style: preserve-3d;
-	transform: rotateX(2deg) rotateY(-2deg) rotateZ(0.5deg);
-	transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.6s ease;
+		0 18px 40px rgba(15 23 42 / 0.55),
+		0 0 0 1px rgba(148 163 184 / 0.16);
+	transform: none;
+	transition: box-shadow 0.4s ease;
 }
 
 .versionBadge {
@@ -207,11 +207,9 @@
 }
 
 .card:hover {
-	transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.02);
 	box-shadow:
-		0 35px 60px -15px rgb(0 0 0 / 0.6),
-		0 15px 30px -10px rgb(0 0 0 / 0.4),
-		inset 0 1px 1px 0 rgb(255 255 255 / 0.15);
+		0 32px 80px rgba(15 23 42 / 0.9),
+		0 0 0 1px rgba(148 163 184 / 0.22);
 }
 
 .cardSingle {
@@ -226,7 +224,10 @@
 	justify-content: center;
 	padding: 3rem 2rem;
 	border-right: 1px solid var(--background-modifier-accent);
-	background-color: #1e1e22;
+	background:
+		radial-gradient(circle at top left, rgba(148, 163, 184, 0.18), transparent 55%),
+		radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.22), transparent 55%),
+		var(--background-secondary);
 }
 
 .logo {
@@ -239,13 +240,21 @@
 	height: 2rem;
 }
 
+.wordmarkText {
+	font-size: 1.3rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--text-primary);
+}
+
 .formSide {
 	display: flex;
 	width: 66.666667%;
 	flex-direction: column;
 	justify-content: center;
 	padding: 3rem;
-	background: #26262b;
+	background-color: var(--background-secondary);
 }
 
 .formSideSingle {
@@ -274,9 +283,11 @@
 }
 
 .mobileWordmark {
-	margin-left: auto;
-	margin-right: auto;
-	height: 2rem;
+	display: inline-block;
+	font-size: 1.25rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
 	color: var(--text-primary);
 }
 
