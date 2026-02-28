@@ -1,0 +1,18 @@
+fluxer_desktop/
+**/*.exe
+**/*.tgz
+
+# Avoid permission errors and reduce upload size (CLI deploys)
+.devenv
+**/.devenv
+**/node_modules
+.git
+*.log
+dev/
+/media/
+**/dist
+**/.turbo
+**/__pycache__
+**/.cache
+**/eb-cache
+**/*.zip

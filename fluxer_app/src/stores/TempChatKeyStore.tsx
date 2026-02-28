@@ -1,0 +1,104 @@
+/*
+ * Copyright (C) 2026 Fluxer Contributors
+ *
+ * This file is part of Fluxer.
+ *
+ * Fluxer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fluxer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+import {
+	exportPrivateKeyBase64,
+	generateKeyPair,
+	importPrivateKeyFromBase64,
+	importPublicKey,
+	type X25519KeyPair,
+} from '@app/lib/E2EEncryption';
+import * as TempChatApi from '@app/lib/TempChatApi';
+import * as TempChatLockStore from '@app/stores/TempChatLockStore';
+
+const STORAGE_KEY_PREFIX = 'temp_chat_private_key_';
+
+/**
+ * Get or create X25519 key pair for the current user.
+ * Private key is stored in sessionStorage; public key is synced to the server.
+ * If a master (or per-chat) password is set and the session is locked, returns null —
+ * use TempChatLockStore.unlockWithMasterPassword or unlockWithChatPassword first.
+ */
+export async function getOrCreateKeyPair(
+	userId: string,
+	tempChatId?: string,
+): Promise<X25519KeyPair | null> {
+	if (TempChatLockStore.isLocked(userId, tempChatId)) {
+		return null;
+	}
+
+	const storageKey = `${STORAGE_KEY_PREFIX}${userId}`;
+	const stored = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem(storageKey) : null;
+
+	if (stored) {
+		try {
+			const privateKey = await importPrivateKeyFromBase64(stored);
+			const serverKey = await TempChatApi.getMyE2EKey();
+			if (serverKey) {
+				const publicKey = await importPublicKey(serverKey);
+				return {
+					privateKey,
+					publicKey,
+					publicKeyBase64: serverKey,
+				};
+			}
+		} catch {
+			// Invalid or outdated stored key; try provisioned key or regenerate below.
+		}
+	}
+
+	// Dev only: if server has our public key but we have no local key, use server-provisioned private key (testing bypass)
+	const serverKey = await TempChatApi.getMyE2EKey();
+	if (serverKey) {
+		const provisionedPrivate = await TempChatApi.getMyE2EPrivateKey();
+		if (provisionedPrivate) {
+			try {
+				const privateKey = await importPrivateKeyFromBase64(provisionedPrivate);
+				const publicKey = await importPublicKey(serverKey);
+				const keyPair: X25519KeyPair = {
+					privateKey,
+					publicKey,
+					publicKeyBase64: serverKey,
+				};
+				// Persist so we don't need to fetch again
+				if (typeof sessionStorage !== 'undefined') {
+					sessionStorage.setItem(storageKey, provisionedPrivate);
+				}
+				return keyPair;
+			} catch {
+				// Fall through to generate new key
+			}
+		}
+	}
+
+	const keyPair = await generateKeyPair();
+	const privateKeyBase64 = await exportPrivateKeyBase64(keyPair.privateKey);
+	if (typeof sessionStorage !== 'undefined') {
+		sessionStorage.setItem(storageKey, privateKeyBase64);
+	}
+	await TempChatApi.setMyE2EKey(keyPair.publicKeyBase64);
+	return keyPair;
+}
+
+/**
+ * Fetch another user's E2E public key (only works if the current user is friends with them).
+ */
+export async function getRecipientPublicKey(recipientUserId: string): Promise<string | null> {
+	return TempChatApi.getOtherUserE2EKey(recipientUserId);
+}

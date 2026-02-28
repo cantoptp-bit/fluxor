@@ -1,0 +1,19 @@
+# Cloudflare Tunnel config for home.auroraplayer.com
+# Copy to cloudflared-config.yml and fill in tunnel ID + credentials path.
+#
+# Setup (one-time):
+#   1. cloudflared tunnel login
+#   2. cloudflared tunnel create fluxor
+#   3. cloudflared tunnel route dns fluxor home.auroraplayer.com
+#   4. Copy credentials path from "cloudflared tunnel list"
+#   5. Replace TUNNEL_UUID and CREDENTIALS_PATH below
+#
+# Run: cloudflared tunnel run fluxor --config dev/cloudflared-config.yml
+
+tunnel: TUNNEL_UUID
+credentials-file: CREDENTIALS_PATH
+
+ingress:
+  - hostname: home.auroraplayer.com
+    service: http://127.0.0.1:48763
+  - service: http_status:404

@@ -1,0 +1,37 @@
+/*
+ * New auth page (split layout) – form area overrides.
+ */
+
+.container {
+	width: 100%;
+}
+
+.title {
+	margin-bottom: 1.75rem;
+	font-size: 1.625rem;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: var(--text-primary);
+}
+
+.footer {
+	margin-top: 1.5rem;
+	padding-top: 1.25rem;
+	border-top: 1px solid var(--background-modifier-accent);
+}
+
+.footerText {
+	text-align: center;
+	font-size: 0.875rem;
+	color: var(--text-secondary);
+}
+
+.footerLink {
+	color: var(--accent-primary, #5865f2);
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.footerLink:hover {
+	text-decoration: underline;
+}

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxer Debug Console</title>
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --header-bg: rgba(20, 24, 30, 0.8);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-main: #e6edf3;
+            --text-dim: #848d97;
+            --accent-purple: #a371f7;
+            --level-info: #3fb950;
+            --level-warn: #d29922;
+            --level-error: #f85149;
+            --level-debug: #3081f7;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--accent-purple), #79c0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--level-info);
+            border: 1px solid rgba(63, 185, 80, 0.2);
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 16px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-container {
+            flex: 1;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            width: 300px;
+        }
+
+        #log-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            scroll-behavior: smooth;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            display: flex;
+            gap: 12px;
+            animation: fadeIn 0.15s ease-out;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .log-entry:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .time { color: var(--text-dim); min-width: 90px; }
+        .service { color: var(--accent-purple); font-weight: 600; min-width: 120px; }
+        .level { font-weight: 800; min-width: 60px; text-transform: uppercase; }
+        .msg { word-break: break-all; }
+
+        .level-info .level { color: var(--level-info); }
+        .level-warn .level { color: var(--level-warn); }
+        .level-error .level { color: var(--level-error); }
+        .level-debug .level { color: var(--level-debug); }
+
+        .data {
+            color: #d1d5da;
+            margin-top: 4px;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            white-space: pre-wrap;
+            display: block;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <div class="logo">FLUXER_DEBUG</div>
+            <div id="status" class="status-badge">CONNECTED</div>
+            <span style="font-size: 0.8rem; color: var(--text-dim); margin-left: 12px;">Uncaught errors from the app stream here when open in another tab</span>
+        </div>
+        <div class="header-right">
+            <div class="controls">
+                <button onclick="clearLogs()">Clear</button>
+                <button onclick="toggleAutoScroll()">Auto-Scroll: <span id="autoscroll-status">ON</span></button>
+            </div>
+        </div>
+    </header>
+
+    <div class="filter-container">
+        <input type="text" id="filter" placeholder="Filter logs (e.g. error, GuildRecord, api, auth)..." oninput="updateFilter()">
+        <div id="stats" style="font-size: 0.8rem; color: var(--text-dim)">
+            Showing <span id="count">0</span> logs
+        </div>
+    </div>
+
+    <div id="log-container"></div>
+
+    <script>
+        let logs = [];
+        let autoScroll = true;
+        let filterText = '';
+
+        const container = document.getElementById('log-container');
+        const statusBadge = document.getElementById('status');
+        const countEl = document.getElementById('count');
+
+        function connect() {
+            const ev = new EventSource('/_debug/events');
+            
+            ev.onopen = () => {
+                statusBadge.textContent = 'CONNECTED';
+                statusBadge.style.color = 'var(--level-info)';
+                statusBadge.style.background = 'rgba(63, 185, 80, 0.15)';
+            };
+
+            ev.onerror = () => {
+                statusBadge.textContent = 'DISCONNECTED';
+                statusBadge.style.color = 'var(--level-error)';
+                statusBadge.style.background = 'rgba(248, 81, 73, 0.15)';
+                setTimeout(connect, 3000);
+            };
+
+            ev.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                addLog(data);
+            };
+        }
+
+        function addLog(log) {
+            logs.push(log);
+            if (logs.length > 5000) logs.shift();
+            
+            if (shouldShow(log)) {
+                renderLog(log);
+            }
+            updateStats();
+        }
+
+        function shouldShow(log) {
+            if (!filterText) return true;
+            const searchStr = JSON.stringify(log).toLowerCase();
+            return searchStr.includes(filterText.toLowerCase());
+        }
+
+        function renderLog(log) {
+            const div = document.createElement('div');
+            div.className = `log-entry level-${log.level?.toLowerCase() || 'info'}`;
+            
+            const time = new Date(log.time).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            let dataStr = '';
+            const { time: t, level, service, msg, ...rest } = log;
+            if (Object.keys(rest).length > 0) {
+                dataStr = `<span class="data">${JSON.stringify(rest, null, 2)}</span>`;
+            }
+
+            div.innerHTML = `
+                <span class="time">${time}</span>
+                <span class="service">${service || 'unknown'}</span>
+                <span class="level">${level}</span>
+                <span class="msg">${msg || ''}${dataStr}</span>
+            `;
+
+            container.appendChild(div);
+
+            if (autoScroll) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        function updateFilter() {
+            filterText = document.getElementById('filter').value;
+            container.innerHTML = '';
+            logs.filter(shouldShow).forEach(renderLog);
+            updateStats();
+        }
+
+        function clearLogs() {
+            logs = [];
+            container.innerHTML = '';
+            updateStats();
+        }
+
+        function toggleAutoScroll() {
+            autoScroll = !autoScroll;
+            document.getElementById('autoscroll-status').textContent = autoScroll ? 'ON' : 'OFF';
+        }
+
+        function updateStats() {
+            countEl.textContent = container.children.length;
+        }
+
+        connect();
+
+        // Initial welcome log
+        addLog({
+            time: new Date().toISOString(),
+            level: 'INFO',
+            service: 'DEBUG_UI',
+            msg: 'Welcome to Fluxer Debug Terminal. Listening for live logs...'
+        });
+    </script>
+</body>
+</html>

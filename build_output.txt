@@ -1,0 +1,331 @@
+
+> fluxer@ build C:\Users\canto\Desktop\fluxor
+> turbo run build
+
+• turbo 2.8.3
+• Packages in scope: @fluxer/admin, @fluxer/api, @fluxer/app_proxy, @fluxer/cache, @fluxer/captcha, @fluxer/cassandra, @fluxer/config, @fluxer/constants, @fluxer/date_utils, @fluxer/elasticsearch_search, @fluxer/email, @fluxer/errors, @fluxer/geo_utils, @fluxer/geoip, @fluxer/hono, @fluxer/hono_types, @fluxer/http_client, @fluxer/i18n, @fluxer/initialization, @fluxer/integration, @fluxer/ip_utils, @fluxer/kv_client, @fluxer/limits, @fluxer/list_utils, @fluxer/locale, @fluxer/logger, @fluxer/markdown_parser, @fluxer/marketing, @fluxer/media_proxy, @fluxer/media_proxy_utils, @fluxer/meilisearch_search, @fluxer/mime_utils, @fluxer/nats, @fluxer/number_utils, @fluxer/oauth2, @fluxer/openapi, @fluxer/queue, @fluxer/rate_limit, @fluxer/s3, @fluxer/schema, @fluxer/sentry, @fluxer/sms, @fluxer/snowflake, @fluxer/telemetry, @fluxer/time, @fluxer/ui, @fluxer/validation, @fluxer/virus_scan, @fluxer/worker, fluxer_admin, fluxer_api, fluxer_app, fluxer_app_proxy, fluxer_marketing, fluxer_media_proxy, fluxer_relay_directory, fluxer_server
+• Running build in 57 packages
+• Remote caching disabled
+fluxer_app:i18n:extract: cache bypass, force executing 167e8787ecdcb4b8
+@fluxer/config:generate: cache hit, replaying logs 41b80d663d73d964
+@fluxer/config:generate: 
+@fluxer/config:generate: > @fluxer/config@0.0.0 generate C:\Users\canto\Desktop\fluxor\packages\config
+@fluxer/config:generate: > tsx src/schema/bundle.ts
+@fluxer/config:generate: 
+@fluxer/config:generate: Bundling JSON Schema...
+@fluxer/config:generate: Writing bundled schema to C:\Users\canto\Desktop\fluxor\packages\config\src\ConfigSchema.json
+@fluxer/config:generate: Generating Zod schema...
+@fluxer/config:generate: Writing Zod schema to C:\Users\canto\Desktop\fluxor\packages\config\src\MasterZodSchema.generated.tsx
+@fluxer/config:generate: Done!
+@fluxer/i18n:generate:types: cache hit, replaying logs 48e1dd10076d8a1d
+@fluxer/i18n:generate:types: 
+@fluxer/i18n:generate:types: > @fluxer/i18n@0.0.0 generate:types C:\Users\canto\Desktop\fluxor\packages\i18n
+@fluxer/i18n:generate:types: > tsx scripts/GenerateI18nTypes.ts
+@fluxer/i18n:generate:types: 
+@fluxer/i18n:generate:types: generating i18n types...
+@fluxer/i18n:generate:types: 
+@fluxer/i18n:generate:types: generated types for @fluxer/errors (499 keys) -> C:\Users\canto\Desktop\fluxor\packages\errors\src\i18n\ErrorI18nTypes.generated.tsx
+@fluxer/i18n:generate:types: generated types for @fluxer/email (21 keys) -> C:\Users\canto\Desktop\fluxor\packages\email\src\email_i18n\EmailI18nTypes.generated.tsx
+@fluxer/i18n:generate:types: generated types for @fluxer/marketing (442 keys) -> C:\Users\canto\Desktop\fluxor\packages\marketing\src\marketing_i18n\MarketingI18nTypes.generated.tsx
+@fluxer/i18n:generate:types: 
+@fluxer/i18n:generate:types: all i18n types generated successfully!
+@fluxer/mime_utils:typecheck: cache hit, replaying logs 889de31734c98b34
+@fluxer/mime_utils:typecheck: 
+@fluxer/mime_utils:typecheck: > @fluxer/mime_utils@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\mime_utils
+@fluxer/mime_utils:typecheck: > tsgo --noEmit
+@fluxer/mime_utils:typecheck: 
+@fluxer/nats:typecheck: cache hit, replaying logs 9ff38414527b3bc7
+@fluxer/nats:typecheck: 
+@fluxer/nats:typecheck: > @fluxer/nats@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\nats
+@fluxer/nats:typecheck: > tsgo --noEmit
+@fluxer/nats:typecheck: 
+@fluxer/constants:typecheck: cache hit, replaying logs ee2051b935a6bcb3
+@fluxer/constants:typecheck: 
+@fluxer/constants:typecheck: > @fluxer/constants@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\constants
+@fluxer/constants:typecheck: > tsgo --noEmit
+@fluxer/constants:typecheck: 
+@fluxer/time:typecheck: cache hit, replaying logs cdcff1fd5e1ca7cc
+@fluxer/time:typecheck: 
+@fluxer/time:typecheck: > @fluxer/time@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\time
+@fluxer/time:typecheck: > tsgo --noEmit
+@fluxer/time:typecheck: 
+@fluxer/telemetry:typecheck: cache hit, replaying logs adb224d21cabc479
+@fluxer/logger:typecheck: cache hit, replaying logs bb9c8e612457753d
+@fluxer/logger:typecheck: 
+@fluxer/logger:typecheck: > @fluxer/logger@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\logger
+@fluxer/logger:typecheck: > tsgo --noEmit
+@fluxer/logger:typecheck: 
+@fluxer/media_proxy_utils:typecheck: cache hit, replaying logs 1974089ce02d7b37
+@fluxer/media_proxy_utils:typecheck: 
+@fluxer/media_proxy_utils:typecheck: > @fluxer/media_proxy_utils@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\media_proxy_utils
+@fluxer/media_proxy_utils:typecheck: > tsgo --noEmit
+@fluxer/media_proxy_utils:typecheck: 
+@fluxer/sentry:typecheck: cache hit, replaying logs 735302b7ebcf0556
+@fluxer/sentry:typecheck: 
+@fluxer/sentry:typecheck: > @fluxer/sentry@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\sentry
+@fluxer/sentry:typecheck: > tsgo --noEmit
+@fluxer/sentry:typecheck: 
+fluxer_app:i18n:extract: 
+fluxer_app:i18n:extract: > fluxer_app@0.0.0 i18n:extract C:\Users\canto\Desktop\fluxor\fluxer_app
+fluxer_app:i18n:extract: > pnpm lingui:extract
+fluxer_app:i18n:extract: 
+@fluxer/ip_utils:typecheck: cache hit, replaying logs 8476885c1e9344e8
+@fluxer/telemetry:typecheck: 
+@fluxer/telemetry:typecheck: > @fluxer/telemetry@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\telemetry
+@fluxer/telemetry:typecheck: > tsgo --noEmit
+@fluxer/telemetry:typecheck: 
+@fluxer/ip_utils:typecheck: 
+@fluxer/ip_utils:typecheck: > @fluxer/ip_utils@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\ip_utils
+@fluxer/ip_utils:typecheck: > tsgo --noEmit
+@fluxer/ip_utils:typecheck: 
+@fluxer/i18n:typecheck: cache hit, replaying logs 2bb90560b5992006
+@fluxer/i18n:typecheck: 
+@fluxer/i18n:typecheck: > @fluxer/i18n@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\i18n
+@fluxer/i18n:typecheck: > tsgo --noEmit
+@fluxer/i18n:typecheck: 
+@fluxer/hono_types:typecheck: cache hit, replaying logs b634fd7ad782a913
+@fluxer/hono_types:typecheck: 
+@fluxer/hono_types:typecheck: > @fluxer/hono_types@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\hono_types
+@fluxer/hono_types:typecheck: > tsgo --noEmit
+@fluxer/hono_types:typecheck: 
+@fluxer/geo_utils:typecheck: cache hit, replaying logs f66dc255d7c4d761
+@fluxer/geo_utils:typecheck: 
+@fluxer/geo_utils:typecheck: > @fluxer/geo_utils@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\geo_utils
+@fluxer/geo_utils:typecheck: > tsgo --noEmit
+@fluxer/geo_utils:typecheck: 
+@fluxer/limits:typecheck: cache hit, replaying logs 2e890928d4eec959
+@fluxer/limits:typecheck: 
+@fluxer/limits:typecheck: > @fluxer/limits@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\limits
+@fluxer/limits:typecheck: > tsgo --noEmit
+@fluxer/limits:typecheck: 
+@fluxer/config:typecheck: cache hit, replaying logs f232d435a7582ab7
+@fluxer/config:typecheck: 
+@fluxer/config:typecheck: > @fluxer/config@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\config
+@fluxer/config:typecheck: > tsgo --noEmit
+@fluxer/config:typecheck: 
+@fluxer/snowflake:typecheck: cache hit, replaying logs f511662e3f13574f
+@fluxer/snowflake:typecheck: 
+@fluxer/snowflake:typecheck: > @fluxer/snowflake@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\snowflake
+@fluxer/snowflake:typecheck: > tsgo --noEmit
+@fluxer/snowflake:typecheck: 
+@fluxer/schema:typecheck: cache hit, replaying logs 9a1f7730d03483fc
+@fluxer/schema:typecheck: 
+@fluxer/schema:typecheck: > @fluxer/schema@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\schema
+@fluxer/schema:typecheck: > tsgo --noEmit
+@fluxer/schema:typecheck: 
+@fluxer/markdown_parser:typecheck: cache hit, replaying logs b2ffe761c7b89081
+@fluxer/markdown_parser:typecheck: 
+@fluxer/markdown_parser:typecheck: > @fluxer/markdown_parser@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\markdown_parser
+@fluxer/markdown_parser:typecheck: > tsgo --noEmit
+@fluxer/markdown_parser:typecheck: 
+@fluxer/http_client:typecheck: cache hit, replaying logs 88eb2e762dafdca8
+@fluxer/http_client:typecheck: 
+@fluxer/http_client:typecheck: > @fluxer/http_client@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\http_client
+@fluxer/http_client:typecheck: > tsgo --noEmit
+@fluxer/http_client:typecheck: 
+@fluxer/locale:typecheck: cache hit, replaying logs 63f3b0a6d883641c
+@fluxer/locale:typecheck: 
+@fluxer/locale:typecheck: > @fluxer/locale@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\locale
+@fluxer/locale:typecheck: > tsgo --noEmit
+@fluxer/locale:typecheck: 
+@fluxer/rate_limit:typecheck: cache hit, replaying logs 794bb91416952b7e
+@fluxer/rate_limit:typecheck: 
+@fluxer/rate_limit:typecheck: > @fluxer/rate_limit@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\rate_limit
+@fluxer/rate_limit:typecheck: > tsgo --noEmit
+@fluxer/rate_limit:typecheck: 
+@fluxer/virus_scan:typecheck: cache hit, replaying logs fe8501f6e9e4c0c4
+@fluxer/virus_scan:typecheck: 
+@fluxer/virus_scan:typecheck: > @fluxer/virus_scan@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\virus_scan
+@fluxer/virus_scan:typecheck: > tsgo --noEmit
+@fluxer/virus_scan:typecheck: 
+@fluxer/captcha:typecheck: cache hit, replaying logs f85361634cabe550
+@fluxer/captcha:typecheck: 
+@fluxer/captcha:typecheck: > @fluxer/captcha@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\captcha
+@fluxer/captcha:typecheck: > tsgo --noEmit
+@fluxer/captcha:typecheck: 
+@fluxer/email:typecheck: cache hit, replaying logs 2fd0f3405ede70b2
+@fluxer/email:typecheck: 
+@fluxer/email:typecheck: > @fluxer/email@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\email
+@fluxer/email:typecheck: > tsgo --noEmit
+@fluxer/email:typecheck: 
+@fluxer/geoip:typecheck: cache hit, replaying logs caf50ca2f9233ce1
+@fluxer/geoip:typecheck: 
+@fluxer/geoip:typecheck: > @fluxer/geoip@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\geoip
+@fluxer/geoip:typecheck: > tsgo --noEmit
+@fluxer/geoip:typecheck: 
+@fluxer/errors:typecheck: cache hit, replaying logs 3f9f9f6e76e62259
+@fluxer/errors:typecheck: 
+@fluxer/errors:typecheck: > @fluxer/errors@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\errors
+@fluxer/errors:typecheck: > tsgo --noEmit
+@fluxer/errors:typecheck: 
+@fluxer/meilisearch_search:typecheck: cache hit, replaying logs 89c7b025d33204cd
+@fluxer/date_utils:typecheck: cache hit, replaying logs 3f69764c9ee65b9e
+@fluxer/date_utils:typecheck: 
+@fluxer/date_utils:typecheck: > @fluxer/date_utils@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\date_utils
+@fluxer/date_utils:typecheck: > tsgo --noEmit
+@fluxer/date_utils:typecheck: 
+@fluxer/meilisearch_search:typecheck: 
+@fluxer/meilisearch_search:typecheck: > @fluxer/meilisearch_search@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\meilisearch_search
+@fluxer/meilisearch_search:typecheck: > tsgo --noEmit
+@fluxer/meilisearch_search:typecheck: 
+@fluxer/sms:typecheck: cache hit, replaying logs 0d3d6b4f97969ef1
+@fluxer/sms:typecheck: 
+@fluxer/sms:typecheck: > @fluxer/sms@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\sms
+@fluxer/sms:typecheck: > tsgo --noEmit
+@fluxer/sms:typecheck: 
+@fluxer/hono:typecheck: cache hit, replaying logs 448c6d0d399dd1c3
+@fluxer/hono:typecheck: 
+@fluxer/hono:typecheck: > @fluxer/hono@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\hono
+@fluxer/hono:typecheck: > tsgo --noEmit
+@fluxer/hono:typecheck: 
+@fluxer/kv_client:typecheck: cache hit, replaying logs 9d468d2ed5a982ee
+@fluxer/kv_client:typecheck: 
+@fluxer/kv_client:typecheck: > @fluxer/kv_client@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\kv_client
+@fluxer/kv_client:typecheck: > tsgo --noEmit
+@fluxer/kv_client:typecheck: 
+@fluxer/queue:typecheck: cache hit, replaying logs 009a84260f9efee3
+@fluxer/queue:typecheck: 
+@fluxer/queue:typecheck: > @fluxer/queue@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\queue
+@fluxer/queue:typecheck: > tsgo --noEmit
+@fluxer/queue:typecheck: 
+@fluxer/media_proxy:typecheck: cache hit, replaying logs c508ae01e4bb0dcc
+@fluxer/cache:typecheck: cache hit, replaying logs 2af8fa285b4f3608
+@fluxer/cache:typecheck: 
+@fluxer/cache:typecheck: > @fluxer/cache@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\cache
+@fluxer/cache:typecheck: > tsgo --noEmit
+@fluxer/cache:typecheck: 
+@fluxer/media_proxy:typecheck: 
+@fluxer/media_proxy:typecheck: > @fluxer/media_proxy@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\media_proxy
+@fluxer/media_proxy:typecheck: > tsgo --noEmit
+@fluxer/media_proxy:typecheck: 
+@fluxer/worker:typecheck: cache hit, replaying logs 7d65cb7fdf68de6d
+@fluxer/worker:typecheck: 
+@fluxer/worker:typecheck: > @fluxer/worker@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\worker
+@fluxer/worker:typecheck: > tsgo --noEmit
+@fluxer/worker:typecheck: 
+@fluxer/s3:typecheck: cache hit, replaying logs 0947ffac2a82ea39
+@fluxer/s3:typecheck: 
+@fluxer/s3:typecheck: > @fluxer/s3@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\s3
+@fluxer/s3:typecheck: > tsgo --noEmit
+@fluxer/s3:typecheck: 
+@fluxer/api:typecheck: cache hit, replaying logs 579f1ccb1d0ac0c1
+@fluxer/api:typecheck: 
+@fluxer/api:typecheck: > @fluxer/api@0.0.0 typecheck C:\Users\canto\Desktop\fluxor\packages\api
+@fluxer/api:typecheck: > tsgo --noEmit
+@fluxer/api:typecheck: 
+@fluxer/openapi:generate: cache hit, replaying logs da223e00cccd4e00
+@fluxer/openapi:generate: [?9001h[?1004h[?25l[2J[m[H]0;C:\WINDOWS\system32\cmd.exe [?25h[?25l
+@fluxer/openapi:generate: > @fluxer/openapi@0.0.0 generate C:\Users\canto\Desktop\fluxor\packages\openapi
+@fluxer/openapi:generate: > tsx src/scripts/GenerateSpec.tsx[5;1H[?25hFluxer OpenAPI Specification Generator
+@fluxer/openapi:generate: ======================================
+@fluxer/openapi:generate: Base path: C:\Users\canto\Desktop\fluxor
+@fluxer/openapi:generate: Output path: C:\Users\canto\Desktop\fluxor\fluxer_docs\api-reference\openapi.json
+@fluxer/openapi:generate: 
+@fluxer/openapi:generate: 
+@fluxer/openapi:generate: Validating specification...
+@fluxer/openapi:generate: Validation passed
+@fluxer/openapi:generate: 
+@fluxer/openapi:generate: Writing specification to C:\Users\canto\Desktop\fluxor\fluxer_docs\api-reference\openapi.json...
+@fluxer/openapi:generate: 
+@fluxer/openapi:generate: Generating resource overview page...
+@fluxer/openapi:generate: Generated 22 resource files in C:\Users\canto\Desktop\fluxor\fluxer_docs\resources
+@fluxer/openapi:generate: 
+@fluxer/openapi:generate: Summary
+@fluxer/openapi:generate: -------
+@fluxer/openapi:generate: Paths: 349
+@fluxer/openapi:generate: Operations: 424
+@fluxer/openapi:generate: Schemas: 538
+@fluxer/openapi:generate: 
+@fluxer/openapi:generate: OpenAPI specification generated successfully.
+@fluxer/openapi:generate: [?9001l[?1004l
+fluxer_relay_directory:build: cache hit, replaying logs 19a2ab344ab126ae
+fluxer_relay_directory:build: [?9001h[?1004h[?25l[2J[m[H]0;C:\WINDOWS\system32\cmd.exe [?25h[?25l
+fluxer_relay_directory:build: > fluxer_relay_directory@0.0.0 build C:\Users\canto\Desktop\fluxor\fluxer_relay_directory
+fluxer_relay_directory:build: > tsgo[5;1H[?25h[?9001l[?1004l
+fluxer_app:i18n:extract: 
+fluxer_app:i18n:extract: > fluxer_app@0.0.0 lingui:extract C:\Users\canto\Desktop\fluxor\fluxer_app
+fluxer_app:i18n:extract: > lingui extract --clean
+fluxer_app:i18n:extract: 
+fluxer_app:i18n:extract: ✔ Done in 29s
+fluxer_app:i18n:extract: Catalog statistics for src/locales/{locale}/messages: 
+fluxer_app:i18n:extract: ┌────────────────┬─────────────┬─────────┐
+fluxer_app:i18n:extract: │ Language       │ Total count │ Missing │
+fluxer_app:i18n:extract: ├────────────────┼─────────────┼─────────┤
+fluxer_app:i18n:extract: │ [1men-US[22m (source) │    5650     │    -    │
+fluxer_app:i18n:extract: │ ar             │    5650     │    0    │
+fluxer_app:i18n:extract: │ bg             │    5650     │    0    │
+fluxer_app:i18n:extract: │ cs             │    5650     │    0    │
+fluxer_app:i18n:extract: │ da             │    5650     │    0    │
+fluxer_app:i18n:extract: │ de             │    5650     │    0    │
+fluxer_app:i18n:extract: │ el             │    5650     │    0    │
+fluxer_app:i18n:extract: │ en-GB          │    5650     │    0    │
+fluxer_app:i18n:extract: │ es-419         │    5650     │    0    │
+fluxer_app:i18n:extract: │ es-ES          │    5650     │    0    │
+fluxer_app:i18n:extract: │ fi             │    5650     │    0    │
+fluxer_app:i18n:extract: │ fr             │    5650     │    0    │
+fluxer_app:i18n:extract: │ he             │    5650     │    0    │
+fluxer_app:i18n:extract: │ hi             │    5650     │    0    │
+fluxer_app:i18n:extract: │ hr             │    5650     │    0    │
+fluxer_app:i18n:extract: │ hu             │    5650     │    0    │
+fluxer_app:i18n:extract: │ id             │    5650     │    0    │
+fluxer_app:i18n:extract: │ it             │    5650     │    0    │
+fluxer_app:i18n:extract: │ ja             │    5650     │    0    │
+fluxer_app:i18n:extract: │ ko             │    5650     │    0    │
+fluxer_app:i18n:extract: │ lt             │    5650     │    0    │
+fluxer_app:i18n:extract: │ nl             │    5650     │    0    │
+fluxer_app:i18n:extract: │ no             │    5650     │    0    │
+fluxer_app:i18n:extract: │ pl             │    5650     │    0    │
+fluxer_app:i18n:extract: │ pt-BR          │    5650     │    0    │
+fluxer_app:i18n:extract: │ ro             │    5650     │    0    │
+fluxer_app:i18n:extract: │ ru             │    5650     │    0    │
+fluxer_app:i18n:extract: │ sv-SE          │    5650     │    0    │
+fluxer_app:i18n:extract: │ th             │    5650     │    0    │
+fluxer_app:i18n:extract: │ tr             │    5650     │    0    │
+fluxer_app:i18n:extract: │ uk             │    5650     │    0    │
+fluxer_app:i18n:extract: │ vi             │    5650     │    0    │
+fluxer_app:i18n:extract: │ zh-CN          │    5650     │    0    │
+fluxer_app:i18n:extract: │ zh-TW          │    5650     │    0    │
+fluxer_app:i18n:extract: └────────────────┴─────────────┴─────────┘
+fluxer_app:i18n:extract: 
+fluxer_app:i18n:extract: (Use "[33mpnpm run lingui:extract[39m" to update catalogs with new messages.)
+fluxer_app:i18n:extract: (Use "[33mpnpm run lingui:compile[39m" to compile catalogs for production. Alternatively, use bundler plugins: https://lingui.dev/ref/cli#compiling-catalogs-in-ci)
+fluxer_app:i18n:auto: cache bypass, force executing 78fce560ca8994c4
+fluxer_app:i18n:auto: 
+fluxer_app:i18n:auto: > fluxer_app@0.0.0 i18n:auto C:\Users\canto\Desktop\fluxor\fluxer_app
+fluxer_app:i18n:auto: > node scripts/auto-i18n.mjs
+fluxer_app:i18n:auto: 
+fluxer_app:i18n:compile: cache bypass, force executing dd15264ebc69d655
+fluxer_app:i18n:compile: 
+fluxer_app:i18n:compile: > fluxer_app@0.0.0 i18n:compile C:\Users\canto\Desktop\fluxor\fluxer_app
+fluxer_app:i18n:compile: > pnpm lingui:compile
+fluxer_app:i18n:compile: 
+fluxer_app:i18n:compile: 
+fluxer_app:i18n:compile: > fluxer_app@0.0.0 lingui:compile C:\Users\canto\Desktop\fluxor\fluxer_app
+fluxer_app:i18n:compile: > lingui compile --strict
+fluxer_app:i18n:compile: 
+fluxer_app:i18n:compile: Compiling message catalogs…
+fluxer_app:i18n:compile: Done in 3s
+fluxer_app:build: cache miss, executing 385feeea089ddae9
+fluxer_app:build: 
+fluxer_app:build: > fluxer_app@0.0.0 build C:\Users\canto\Desktop\fluxor\fluxer_app
+fluxer_app:build: > pnpm wasm:codegen && pnpm generate:colors && pnpm generate:masks && pnpm generate:css-types && tsgo --noEmit && pnpm lingui:compile && rm -rf dist && rspack build --mode production && pnpm tsx scripts/build-sw.mjs
+fluxer_app:build: 
+fluxer_app:build: 
+fluxer_app:build: > fluxer_app@0.0.0 wasm:codegen C:\Users\canto\Desktop\fluxor\fluxer_app
+fluxer_app:build: > cd crates/libfluxcore && wasm-pack build --target web --out-dir ../../pkgs/libfluxcore --release
+fluxer_app:build: 
+fluxer_app:build: Error: failed to start `cargo metadata`: program not found
+fluxer_app:build: Caused by: failed to start `cargo metadata`: program not found
+fluxer_app:build: Caused by: program not found
+fluxer_app:build:  ELIFECYCLE  Command failed with exit code 1.
+fluxer_app:build:  ELIFECYCLE  Command failed with exit code 1.
+fluxer_app:build: ERROR: command finished with error: command (C:\Users\canto\Desktop\fluxor\fluxer_app) C:\Users\canto\AppData\Local\npm-cache\_npx\881d3651d5ee0fab\node_modules\.bin\pnpm.cmd run build exited (1)
+fluxer_app#build: command (C:\Users\canto\Desktop\fluxor\fluxer_app) C:\Users\canto\AppData\Local\npm-cache\_npx\881d3651d5ee0fab\node_modules\.bin\pnpm.cmd run build exited (1)
+
+ Tasks:    43 successful, 44 total
+Cached:    40 cached, 44 total
+  Time:    37.105s 
+Failed:    fluxer_app#build
+
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Command failed with exit code 1.

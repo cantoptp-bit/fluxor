@@ -1,0 +1,234 @@
+/*
+ * Copyright (C) 2026 Fluxer Contributors
+ *
+ * This file is part of Fluxer.
+ *
+ * Fluxer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Fluxer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/* Match project aesthetic: same surface as other fullscreen modals */
+.discoveryRoot {
+	background: var(--background-secondary);
+}
+
+.layout {
+	display: flex;
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+}
+
+/* Left sidebar: clean raised panel, lighter and more refined */
+.sidebar {
+	width: 232px;
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-4);
+	padding: var(--spacing-5) var(--spacing-3);
+	background: color-mix(in srgb, var(--background-tertiary) 92%, var(--background-secondary) 8%);
+	border-right: 1px solid var(--background-modifier-accent);
+	border-radius: 0 14px 14px 0;
+	box-shadow:
+		inset 1px 0 0 rgba(255, 255, 255, 0.06),
+		6px 0 20px rgba(0, 0, 0, 0.08),
+		2px 0 8px rgba(0, 0, 0, 0.04);
+	position: relative;
+	z-index: 1;
+}
+
+.sidebarHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-2);
+	padding: var(--spacing-1) var(--spacing-2);
+}
+
+.sidebarIcon {
+	color: var(--brand-primary);
+	flex-shrink: 0;
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.sidebarTitle {
+	font-size: 1.0625rem;
+	font-weight: 700;
+	color: var(--text-primary);
+	letter-spacing: 0.01em;
+}
+
+.categories {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: var(--spacing-1) 0;
+}
+
+.categoryItem {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 0.625rem var(--spacing-3) 0.625rem calc(var(--spacing-3) + 8px);
+	border: 1px solid transparent;
+	border-radius: 10px;
+	background: transparent;
+	color: var(--text-secondary);
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-align: left;
+	cursor: pointer;
+	transition:
+		background-color 0.2s ease,
+		color 0.2s ease,
+		border-color 0.2s ease,
+		box-shadow 0.2s ease;
+	position: relative;
+}
+
+.categoryItem:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-primary);
+	border-color: var(--background-modifier-accent);
+}
+
+.categoryItemActive {
+	background: color-mix(in srgb, var(--background-modifier-selected) 90%, var(--brand-primary) 8%);
+	color: var(--text-primary);
+	border-color: color-mix(in srgb, var(--brand-primary) 35%, transparent);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.08),
+		0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+/* Blue accent bar on left when selected */
+.categoryItemActive::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 4px;
+	height: 22px;
+	border-radius: 0 3px 3px 0;
+	background: var(--brand-primary);
+	box-shadow: 0 0 10px color-mix(in srgb, var(--brand-primary) 45%, transparent);
+}
+
+/* Main area: hero + scrollable grid, same base as rest of app */
+.main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+	position: relative;
+	background: var(--background-secondary);
+}
+
+/* Blue hero section at top */
+.hero {
+	position: relative;
+	flex-shrink: 0;
+	overflow: hidden;
+}
+
+.heroBackground {
+	position: absolute;
+	inset: 0;
+	background-color: var(--brand-primary);
+	pointer-events: none;
+}
+
+.heroPattern {
+	position: absolute;
+	inset: 0;
+	background-size: 260px 260px;
+	background-repeat: repeat;
+	opacity: 0.06;
+	filter: invert(1);
+	background-color: transparent;
+	pointer-events: none;
+}
+
+.heroContent {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--spacing-4);
+	padding: var(--spacing-8) var(--spacing-5) var(--spacing-5);
+}
+
+.heroTitle {
+	margin: 0;
+	font-size: 1.75rem;
+	font-weight: 700;
+	color: white;
+	text-align: center;
+}
+
+.searchBar {
+	width: 100%;
+	max-width: 480px;
+}
+
+.searchInput {
+	width: 100%;
+}
+
+/* Subtle pattern behind scrollable content */
+.mainBackground {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	overflow: hidden;
+}
+
+.mainPattern {
+	position: absolute;
+	inset: 0;
+	background-size: 260px 260px;
+	background-repeat: repeat;
+	opacity: 0.04;
+	filter: invert(0);
+	background-color: transparent;
+}
+
+.mainContent {
+	flex: 1;
+	min-height: 0;
+	position: relative;
+	z-index: 1;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: var(--spacing-4);
+	padding: 0 var(--spacing-5) var(--spacing-5);
+}
+
+.loadingState {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--spacing-10) var(--spacing-5);
+}
+
+.loadMore {
+	display: flex;
+	justify-content: center;
+	padding: var(--spacing-4) var(--spacing-5) var(--spacing-6);
+}

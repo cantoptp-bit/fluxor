@@ -1,0 +1,415 @@
+name: build desktop
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Channel to build (stable or canary)
+        required: false
+        type: choice
+        options:
+          - stable
+          - canary
+        default: stable
+      ref:
+        description: Git ref to build (branch, tag, or commit SHA)
+        required: false
+        default: ''
+        type: string
+      skip_windows:
+        description: Skip Windows builds
+        required: false
+        default: false
+        type: boolean
+      skip_macos:
+        description: Skip macOS builds
+        required: false
+        default: false
+        type: boolean
+      skip_linux:
+        description: Skip Linux builds
+        required: false
+        default: false
+        type: boolean
+      skip_windows_x64:
+        description: Skip Windows x64 builds
+        required: false
+        default: false
+        type: boolean
+      skip_windows_arm64:
+        description: Skip Windows ARM64 builds
+        required: false
+        default: false
+        type: boolean
+      skip_macos_x64:
+        description: Skip macOS x64 builds
+        required: false
+        default: false
+        type: boolean
+      skip_macos_arm64:
+        description: Skip macOS ARM64 builds
+        required: false
+        default: false
+        type: boolean
+      skip_linux_x64:
+        description: Skip Linux x64 builds
+        required: false
+        default: false
+        type: boolean
+      skip_linux_arm64:
+        description: Skip Linux ARM64 builds
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: desktop-${{ inputs.channel }}
+  cancel-in-progress: true
+
+env:
+  CHANNEL: ${{ inputs.channel }}
+  BUILD_CHANNEL: ${{ inputs.channel == 'canary' && 'canary' || 'stable' }}
+
+jobs:
+  meta:
+    name: Resolve build metadata
+    runs-on: blacksmith-8vcpu-ubuntu-2404
+    timeout-minutes: 25
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      pub_date: ${{ steps.meta.outputs.pub_date }}
+      channel: ${{ steps.meta.outputs.channel }}
+      build_channel: ${{ steps.meta.outputs.build_channel }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: scripts/ci
+          sparse-checkout-cone-mode: false
+
+      - name: Set metadata
+        id: meta
+        run: >-
+          python3 scripts/ci/workflows/build_desktop.py
+          --step set_metadata
+          --channel "${{ inputs.channel }}"
+          --ref "${{ inputs.ref }}"
+
+  matrix:
+    name: Resolve build matrix
+    runs-on: blacksmith-8vcpu-ubuntu-2404
+    timeout-minutes: 25
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: scripts/ci
+          sparse-checkout-cone-mode: false
+
+      - name: Build platform matrix
+        id: set-matrix
+        run: >-
+          python3 scripts/ci/workflows/build_desktop.py
+          --step set_matrix
+          --skip-windows "${{ inputs.skip_windows }}"
+          --skip-windows-x64 "${{ inputs.skip_windows_x64 }}"
+          --skip-windows-arm64 "${{ inputs.skip_windows_arm64 }}"
+          --skip-macos "${{ inputs.skip_macos }}"
+          --skip-macos-x64 "${{ inputs.skip_macos_x64 }}"
+          --skip-macos-arm64 "${{ inputs.skip_macos_arm64 }}"
+          --skip-linux "${{ inputs.skip_linux }}"
+          --skip-linux-x64 "${{ inputs.skip_linux_x64 }}"
+          --skip-linux-arm64 "${{ inputs.skip_linux_arm64 }}"
+
+  build:
+    name: Build ${{ matrix.platform }} (${{ matrix.arch }})
+    needs:
+      - meta
+      - matrix
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.matrix.outputs.matrix) }}
+    env:
+      CHANNEL: ${{ needs.meta.outputs.channel }}
+      BUILD_CHANNEL: ${{ needs.meta.outputs.build_channel }}
+      VERSION: ${{ needs.meta.outputs.version }}
+      PUB_DATE: ${{ needs.meta.outputs.pub_date }}
+      PLATFORM: ${{ matrix.platform }}
+      ARCH: ${{ matrix.arch }}
+      ELECTRON_ARCH: ${{ matrix.electron_arch }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || '' }}
+
+      - name: Shorten Windows paths (workspace + temp for Squirrel) and pin pnpm store
+        if: runner.os == 'Windows'
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step windows_paths
+
+      - name: Set workdir (Unix)
+        if: runner.os != 'Windows'
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step set_workdir_unix
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Resolve pnpm store path (Windows)
+        if: runner.os == 'Windows'
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step resolve_pnpm_store_windows
+
+      - name: Resolve pnpm store path (Unix)
+        if: runner.os != 'Windows'
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step resolve_pnpm_store_unix
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.PNPM_STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install Python setuptools (Windows ARM64)
+        if: matrix.platform == 'windows' && matrix.arch == 'arm64'
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step install_setuptools_windows_arm64
+
+      - name: Install Python setuptools (macOS)
+        if: matrix.platform == 'macos'
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step install_setuptools_macos
+
+      - name: Install Linux dependencies
+        if: matrix.platform == 'linux'
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step install_linux_deps
+
+      - name: Install dependencies
+        working-directory: ${{ env.WORKDIR }}/fluxer_desktop
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step install_dependencies
+
+      - name: Update version
+        working-directory: ${{ env.WORKDIR }}/fluxer_desktop
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step update_version
+
+      - name: Set build channel
+        working-directory: ${{ env.WORKDIR }}/fluxer_desktop
+        env:
+          BUILD_CHANNEL: ${{ env.BUILD_CHANNEL }}
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step set_build_channel
+
+      - name: Build Electron main process
+        working-directory: ${{ env.WORKDIR }}/fluxer_desktop
+        env:
+          BUILD_CHANNEL: ${{ env.BUILD_CHANNEL }}
+          TURBO_API: https://turborepo.fluxer.dev
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: team_fluxer
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step build_electron_main
+
+      - name: Build Electron app (macOS)
+        if: matrix.platform == 'macos'
+        working-directory: ${{ env.WORKDIR }}/fluxer_desktop
+        env:
+          BUILD_CHANNEL: ${{ env.BUILD_CHANNEL }}
+          CSC_LINK: ${{ secrets.APPLE_CERTIFICATE }}
+          CSC_KEY_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step build_app_macos
+
+      - name: Verify macOS bundle ID (fail fast if wrong channel)
+        if: matrix.platform == 'macos'
+        working-directory: ${{ env.WORKDIR }}/fluxer_desktop
+        env:
+          BUILD_CHANNEL: ${{ env.BUILD_CHANNEL }}
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step verify_bundle_id
+
+      - name: Build Electron app (Windows)
+        if: matrix.platform == 'windows'
+        working-directory: ${{ env.WORKDIR }}/fluxer_desktop
+        env:
+          BUILD_CHANNEL: ${{ env.BUILD_CHANNEL }}
+          TEMP: C:\t
+          TMP: C:\t
+          SQUIRREL_TEMP: C:\sq
+          ELECTRON_BUILDER_CACHE: C:\ebcache
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step build_app_windows
+
+      - name: Analyze Squirrel nupkg for long paths
+        if: matrix.platform == 'windows'
+        working-directory: ${{ env.WORKDIR }}/fluxer_desktop
+        env:
+          BUILD_VERSION: ${{ env.VERSION }}
+          MAX_WINDOWS_PATH_LEN: 260
+          PATH_HEADROOM: 10
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step analyse_squirrel_paths
+
+      - name: Build Electron app (Linux)
+        if: matrix.platform == 'linux'
+        working-directory: ${{ env.WORKDIR }}/fluxer_desktop
+        env:
+          BUILD_CHANNEL: ${{ env.BUILD_CHANNEL }}
+          USE_SYSTEM_FPM: true
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step build_app_linux
+
+      - name: Prepare artifacts (Windows)
+        if: runner.os == 'Windows'
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step prepare_artifacts_windows
+
+      - name: Prepare artifacts (Unix)
+        if: runner.os != 'Windows'
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step prepare_artifacts_unix
+
+      - name: Normalize updater YAML (arm64)
+        if: matrix.arch == 'arm64'
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step normalise_updater_yaml
+
+      - name: Generate SHA256 checksums (Unix)
+        if: runner.os != 'Windows'
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step generate_checksums_unix
+
+      - name: Generate SHA256 checksums (Windows)
+        if: runner.os == 'Windows'
+        run: >-
+          python3 ${{ github.workspace }}/scripts/ci/workflows/build_desktop.py
+          --step generate_checksums_windows
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fluxer-desktop-${{ env.BUILD_CHANNEL }}-${{ matrix.platform }}-${{ matrix.arch }}
+          path: |
+            upload_staging/*.exe
+            upload_staging/*.exe.blockmap
+            upload_staging/*.exe.sha256
+            upload_staging/*.dmg
+            upload_staging/*.dmg.sha256
+            upload_staging/*.zip
+            upload_staging/*.zip.blockmap
+            upload_staging/*.zip.sha256
+            upload_staging/*.AppImage
+            upload_staging/*.AppImage.sha256
+            upload_staging/*.deb
+            upload_staging/*.deb.sha256
+            upload_staging/*.rpm
+            upload_staging/*.rpm.sha256
+            upload_staging/*.tar.gz
+            upload_staging/*.tar.gz.sha256
+            upload_staging/*.yml
+            upload_staging/*.nupkg
+            upload_staging/*.nupkg.blockmap
+            upload_staging/*.nupkg.sha256
+            upload_staging/RELEASES*
+          retention-days: 30
+
+  upload:
+    name: Upload to S3 (rclone)
+    needs:
+      - meta
+      - build
+    runs-on: blacksmith-8vcpu-ubuntu-2404
+    timeout-minutes: 25
+    env:
+      CHANNEL: ${{ needs.meta.outputs.build_channel }}
+      DISPLAY_CHANNEL: ${{ needs.meta.outputs.channel }}
+      VERSION: ${{ needs.meta.outputs.version }}
+      PUB_DATE: ${{ needs.meta.outputs.pub_date }}
+      S3_ENDPOINT: https://s3.us-east-va.io.cloud.ovh.us
+      S3_BUCKET: fluxer-downloads
+      PUBLIC_DL_BASE: https://api.fluxer.app/dl
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: scripts/ci
+          sparse-checkout-cone-mode: false
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: fluxer-desktop-${{ needs.meta.outputs.build_channel }}-*
+
+      - name: Install rclone
+        run: >-
+          python3 scripts/ci/workflows/build_desktop.py
+          --step install_rclone
+
+      - name: Configure rclone (OVH S3)
+        run: >-
+          python3 scripts/ci/workflows/build_desktop.py
+          --step configure_rclone
+
+      - name: Build S3 payload layout (+ manifest.json)
+        env:
+          VERSION: ${{ needs.meta.outputs.version }}
+          PUB_DATE: ${{ needs.meta.outputs.pub_date }}
+        run: >-
+          python3 scripts/ci/workflows/build_desktop.py
+          --step build_payload
+
+      - name: Upload payload to S3
+        run: >-
+          python3 scripts/ci/workflows/build_desktop.py
+          --step upload_payload
+
+      - name: Build summary
+        run: >-
+          python3 scripts/ci/workflows/build_desktop.py
+          --step build_summary

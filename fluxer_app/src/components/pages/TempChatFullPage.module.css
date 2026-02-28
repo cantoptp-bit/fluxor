@@ -1,0 +1,349 @@
+/*
+ * Copyright (C) 2026 Fluxer Contributors
+ *
+ * This file is part of Fluxer.
+ *
+ * Fluxer is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License or (at your option) any later version.
+ *
+ * Fluxer is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+.container {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 0;
+	background: var(--background-primary);
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--background-modifier-accent);
+	flex-shrink: 0;
+}
+
+.backButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: none;
+	border-radius: 8px;
+	background: transparent;
+	color: var(--text-normal);
+	font-size: 18px;
+	cursor: pointer;
+}
+
+.backButton:hover {
+	background: var(--background-modifier-hover);
+}
+
+.headerAvatar {
+	flex-shrink: 0;
+}
+
+.headerTitleBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.headerTitle {
+	font-weight: 600;
+	font-size: 16px;
+	color: var(--text-normal);
+}
+
+.headerTempLabel {
+	font-size: 11px;
+	color: var(--text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.headerActions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-left: auto;
+}
+
+.subtitle {
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.tempChatBanner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 8px 16px;
+	background: var(--background-secondary);
+	border-bottom: 1px solid var(--background-modifier-accent);
+	font-size: 13px;
+	color: var(--text-muted);
+	flex-shrink: 0;
+}
+
+.tempChatBannerIcon {
+	font-size: 16px;
+	flex-shrink: 0;
+}
+
+.deleteButton {
+	flex-shrink: 0;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.inner {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
+.scroller {
+	flex: 1;
+	min-height: 0;
+}
+
+.messageList {
+	display: flex;
+	flex-direction: column;
+	padding: 12px;
+}
+
+.dateDivider {
+	align-self: stretch;
+}
+
+.messageRow,
+.messageRowGrouped {
+	display: grid;
+	grid-template-columns:
+		var(--message-gutter, 16px)
+		var(--message-avatar-size, 40px)
+		var(--message-gutter, 16px)
+		minmax(0, 1fr);
+	grid-template-areas: 'gutter-left avatar gutter-right content';
+	align-items: start;
+	padding-block: 0.125rem;
+	padding-inline-end: var(--message-gutter, 16px);
+	text-align: left;
+}
+
+.messageRow:hover,
+.messageRowGrouped:hover {
+	background-color: var(--background-modifier-hover);
+}
+
+.messageRowGrouped {
+	grid-template-areas: 'gutter-left timestamp gutter-right content';
+}
+
+.messageGutterLeft {
+	grid-area: gutter-left;
+}
+
+.messageGutterRight {
+	grid-area: gutter-right;
+}
+
+.messageAvatar {
+	grid-area: avatar;
+	align-self: start;
+	inline-size: var(--message-avatar-size, 40px);
+	block-size: var(--message-avatar-size, 40px);
+}
+
+.messageContent {
+	grid-area: content;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.messageAuthorRow {
+	display: flex;
+	align-items: baseline;
+	line-height: var(--message-line-height, 1.375rem);
+	min-height: var(--message-line-height, 1.375rem);
+}
+
+.messageSender {
+	font-weight: 600;
+	color: var(--text-primary);
+}
+
+.messageTimestamp {
+	font-size: var(--message-timestamp-font-size, 0.75rem);
+	font-weight: 400;
+	color: var(--message-timestamp-color, var(--text-muted));
+	opacity: 0.6;
+	white-space: nowrap;
+}
+
+.messageTimestampHover {
+	grid-area: timestamp;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	width: var(--message-avatar-size, 40px);
+	height: var(--message-line-height, 1.375rem);
+	font-size: var(--message-timestamp-font-size, 0.75rem);
+	color: var(--message-timestamp-color, var(--text-muted));
+	text-align: right;
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.messageRow:hover .messageTimestampHover,
+.messageRowGrouped:hover .messageTimestampHover {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.messageText {
+	line-height: var(--message-line-height, 1.375rem);
+	color: var(--text-normal);
+	white-space: break-spaces;
+	word-break: break-word;
+}
+
+.decryptError {
+	padding: 8px;
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.testingBypassRow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 12px;
+	border-top: 1px solid var(--background-modifier-accent);
+	flex-shrink: 0;
+	background: var(--background-secondary-alt);
+}
+
+.testingBypassHint {
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.inputRow {
+	display: flex;
+	align-items: flex-end;
+	gap: 8px;
+	padding: 12px;
+	border-top: 1px solid var(--background-modifier-accent);
+	flex-shrink: 0;
+}
+
+.input {
+	flex: 1;
+	min-width: 0;
+	min-height: 40px;
+	max-height: 200px;
+	padding: 10px 16px;
+	border-radius: 8px;
+	border: none;
+	background: var(--background-secondary);
+	color: var(--text-normal);
+	font-size: 15px;
+	line-height: 1.375rem;
+	resize: none;
+	font-family: inherit;
+}
+
+.input::placeholder {
+	color: var(--text-muted);
+}
+
+.input:focus {
+	outline: none;
+	box-shadow: 0 0 0 1px var(--interactive-active);
+}
+
+.sendButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	flex-shrink: 0;
+	padding: 0;
+	border: none;
+	border-radius: 10px;
+	background: linear-gradient(
+		145deg,
+		color-mix(in srgb, var(--brand-primary) 92%, white),
+		color-mix(in srgb, var(--brand-primary) 92%, black)
+	);
+	color: white;
+	cursor: pointer;
+	transition: box-shadow 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+	box-shadow:
+		0 4px 8px rgba(0, 0, 0, 0.25),
+		0 2px 4px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.25);
+	border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.sendButton:hover:not(:disabled) {
+	box-shadow:
+		0 5px 12px rgba(0, 0, 0, 0.3),
+		0 2px 6px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.3);
+	transform: translateY(-1px);
+}
+
+.sendButton:active:not(:disabled) {
+	box-shadow:
+		0 1px 3px rgba(0, 0, 0, 0.3),
+		0 1px 2px rgba(0, 0, 0, 0.2),
+		inset 0 2px 4px rgba(0, 0, 0, 0.2);
+	transform: translateY(1px);
+}
+
+.sendButton:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.sendButtonIcon {
+	width: 20px;
+	height: 20px;
+	filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+}
+
+.loading {
+	padding: 24px;
+	text-align: center;
+	color: var(--text-muted);
+}

@@ -1,0 +1,114 @@
+/*
+ * AuthLayoutV7 – Soft / Rounded: pill buttons, large radius, soft shadows.
+ */
+
+.wrapper {
+	min-height: 100svh;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+	box-sizing: border-box;
+	background: linear-gradient(160deg, #fef7ee 0%, #f5e6ff 50%, #e8f4ff 100%);
+	position: relative;
+	overflow: auto;
+}
+
+.scroll {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	max-width: 400px;
+}
+
+.card {
+	width: 100%;
+	padding: 2.25rem 2rem;
+	background: rgba(255, 255, 255, 0.85);
+	border-radius: 28px;
+	box-shadow: 0 12px 48px rgba(0, 0, 0, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.8);
+	box-sizing: border-box;
+}
+
+.wordmark {
+	display: block;
+	text-align: center;
+	font-size: 1.6rem;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	color: #2d1b4e;
+	margin: 0 0 0.25rem 0;
+}
+
+.tagline {
+	display: block;
+	text-align: center;
+	font-size: 0.9rem;
+	color: #6b5b7a;
+	margin: 0 0 1.5rem 0;
+}
+
+/* Form overrides – soft rounded */
+.inner h1 {
+	font-size: 1.35rem !important;
+	font-weight: 700 !important;
+	color: #2d1b4e !important;
+	margin-bottom: 1.25rem !important;
+}
+
+.inner input {
+	border: 2px solid #e8e0f0 !important;
+	border-radius: 999px !important;
+	background: #fff !important;
+	padding: 0.85rem 1.25rem !important;
+	font-size: 0.95rem !important;
+}
+
+.inner input:focus {
+	border-color: #b794f6 !important;
+	outline: none !important;
+	box-shadow: 0 0 0 3px rgba(183, 148, 246, 0.2) !important;
+}
+
+.inner button {
+	background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%) !important;
+	color: #fff !important;
+	border: none !important;
+	border-radius: 999px !important;
+	font-weight: 600 !important;
+	padding: 0.9rem 1.25rem !important;
+	box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35) !important;
+}
+
+.inner button:hover:not(:disabled) {
+	box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4) !important;
+	transform: translateY(-1px) !important;
+}
+
+.inner a {
+	color: #7c3aed !important;
+	font-weight: 500 !important;
+}
+
+.inner a:hover {
+	text-decoration: underline !important;
+}
+
+.inner [role="alert"],
+.inner [role="status"] {
+	border-radius: 16px !important;
+	border: 1px solid #e8e0f0 !important;
+	background: #fff !important;
+}
+
+@media (max-width: 480px) {
+	.wrapper {
+		padding: 1.25rem;
+	}
+	.card {
+		padding: 1.75rem 1.25rem;
+		border-radius: 22px;
+	}
+}

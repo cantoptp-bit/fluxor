@@ -1,0 +1,27 @@
+{
+    "$schema": "./packages/config/src/schema/ConfigSchema.json",
+    "env": "production",
+    "domain": {
+        "base_domain": "home.auroraplayer.com",
+        "public_scheme": "https",
+        "public_port": 443
+    },
+    "app_public": {
+        "bootstrap_api_endpoint": "/api"
+    },
+    "services": {
+        "server": {
+            "port": 49319
+        },
+        "gateway": {
+            "port": 49107,
+            "admin_reload_secret": "e91ac8081261261495afdf204bfa42c38d6775300d28f0912e97873532ee8fd3",
+            "media_proxy_endpoint": "http://localhost:49319/media"
+        },
+        "app_proxy": {
+            "port": 48763,
+            "assets_dir": "./fluxer_app/dist",
+            "app_dev_endpoint": ""
+        }
+    }
+}

@@ -1,0 +1,74 @@
+/*
+ * AuthLayoutV2 – centered card on gradient background.
+ */
+
+.wrapper {
+	min-height: 100svh;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+	box-sizing: border-box;
+	background: var(--background-primary);
+	position: relative;
+	overflow: auto;
+}
+
+.wrapper::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	background:
+		radial-gradient(ellipse 100% 80% at 50% -20%, rgba(88, 101, 242, 0.18) 0%, transparent 50%),
+		radial-gradient(ellipse 80% 60% at 100% 60%, rgba(139, 92, 246, 0.12) 0%, transparent 45%),
+		radial-gradient(ellipse 70% 50% at 0% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 45%);
+	pointer-events: none;
+}
+
+.scroll {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	max-width: 420px;
+}
+
+.card {
+	width: 100%;
+	padding: 2.5rem 2rem;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-accent);
+	border-radius: 16px;
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+	box-sizing: border-box;
+}
+
+.wordmark {
+	display: block;
+	text-align: center;
+	font-size: 1.5rem;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	color: var(--text-primary);
+	margin: 0 0 0.25rem 0;
+}
+
+.tagline {
+	display: block;
+	text-align: center;
+	font-size: 0.875rem;
+	color: var(--text-secondary);
+	margin: 0 0 1.75rem 0;
+}
+
+@media (max-width: 480px) {
+	.wrapper {
+		padding: 1.25rem;
+	}
+
+	.card {
+		padding: 1.75rem 1.25rem;
+		border-radius: 12px;
+	}
+}
