@@ -27,7 +27,21 @@ import {Spinner} from '@app/components/uikit/Spinner';
 import foodPatternUrl from '@app/images/i-like-food.svg';
 import DiscoveryStore from '@app/stores/DiscoveryStore';
 import {useLingui} from '@lingui/react/macro';
-import {CompassIcon, MagnifyingGlassIcon} from '@phosphor-icons/react';
+import {
+	BookOpenIcon,
+	CodeIcon,
+	FilmStripIcon,
+	GameControllerIcon,
+	HouseIcon,
+	MagnifyingGlassIcon,
+	MusicNotesIcon,
+	PaintBrushIcon,
+	StarIcon,
+	TagIcon,
+	TelevisionIcon,
+	UserCircleIcon,
+	UsersThreeIcon,
+} from '@phosphor-icons/react';
 import {clsx} from 'clsx';
 import {observer} from 'mobx-react-lite';
 import {useCallback, useEffect, useRef} from 'react';
@@ -47,12 +61,17 @@ export const DiscoveryModal = observer(function DiscoveryModal() {
 	}, []);
 
 	const handleSearchChange = useCallback((value: string) => {
+		DiscoveryStore.setQuery(value);
 		if (searchTimerRef.current) {
 			clearTimeout(searchTimerRef.current);
 		}
 		searchTimerRef.current = setTimeout(() => {
 			void DiscoveryStore.search({query: value, offset: 0});
 		}, 300);
+	}, []);
+
+	const handleSearchSubmit = useCallback(() => {
+		void DiscoveryStore.search({query: DiscoveryStore.query, offset: 0});
 	}, []);
 
 	const handleCategoryClick = useCallback((categoryId: number | null) => {
@@ -63,6 +82,19 @@ export const DiscoveryModal = observer(function DiscoveryModal() {
 		void DiscoveryStore.search({offset: DiscoveryStore.guilds.length});
 	}, []);
 
+	const handleRetry = useCallback(() => {
+		void DiscoveryStore.loadCategories();
+		void DiscoveryStore.search({offset: 0});
+	}, []);
+
+	const handleClearAndRefresh = useCallback(() => {
+		void DiscoveryStore.search({query: '', category: null, offset: 0});
+	}, []);
+
+	const handleSortChange = useCallback((sortBy: string) => {
+		void DiscoveryStore.search({sortBy, offset: 0});
+	}, []);
+
 	const handleClose = useCallback(() => {
 		DiscoveryStore.reset();
 		ModalActionCreators.pop();
@@ -70,16 +102,40 @@ export const DiscoveryModal = observer(function DiscoveryModal() {
 
 	const hasMore = DiscoveryStore.guilds.length < DiscoveryStore.total;
 
+	const getCategoryIcon = (categoryId: number) => {
+		const iconProps = {size: 18, weight: 'duotone' as const, className: styles.categoryIcon};
+		switch (categoryId) {
+			case 0:
+				return <GameControllerIcon {...iconProps} />;
+			case 1:
+				return <MusicNotesIcon {...iconProps} />;
+			case 2:
+				return <FilmStripIcon {...iconProps} />;
+			case 3:
+				return <BookOpenIcon {...iconProps} />;
+			case 4:
+				return <CodeIcon {...iconProps} />;
+			case 5:
+				return <UserCircleIcon {...iconProps} />;
+			case 6:
+				return <PaintBrushIcon {...iconProps} />;
+			case 7:
+				return <TelevisionIcon {...iconProps} />;
+			case 8:
+			default:
+				return <TagIcon {...iconProps} />;
+		}
+	};
+
 	return (
 		<Modal.Root size="fullscreen" onClose={handleClose} className={styles.discoveryRoot}>
 			<Modal.ScreenReaderLabel text={t`Explore Communities`} />
 			<Modal.InsetCloseButton onClick={handleClose} />
 
 			<div className={styles.layout}>
-				<aside className={styles.sidebar} aria-label={t`Explore categories`}>
+				<aside className={styles.sidebar} aria-label={t`Browse categories`}>
 					<div className={styles.sidebarHeader}>
-						<CompassIcon size={24} weight="duotone" className={styles.sidebarIcon} />
-						<span className={styles.sidebarTitle}>{t`Explore`}</span>
+						<span className={styles.sidebarLabel}>{t`BROWSE BY`}</span>
 					</div>
 					<nav className={styles.categories}>
 						<button
@@ -90,7 +146,8 @@ export const DiscoveryModal = observer(function DiscoveryModal() {
 							)}
 							onClick={() => handleCategoryClick(null)}
 						>
-							{t`All`}
+							<HouseIcon size={18} weight="duotone" className={styles.categoryIcon} />
+							<span>{t`Home`}</span>
 						</button>
 						{DiscoveryStore.categories.map((cat) => (
 							<button
@@ -102,7 +159,8 @@ export const DiscoveryModal = observer(function DiscoveryModal() {
 								)}
 								onClick={() => handleCategoryClick(cat.id)}
 							>
-								{cat.name}
+								{getCategoryIcon(cat.id)}
+								<span>{cat.name}</span>
 							</button>
 						))}
 					</nav>
@@ -114,15 +172,26 @@ export const DiscoveryModal = observer(function DiscoveryModal() {
 							<div className={styles.heroPattern} style={{backgroundImage: `url(${foodPatternUrl})`}} />
 						</div>
 						<div className={styles.heroContent}>
-							<h1 className={styles.heroTitle}>{t`Explore Communities`}</h1>
-							<div className={styles.searchBar}>
+							<button type="button" className={styles.heroPill} aria-label={t`Explore Fluxer`}>
+								<StarIcon size={14} weight="fill" className={styles.heroPillIcon} />
+								<span>{t`Explore Fluxer`}</span>
+							</button>
+							<h1 className={styles.heroTitle}>
+								{t`Find your `}
+								<span className={styles.heroTitleGradient}>{t`community.`}</span>
+							</h1>
+							<div className={styles.heroSearchRow}>
 								<Input
 									className={styles.searchInput}
-									placeholder={t`Search communities...`}
-									defaultValue={DiscoveryStore.query}
+									placeholder={t`Search for topics, tags, or servers...`}
+									value={DiscoveryStore.query}
 									onChange={(e) => handleSearchChange(e.target.value)}
+									onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
 									leftIcon={<MagnifyingGlassIcon size={16} weight="bold" />}
 								/>
+								<Button variant="primary" className={styles.heroSearchButton} onClick={handleSearchSubmit}>
+									{t`Search`}
+								</Button>
 							</div>
 						</div>
 					</div>
@@ -130,31 +199,81 @@ export const DiscoveryModal = observer(function DiscoveryModal() {
 						<div className={styles.mainPattern} style={{backgroundImage: `url(${foodPatternUrl})`}} />
 					</div>
 					<Modal.Content className={styles.mainContent} padding="none">
-						{DiscoveryStore.loading && DiscoveryStore.guilds.length === 0 ? (
+						{DiscoveryStore.error ? (
+							<div className={styles.errorState}>
+								<p className={styles.errorStateMessage}>
+									{t`Something went wrong loading communities. Please try again.`}
+								</p>
+								<Button variant="primary" onClick={handleRetry}>
+									{t`Try again`}
+								</Button>
+							</div>
+						) : DiscoveryStore.loading && DiscoveryStore.guilds.length === 0 ? (
 							<div className={styles.loadingState}>
 								<Spinner />
 							</div>
-						) : (
-							DiscoveryStore.guilds.length > 0 && (
-								<>
-									<div className={styles.grid}>
-										{DiscoveryStore.guilds.map((guild) => (
-											<DiscoveryGuildCard key={guild.id} guild={guild} />
-										))}
-									</div>
-									{hasMore && (
-										<div className={styles.loadMore}>
-											<Button
-												variant="primary"
-												onClick={handleLoadMore}
-												disabled={DiscoveryStore.loading}
+						) : DiscoveryStore.guilds.length > 0 ? (
+							<>
+								<div className={styles.sectionHeader}>
+									<h2 className={styles.sectionTitle}>{t`Featured Communities`}</h2>
+									{DiscoveryStore.total > 0 && (
+										<div className={styles.sectionMeta}>
+											<span className={styles.resultCount} aria-live="polite">
+												{DiscoveryStore.total === 1
+													? t`Showing 1 result`
+													: t`Showing ${DiscoveryStore.total} results`}
+											</span>
+											<select
+												id="discovery-sort"
+												className={styles.sortSelect}
+												value={DiscoveryStore.sortBy}
+												onChange={(e) => handleSortChange(e.target.value)}
+												aria-label={t`Sort communities by`}
 											>
-												{DiscoveryStore.loading ? t`Loading...` : t`Load More`}
-											</Button>
+												<option value="member_count">{t`Most members`}</option>
+												<option value="online_count">{t`Most online`}</option>
+												<option value="relevance">{t`Relevance`}</option>
+											</select>
 										</div>
 									)}
-								</>
-							)
+								</div>
+								<div className={styles.grid}>
+									{DiscoveryStore.guilds.map((guild) => (
+										<DiscoveryGuildCard key={guild.id} guild={guild} />
+									))}
+								</div>
+								{hasMore && (
+									<div className={styles.loadMore}>
+										<Button
+											variant="primary"
+											onClick={handleLoadMore}
+											disabled={DiscoveryStore.loading}
+											leftIcon={DiscoveryStore.loading ? <Spinner size="small" className={styles.loadMoreSpinner} /> : undefined}
+										>
+											{DiscoveryStore.loading ? t`Loading...` : t`Load More`}
+										</Button>
+									</div>
+								)}
+							</>
+						) : (
+							<div className={styles.emptyState}>
+								<UsersThreeIcon size={48} weight="duotone" className={styles.emptyStateIcon} aria-hidden />
+								<h3 className={styles.emptyStateTitle}>
+									{DiscoveryStore.query.trim() || DiscoveryStore.category !== null
+										? t`No communities match your search`
+										: t`No communities yet`}
+								</h3>
+								<p className={styles.emptyStateDescription}>
+									{DiscoveryStore.query.trim() || DiscoveryStore.category !== null
+										? t`Try a different search or category, or view all communities.`
+										: t`Check back later or try a different category.`}
+								</p>
+								{(DiscoveryStore.query.trim() || DiscoveryStore.category !== null) && (
+									<Button variant="secondary" onClick={handleClearAndRefresh}>
+										{t`View all`}
+									</Button>
+								)}
+							</div>
 						)}
 					</Modal.Content>
 				</div>
