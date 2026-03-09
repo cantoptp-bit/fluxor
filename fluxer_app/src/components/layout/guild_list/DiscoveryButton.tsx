@@ -18,23 +18,23 @@
  */
 
 import * as ModalActionCreators from '@app/actions/ModalActionCreators';
-import {modal} from '@app/actions/ModalActionCreators';
+import { modal } from '@app/actions/ModalActionCreators';
 import guildStyles from '@app/components/layout/GuildsLayout.module.css';
 import styles from '@app/components/layout/guild_list/DiscoveryButton.module.css';
-import {DiscoveryModal} from '@app/components/modals/DiscoveryModal';
+import { DiscoveryModal } from '@app/components/modals/DiscoveryModal';
 import FocusRing from '@app/components/uikit/focus_ring/FocusRing';
-import {Tooltip} from '@app/components/uikit/tooltip/Tooltip';
-import {useHover} from '@app/hooks/useHover';
-import {useMergeRefs} from '@app/hooks/useMergeRefs';
+import { Tooltip } from '@app/components/uikit/tooltip/Tooltip';
+import { useHover } from '@app/hooks/useHover';
+import { useMergeRefs } from '@app/hooks/useMergeRefs';
 import AccessibilityStore from '@app/stores/AccessibilityStore';
-import {useLingui} from '@lingui/react/macro';
-import {CompassIcon} from '@phosphor-icons/react';
-import {motion} from 'framer-motion';
-import {observer} from 'mobx-react-lite';
-import {useCallback, useRef} from 'react';
+import { useLingui } from '@lingui/react/macro';
+import { CompassIcon } from '@phosphor-icons/react';
+import { motion } from 'framer-motion';
+import { observer } from 'mobx-react-lite';
+import { useCallback, useRef } from 'react';
 
 export const DiscoveryButton = observer(() => {
-	const {t} = useLingui();
+	const { t } = useLingui();
 	const [hoverRef, isHovering] = useHover();
 	const buttonRef = useRef<HTMLButtonElement | null>(null);
 	const iconRef = useRef<HTMLDivElement | null>(null);
@@ -59,10 +59,10 @@ export const DiscoveryButton = observer(() => {
 						<motion.div
 							ref={iconRef}
 							className={guildStyles.addGuildButtonIcon}
-							animate={{borderRadius: isHovering ? '30%' : '50%'}}
-							initial={{borderRadius: isHovering ? '30%' : '50%'}}
-							transition={{duration: AccessibilityStore.useReducedMotion ? 0 : 0.07, ease: 'easeOut'}}
-							whileHover={AccessibilityStore.useReducedMotion ? undefined : {borderRadius: '30%'}}
+							animate={{ borderRadius: isHovering ? '30%' : '50%' }}
+							initial={{ borderRadius: isHovering ? '30%' : '50%' }}
+							transition={{ duration: AccessibilityStore.useReducedMotion ? 0 : 0.07, ease: 'easeOut' }}
+							whileHover={AccessibilityStore.useReducedMotion ? undefined : { borderRadius: '30%' }}
 						>
 							<CompassIcon weight="fill" className={styles.iconText} />
 						</motion.div>

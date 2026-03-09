@@ -17,37 +17,37 @@
  * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {AppBadge} from '@app/components/AppBadge';
-import {ChannelIndexPage} from '@app/components/channel/ChannelIndexPage';
-import {ChannelLayout} from '@app/components/channel/ChannelLayout';
-import {DMLayout} from '@app/components/channel/direct_message/DMLayout';
-import {TempChatFullPage} from '@app/components/pages/TempChatFullPage';
-import {GuildMembersPage} from '@app/components/channel/GuildMembersPage';
-import {AppLayout} from '@app/components/layout/AppLayout';
-import {FavoritesLayout} from '@app/components/layout/FavoritesLayout';
-import {GuildsLayout} from '@app/components/layout/GuildsLayout';
-import {BookmarksBottomSheet} from '@app/components/modals/BookmarksBottomSheet';
-import {StatusChangeBottomSheet} from '@app/components/modals/StatusChangeBottomSheet';
+import { AppBadge } from '@app/components/AppBadge';
+import { ChannelIndexPage } from '@app/components/channel/ChannelIndexPage';
+import { ChannelLayout } from '@app/components/channel/ChannelLayout';
+import { DMLayout } from '@app/components/channel/direct_message/DMLayout';
+import { TempChatFullPage } from '@app/components/pages/TempChatFullPage';
+import { GuildMembersPage } from '@app/components/channel/GuildMembersPage';
+import { AppLayout } from '@app/components/layout/AppLayout';
+import { FavoritesLayout } from '@app/components/layout/FavoritesLayout';
+import { GuildsLayout } from '@app/components/layout/GuildsLayout';
+import { BookmarksBottomSheet } from '@app/components/modals/BookmarksBottomSheet';
+import { StatusChangeBottomSheet } from '@app/components/modals/StatusChangeBottomSheet';
 import ConnectionCallbackPage from '@app/components/pages/ConnectionCallbackPage';
-import {NotificationsPage} from '@app/components/pages/NotificationsPage';
+import { NotificationsPage } from '@app/components/pages/NotificationsPage';
 import PremiumCallbackPage from '@app/components/pages/PremiumCallbackPage';
-import {YouPage} from '@app/components/pages/YouPage';
-import {createRoute} from '@app/lib/router/Builder';
-import {useParams} from '@app/lib/router/React';
-import {Redirect} from '@app/lib/router/RouterTypes';
+import { YouPage } from '@app/components/pages/YouPage';
+import { createRoute } from '@app/lib/router/Builder';
+import { useParams } from '@app/lib/router/React';
+import { Redirect } from '@app/lib/router/RouterTypes';
 import SessionManager from '@app/lib/SessionManager';
-import {Routes} from '@app/Routes';
-import {GuildChannelRouter} from '@app/router/components/GuildChannelRouter';
-import {rootRoute} from '@app/router/routes/RootRoutes';
+import { Routes } from '@app/Routes';
+import { GuildChannelRouter } from '@app/router/components/GuildChannelRouter';
+import { rootRoute } from '@app/router/routes/RootRoutes';
 import AuthenticationStore from '@app/stores/AuthenticationStore';
 import ChannelStore from '@app/stores/ChannelStore';
 import MobileLayoutStore from '@app/stores/MobileLayoutStore';
 import SelectedChannelStore from '@app/stores/SelectedChannelStore';
-import {setPathQueryParams} from '@app/utils/UrlUtils';
-import {ME} from '@fluxer/constants/src/AppConstants';
-import {ChannelTypes} from '@fluxer/constants/src/ChannelConstants';
-import {observer} from 'mobx-react-lite';
-import {useEffect, useState} from 'react';
+import { setPathQueryParams } from '@app/utils/UrlUtils';
+import { ME } from '@fluxer/constants/src/AppConstants';
+import { ChannelTypes } from '@fluxer/constants/src/ChannelConstants';
+import { observer } from 'mobx-react-lite';
+import { useEffect, useState } from 'react';
 
 const appLayoutRoute = createRoute({
 	getParentRoute: () => rootRoute,
@@ -58,11 +58,11 @@ const appLayoutRoute = createRoute({
 		}
 		if (!AuthenticationStore.isAuthenticated) {
 			const current = window.location.pathname + window.location.search;
-			return new Redirect(setPathQueryParams(Routes.LOGIN, {redirect_to: current}));
+			return new Redirect(setPathQueryParams(Routes.LOGIN, { redirect_to: current }));
 		}
 		return undefined;
 	},
-	layout: ({children}) => (
+	layout: ({ children }) => (
 		<>
 			<AppBadge />
 			<AppLayout>{children}</AppLayout>
@@ -73,7 +73,7 @@ const appLayoutRoute = createRoute({
 const guildsLayoutRoute = createRoute({
 	getParentRoute: () => appLayoutRoute,
 	id: 'guildsLayout',
-	layout: ({children}) => <GuildsLayout>{children}</GuildsLayout>,
+	layout: ({ children }) => <GuildsLayout>{children}</GuildsLayout>,
 });
 
 const notificationsRoute = createRoute({
@@ -157,7 +157,7 @@ const favoritesRoute = createRoute({
 	getParentRoute: () => guildsLayoutRoute,
 	id: 'favorites',
 	path: '/channels/@favorites',
-	layout: ({children}) => <FavoritesLayout>{children}</FavoritesLayout>,
+	layout: ({ children }) => <FavoritesLayout>{children}</FavoritesLayout>,
 });
 
 const favoritesChannelRoute = createRoute({
@@ -175,9 +175,9 @@ const channelsRoute = createRoute({
 	getParentRoute: () => guildsLayoutRoute,
 	id: 'channels',
 	path: '/channels/:guildId',
-	layout: ({children}) => {
-		const params = useParams() as {guildId: string};
-		const {guildId} = params;
+	layout: ({ children }) => {
+		const params = useParams() as { guildId: string };
+		const { guildId } = params;
 
 		if (guildId === ME) {
 			return <DMLayout>{children}</DMLayout>;
@@ -192,7 +192,7 @@ const membersRoute = createRoute({
 	id: 'guildMembers',
 	path: '/channels/:guildId/members',
 	component: () => {
-		const {guildId} = useParams() as {guildId: string};
+		const { guildId } = useParams() as { guildId: string };
 		return <GuildMembersPage guildId={guildId} />;
 	},
 });
@@ -202,7 +202,7 @@ const tempChatRoute = createRoute({
 	id: 'tempChat',
 	path: '/channels/:guildId/temp/:tempChatId',
 	component: () => {
-		const {tempChatId} = useParams() as {tempChatId: string};
+		const { tempChatId } = useParams() as { tempChatId: string };
 		return <TempChatFullPage tempChatId={tempChatId} />;
 	},
 });
@@ -212,7 +212,7 @@ const channelRoute = createRoute({
 	id: 'channel',
 	path: '/channels/:guildId/:channelId',
 	onEnter: (ctx) => {
-		const {guildId, channelId} = ctx.params;
+		const { guildId, channelId } = ctx.params;
 		const channel = ChannelStore.getChannel(channelId);
 		if (channel && (channel.type === ChannelTypes.GUILD_CATEGORY || channel.type === ChannelTypes.GUILD_LINK)) {
 			return new Redirect(Routes.guildChannel(guildId));
@@ -231,7 +231,7 @@ const messageRoute = createRoute({
 	id: 'message',
 	path: '/channels/:guildId/:channelId/:messageId',
 	onEnter: (ctx) => {
-		const {guildId, channelId} = ctx.params;
+		const { guildId, channelId } = ctx.params;
 		const channel = ChannelStore.getChannel(channelId);
 		if (channel && (channel.type === ChannelTypes.GUILD_CATEGORY || channel.type === ChannelTypes.GUILD_LINK)) {
 			return new Redirect(Routes.guildChannel(guildId));

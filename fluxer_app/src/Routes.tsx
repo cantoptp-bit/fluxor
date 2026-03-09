@@ -17,7 +17,7 @@
  * along with Fluxer. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {marketingUrl} from '@app/utils/UrlUtils';
+import { marketingUrl } from '@app/utils/UrlUtils';
 
 export const Routes = {
 	HOME: '/',
